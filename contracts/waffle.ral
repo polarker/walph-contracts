@@ -7,7 +7,8 @@ Contract Walphle(
     poolOwner: Address,
     poolFees: U256,
     ratioAlphAlf: U256,
-    mut open: Bool
+    mut open: Bool,
+    mut balance: U256
 ){
     
 
@@ -22,6 +23,7 @@ Contract Walphle(
         PoolClosed = 3
         InvalidCaller = 4
         NotEnoughALF = 5
+        PoolNotFull = 6
     }
 
     //const AlfTokenId = #66da610efb5129c062e88e5fd65fe810f31efd1597021b2edf887a4360fa0800
@@ -34,15 +36,15 @@ Contract Walphle(
         return poolSize
     }
 
+    pub fn getBalance() -> (U256){
+        return balance
+    }
+
     fn getNumALF() -> (U256){
         return tokenRemaining!(callerAddress!(), #66da610efb5129c062e88e5fd65fe810f31efd1597021b2edf887a4360fa0800
     )
     }
 
-    fn getContractBalance() -> (U256){
-
-        return tokenRemaining!(selfAddress!(), ALPH)
-    }
 
     fn ratioAlphAlfRatio() -> (U256) {
         // if ratioAlphAlf is set to 0 it means you don't need Alf to access the pool
@@ -53,35 +55,46 @@ Contract Walphle(
         return 1
     }
 
-    @using(preapprovedAssets = true, assetsInContract = true, updateFields = false, checkExternalCaller = false)
+    @using(preapprovedAssets = true, assetsInContract = true, updateFields = true, checkExternalCaller = false)
     pub fn buyTicket(amount: U256) -> (){
 
-        assert!(getContractBalance() + amount <= poolSize, ErrorCodes.PoolFull)
+        assert!(balance + amount <= poolSize, ErrorCodes.PoolFull)
         assert!(open, ErrorCodes.PoolClosed)
         assert!(ratioAlphAlfRatio() >= 1, ErrorCodes.NotEnoughALF)
         
         transferTokenToSelf!(callerAddress!(), ALPH, amount)
-
+        balance = balance + amount
         emit TicketBought(callerAddress!(), amount)
 
         // last person to complete the pool close it
-        if(getContractBalance() >= poolSize){
-           closePool()
+        if(balance >= poolSize){
+            closePoolWhenFull()
         }
         
     }
 
-    @using(preapprovedAssets = true, assetsInContract = true, updateFields = false, checkExternalCaller = true)
+    @using(preapprovedAssets = true, assetsInContract = true, updateFields = true, checkExternalCaller = true)
     pub fn distributePrize(winner: Address) -> (){
         assert!(!open, ErrorCodes.PoolAlreadyClose)
         checkCaller!(callerAddress!() == poolOwner, ErrorCodes.InvalidCaller)
 
-        transferTokenFromSelf!(callerAddress!(), ALPH, getContractBalance() * (poolFees/100))
-
-        transferTokenFromSelf!(winner, ALPH, getContractBalance())
+        
+        transferTokenFromSelf!(callerAddress!(), ALPH, balance * poolFees/100 )
+        balance = balance - (balance * poolFees/100)
+        transferTokenFromSelf!(winner, ALPH, balance)
 
         openPool()
 
+    }
+
+    @using(updateFields = true, checkExternalCaller = false)
+    pub fn closePoolWhenFull() -> (){
+        assert!(open, ErrorCodes.PoolAlreadyClose)
+        assert!(balance >= poolSize, ErrorCodes.PoolNotFull)
+
+        open = false
+
+        emit PoolClose()
     }
 
     @using(updateFields = true, checkExternalCaller = true)

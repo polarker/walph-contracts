@@ -30,9 +30,10 @@ describe('unit tests', () => {
         poolFees: 1n,
         ratioAlphAlf: 0n,
         open: false,
+        balance: 0n
       },
       // arguments to test the target function of the test contract
-      testArgs: { amount: 1n },
+      testArgs: { amount: 1n * 10n ** 18n},
       // assets owned by the caller of the function
       inputAssets: [
         { 
@@ -82,36 +83,59 @@ describe('unit tests', () => {
   })
 
 
+  it('test try to close a not full pool', async () => {
+    const testParams = testParamsFixture
+    testParams.initialFields.open = true
+    const randomAddress = PrivateKeyWallet.Random(0,web3.getCurrentNodeProvider()).account.address
+    testParams.inputAssets[0].address = randomAddress
+
+    await expectAssertionError( Walphle.tests.closePoolWhenFull(testParams),testContractAddress,6)
+  })
+
   it('test try to open the pool with wrong address', async () => {
     const testParams = testParamsFixture
     const wrongAddress = PrivateKeyWallet.Random(0,web3.getCurrentNodeProvider()).account.address
     testParams.inputAssets[0].address = wrongAddress
+    testParams.initialFields.open = false
 
     await expectAssertionError(Walphle.tests.openPool(testParams),testContractAddress,4)
   })
 
-  it('test get pool balance', async () => {
-    const testParams = testParamsFixture
-    testParams.initialFields.open = true
-
-    const testResult = await Walphle.tests.getContractBalance(testParams)
-
-    const contractState = testResult.contracts[0] as WalphleTypes.State
-    console.log(contractState)
-
-  })
 
   it('test buy a ticket', async () => {
     const testParams = testParamsFixture
     testParams.initialFields.open = true
-   // testParams.inputAssets[0] = { address: "1GBvuTs4TosNB9xTCGJL5wABn2xTYCzwa7MnXHphjcj1y", asset: { alphAmount: 100n * 10n ** 18n } }
+   testParams.inputAssets[0] = { address: "1GBvuTs4TosNB9xTCGJL5wABn2xTYCzwa7MnXHphjcj1y", asset: { alphAmount: 100n * 10n ** 18n } }
     
-    console.log(testParamsFixture.inputAssets[0])
-    let testResult = await Walphle.tests.buyTicket(testParams)
-    let contractState = testResult.contracts[0] as WalphleTypes.State
-    console.log(contractState)
+    const testResult = await Walphle.tests.buyTicket(testParams)
+    const contractState = testResult.contracts[0] as WalphleTypes.State
 
-    expect(contractState.fields.open).toEqual(true)
+    expect(contractState.fields.balance).toEqual(10n**18n)
+
+  })
+
+  it('test buy a ticket when pool full', async () => {
+    const testParams = testParamsFixture
+    testParams.initialFields.open = true
+    testParams.initialFields.balance = 100n * 10n ** 18n
+    testParams.inputAssets[0] = { address: "1GBvuTs4TosNB9xTCGJL5wABn2xTYCzwa7MnXHphjcj1y", asset: { alphAmount: 100n * 10n ** 18n } }
+    
+    await expectAssertionError(Walphle.tests.buyTicket(testParams),testContractAddress,0)
+
+  })
+
+
+  it('test buy a ticket and then close the pool', async () => {
+    const testParams = testParamsFixture
+    testParams.initialFields.open = true
+    testParams.initialFields.balance = 99n * 10n ** 18n
+    testParams.inputAssets[0] = { address: "1GBvuTs4TosNB9xTCGJL5wABn2xTYCzwa7MnXHphjcj1y", asset: { alphAmount: 100n * 10n ** 18n } }
+    
+    const testResult = await Walphle.tests.buyTicket(testParams)
+    const contractState = testResult.contracts[0] as WalphleTypes.State
+
+    expect(contractState.fields.balance).toEqual(testParams.initialFields.poolSize)
+    expect(contractState.fields.open).toEqual(false)
 
   })
 

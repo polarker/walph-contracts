@@ -1,28 +1,31 @@
 {
   "version": "v2.5.0",
   "name": "Walphle",
-  "bytecode": "05090912403e4047405b408740aa40bf40d5010000000102a00002010000000102ce0002000000000104b414402066da610efb5129c062e88e5fd65fe810f31efd1597021b2edf887a4360fa0800a502000000000103b2a40200000000010ace030c334c040002ce032d020d0201010101001b000316002ace00320c7ba0000f7b00040d34117bb41600a905b416005f0003ce00344c010007010101010014a000190d7bb4ce0145107bb40003ce021340642d2ca816000003a8000801000000000ca0000d7bb4ce0145107b04a100075d01000000000da000190e7bb4ce0145107b03a100065d",
-  "codeHash": "93ebb3902174bec506445fd2b95941477b48e2536be65552ab0928f8c8916c3d",
+  "bytecode": "060a09121b4047405b408e40bf40d640eb4101010000000102a00002010000000102ce0002010000000102a00102000000000104b414402066da610efb5129c062e88e5fd65fe810f31efd1597021b2edf887a4360fa0800a50200000000010ace030c334c040003ce032d020d0201010101001fa00116002ace00320c7ba0000f7b00040d34117bb41600a9a00116002aa10105b416005fa001ce00344c01000701010101001ca000190d7bb4ce0145107bb4a001ce022c1340642da8a001a001ce022c1340642d2ba1011600a001a8000901000000000ca0000d7ba001ce003413067b04a100075d01000000000ca0000d7bb4ce0145107b04a100075d01000000000da000190e7bb4ce0145107b03a100065d",
+  "codeHash": "eb6b10e827830aebcb0a6c7bf655c23564816116b6596297eeea0c8978c1142f",
   "fieldsSig": {
     "names": [
       "poolSize",
       "poolOwner",
       "poolFees",
       "ratioAlphAlf",
-      "open"
+      "open",
+      "balance"
     ],
     "types": [
       "U256",
       "Address",
       "U256",
       "U256",
-      "Bool"
+      "Bool",
+      "U256"
     ],
     "isMutable": [
       false,
       false,
       false,
       false,
+      true,
       true
     ]
   },
@@ -75,10 +78,10 @@
       ]
     },
     {
-      "name": "getNumALF",
+      "name": "getBalance",
       "usePreapprovedAssets": false,
       "useAssetsInContract": false,
-      "isPublic": false,
+      "isPublic": true,
       "paramNames": [],
       "paramTypes": [],
       "paramIsMutable": [],
@@ -87,7 +90,7 @@
       ]
     },
     {
-      "name": "getContractBalance",
+      "name": "getNumALF",
       "usePreapprovedAssets": false,
       "useAssetsInContract": false,
       "isPublic": false,
@@ -140,6 +143,16 @@
       "paramIsMutable": [
         false
       ],
+      "returnTypes": []
+    },
+    {
+      "name": "closePoolWhenFull",
+      "usePreapprovedAssets": false,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
       "returnTypes": []
     },
     {
@@ -208,6 +221,13 @@
           "value": {
             "type": "U256",
             "value": "5"
+          }
+        },
+        {
+          "name": "PoolNotFull",
+          "value": {
+            "type": "U256",
+            "value": "6"
           }
         }
       ]

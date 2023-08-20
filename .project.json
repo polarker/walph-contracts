@@ -11,9 +11,9 @@
   "infos": {
     "Walphle": {
       "sourceFile": "waffle.ral",
-      "sourceCodeHash": "f1ffb82c42f15dc04b4385bae1b3099da478cc87a65d04605dd3156513244606",
+      "sourceCodeHash": "6bd531ce0673c59d4bdea9f4c5186360af4fc7f2bba56c525d66cf0a3d3789c8",
       "bytecodeDebugPatch": "",
-      "codeHashDebug": "93ebb3902174bec506445fd2b95941477b48e2536be65552ab0928f8c8916c3d",
+      "codeHashDebug": "eb6b10e827830aebcb0a6c7bf655c23564816116b6596297eeea0c8978c1142f",
       "warnings": []
     }
   }

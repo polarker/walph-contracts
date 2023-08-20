@@ -35,6 +35,7 @@ export namespace WalphleTypes {
     poolFees: bigint;
     ratioAlphAlf: bigint;
     open: boolean;
+    balance: bigint;
   };
 
   export type State = ContractState<Fields>;
@@ -52,6 +53,10 @@ export namespace WalphleTypes {
       result: CallContractResult<boolean>;
     };
     getPoolSize: {
+      params: Omit<CallContractParams<{}>, "args">;
+      result: CallContractResult<bigint>;
+    };
+    getBalance: {
       params: Omit<CallContractParams<{}>, "args">;
       result: CallContractResult<bigint>;
     };
@@ -80,6 +85,7 @@ class Factory extends ContractFactory<WalphleInstance, WalphleTypes.Fields> {
       PoolClosed: BigInt(3),
       InvalidCaller: BigInt(4),
       NotEnoughALF: BigInt(5),
+      PoolNotFull: BigInt(6),
     },
   };
 
@@ -98,15 +104,15 @@ class Factory extends ContractFactory<WalphleInstance, WalphleTypes.Fields> {
     ): Promise<TestContractResult<bigint>> => {
       return testMethod(this, "getPoolSize", params);
     },
+    getBalance: async (
+      params: Omit<TestContractParams<WalphleTypes.Fields, never>, "testArgs">
+    ): Promise<TestContractResult<bigint>> => {
+      return testMethod(this, "getBalance", params);
+    },
     getNumALF: async (
       params: Omit<TestContractParams<WalphleTypes.Fields, never>, "testArgs">
     ): Promise<TestContractResult<bigint>> => {
       return testMethod(this, "getNumALF", params);
-    },
-    getContractBalance: async (
-      params: Omit<TestContractParams<WalphleTypes.Fields, never>, "testArgs">
-    ): Promise<TestContractResult<bigint>> => {
-      return testMethod(this, "getContractBalance", params);
     },
     ratioAlphAlfRatio: async (
       params: Omit<TestContractParams<WalphleTypes.Fields, never>, "testArgs">
@@ -122,6 +128,11 @@ class Factory extends ContractFactory<WalphleInstance, WalphleTypes.Fields> {
       params: TestContractParams<WalphleTypes.Fields, { winner: Address }>
     ): Promise<TestContractResult<null>> => {
       return testMethod(this, "distributePrize", params);
+    },
+    closePoolWhenFull: async (
+      params: Omit<TestContractParams<WalphleTypes.Fields, never>, "testArgs">
+    ): Promise<TestContractResult<null>> => {
+      return testMethod(this, "closePoolWhenFull", params);
     },
     closePool: async (
       params: Omit<TestContractParams<WalphleTypes.Fields, never>, "testArgs">
@@ -141,7 +152,7 @@ export const Walphle = new Factory(
   Contract.fromJson(
     WalphleContractJson,
     "",
-    "93ebb3902174bec506445fd2b95941477b48e2536be65552ab0928f8c8916c3d"
+    "eb6b10e827830aebcb0a6c7bf655c23564816116b6596297eeea0c8978c1142f"
   )
 );
 
@@ -228,6 +239,17 @@ export class WalphleInstance extends ContractInstance {
         Walphle,
         this,
         "getPoolSize",
+        params === undefined ? {} : params,
+        getContractByCodeHash
+      );
+    },
+    getBalance: async (
+      params?: WalphleTypes.CallMethodParams<"getBalance">
+    ): Promise<WalphleTypes.CallMethodResult<"getBalance">> => {
+      return callMethod(
+        Walphle,
+        this,
+        "getBalance",
         params === undefined ? {} : params,
         getContractByCodeHash
       );
