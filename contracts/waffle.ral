@@ -53,10 +53,10 @@ Contract Walphle(
         return 1
     }
 
-    @using(assetsInContract = true, updateFields = false, checkExternalCaller = false)
+    @using(preapprovedAssets = true, assetsInContract = true, updateFields = false, checkExternalCaller = false)
     pub fn buyTicket(amount: U256) -> (){
 
-        assert!(getContractBalance()+amount <= poolSize, ErrorCodes.PoolFull)
+        assert!(getContractBalance() + amount <= poolSize, ErrorCodes.PoolFull)
         assert!(open, ErrorCodes.PoolClosed)
         assert!(ratioAlphAlfRatio() >= 1, ErrorCodes.NotEnoughALF)
         
@@ -71,7 +71,7 @@ Contract Walphle(
         
     }
 
-    @using(assetsInContract = true, updateFields = false, checkExternalCaller = true)
+    @using(preapprovedAssets = true, assetsInContract = true, updateFields = false, checkExternalCaller = true)
     pub fn distributePrize(winner: Address) -> (){
         assert!(!open, ErrorCodes.PoolAlreadyClose)
         checkCaller!(callerAddress!() == poolOwner, ErrorCodes.InvalidCaller)
@@ -86,7 +86,7 @@ Contract Walphle(
 
     @using(updateFields = true, checkExternalCaller = true)
     pub fn closePool() -> (){
-        assert!(!open, ErrorCodes.PoolAlreadyClose)
+        assert!(open, ErrorCodes.PoolAlreadyClose)
         checkCaller!(callerAddress!() == poolOwner, ErrorCodes.InvalidCaller)
 
         open = false
