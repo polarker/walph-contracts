@@ -8,7 +8,9 @@ Contract Walphle(
     poolFees: U256,
     ratioAlphAlf: U256,
     mut open: Bool,
-    mut balance: U256
+    mut balance: U256,
+    mut numAttendees: U256,
+    mut attendees: [Address;10]
 ){
     
 
@@ -24,6 +26,7 @@ Contract Walphle(
         InvalidCaller = 4
         NotEnoughALF = 5
         PoolNotFull = 6
+        InvalidAmount = 7
     }
 
     //const AlfTokenId = #66da610efb5129c062e88e5fd65fe810f31efd1597021b2edf887a4360fa0800
@@ -61,10 +64,16 @@ Contract Walphle(
         assert!(balance + amount <= poolSize, ErrorCodes.PoolFull)
         assert!(open, ErrorCodes.PoolClosed)
         assert!(ratioAlphAlfRatio() >= 1, ErrorCodes.NotEnoughALF)
+        assert!(amount == 1 * 10 ** 18, ErrorCodes.InvalidAmount)
         
         transferTokenToSelf!(callerAddress!(), ALPH, amount)
+
         balance = balance + amount
         emit TicketBought(callerAddress!(), amount)
+
+        
+        attendees[numAttendees] = callerAddress!()
+        numAttendees = numAttendees + 1
 
         // last person to complete the pool close it
         if(balance >= poolSize){
@@ -83,7 +92,13 @@ Contract Walphle(
         balance = balance - (balance * poolFees/100)
         transferTokenFromSelf!(winner, ALPH, balance)
 
-        openPool()
+        numAttendees = 0
+
+        //for (let mut index = 0; index <= attendees.size!(); index = index + 1) {
+        //    attendees[index] = nullContractAddress!()
+        //  }
+
+        //openPool()
 
     }
 

@@ -36,6 +36,19 @@ export namespace WalphleTypes {
     ratioAlphAlf: bigint;
     open: boolean;
     balance: bigint;
+    numAttendees: bigint;
+    attendees: [
+      Address,
+      Address,
+      Address,
+      Address,
+      Address,
+      Address,
+      Address,
+      Address,
+      Address,
+      Address
+    ];
   };
 
   export type State = ContractState<Fields>;
@@ -86,6 +99,7 @@ class Factory extends ContractFactory<WalphleInstance, WalphleTypes.Fields> {
       InvalidCaller: BigInt(4),
       NotEnoughALF: BigInt(5),
       PoolNotFull: BigInt(6),
+      InvalidAmount: BigInt(7),
     },
   };
 
@@ -152,7 +166,7 @@ export const Walphle = new Factory(
   Contract.fromJson(
     WalphleContractJson,
     "",
-    "eb6b10e827830aebcb0a6c7bf655c23564816116b6596297eeea0c8978c1142f"
+    "b14e3dca4e5c0635c69207d43b0acdab658062724a464b1c33092e560101d264"
   )
 );
 

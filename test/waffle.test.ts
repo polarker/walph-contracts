@@ -1,4 +1,4 @@
-import { web3, Project, TestContractParams, addressFromContractId, AssetOutput, DUST_AMOUNT, addressFromPublicKey } from '@alephium/web3'
+import { web3, Project, TestContractParams, addressFromContractId, AssetOutput, DUST_AMOUNT, addressFromPublicKey, ZERO_ADDRESS, ContractState, NamedVals } from '@alephium/web3'
 import { PrivateKeyWallet } from '@alephium/web3-wallet'
 import { expectAssertionError, randomContractId, testAddress, testPrivateKey } from '@alephium/web3-test'
 import { Walphle, WalphleTypes } from '../artifacts/ts'
@@ -7,38 +7,47 @@ describe('unit tests', () => {
   let testContractId: string
   let testTokenId: string
   let testContractAddress: string
-  let testParamsFixture: TestContractParams<WalphleTypes.Fields, { amount: bigint }>
+  let testParamsFixture: TestContractParams<WalphleTypes.Fields, { amount: bigint, winner: string}>
 
 
   // We initialize the fixture variables before all tests
   beforeAll(async () => {
+
     web3.setCurrentNodeProvider('http://127.0.0.1:12973', undefined, fetch)
     await Project.build()
     testContractId = randomContractId()
     
     testTokenId = testContractId
     testContractAddress = addressFromContractId(testContractId)
-
     testParamsFixture = {
       // a random address that the test contract resides in the tests
       address: testContractAddress,
 
       // initial state of the test contract
       initialFields: {
-        poolSize: 100n * 10n ** 18n,
+        poolSize: 10n * 10n ** 18n,
         poolOwner: testAddress,
         poolFees: 1n,
         ratioAlphAlf: 0n,
         open: false,
-        balance: 0n
+        balance: 0n,
+        attendees: [ZERO_ADDRESS,ZERO_ADDRESS,ZERO_ADDRESS,ZERO_ADDRESS,ZERO_ADDRESS,ZERO_ADDRESS,ZERO_ADDRESS,ZERO_ADDRESS,ZERO_ADDRESS,ZERO_ADDRESS],
+        numAttendees: 0n
+      },
+      initialAsset: {
+        alphAmount: 0n,
       },
       // arguments to test the target function of the test contract
-      testArgs: { amount: 1n * 10n ** 18n},
+      testArgs: { 
+        amount: 1n * 10n ** 18n,
+        winner: PrivateKeyWallet.Random(0,web3.getCurrentNodeProvider()).account.address
+        
+      },
       // assets owned by the caller of the function
       inputAssets: [
         { 
           address: testAddress, 
-          asset: { alphAmount: 1000n * 10n ** 18n }
+          asset: { alphAmount: 100n * 10n ** 18n }
         }
       ]
       
@@ -48,7 +57,7 @@ describe('unit tests', () => {
 
 
   it('test opening and closing pool', async () => {
-    const testParams = testParamsFixture
+    const testParams = JSON.parse(JSON.stringify(testParamsFixture))
 
      // open the pool
     let testResult = await Walphle.tests.openPool(testParams)
@@ -59,7 +68,7 @@ describe('unit tests', () => {
 
     //assign new state to initial fields and close the pool
     testParams.initialFields = contractState.fields
-    testResult = await Walphle.tests.closePool(testParamsFixture)
+    testResult = await Walphle.tests.closePool(testParams)
 
     contractState = testResult.contracts[0] as WalphleTypes.State
     expect(contractState.fields.open).toEqual(false)
@@ -68,14 +77,14 @@ describe('unit tests', () => {
 
 
   it('test try to open an opened pool', async () => {
-    const testParams = testParamsFixture
+    const testParams = JSON.parse(JSON.stringify(testParamsFixture))
     testParams.initialFields.open = true
 
     await expectAssertionError(Walphle.tests.openPool(testParams),testContractAddress,2)
   })
 
   it('test try to close a closed pool', async () => {
-    const testParams = testParamsFixture
+    const testParams = JSON.parse(JSON.stringify(testParamsFixture))
     testParams.initialFields.open = false
 
 
@@ -84,7 +93,7 @@ describe('unit tests', () => {
 
 
   it('test try to close a not full pool', async () => {
-    const testParams = testParamsFixture
+    const testParams = JSON.parse(JSON.stringify(testParamsFixture))
     testParams.initialFields.open = true
     const randomAddress = PrivateKeyWallet.Random(0,web3.getCurrentNodeProvider()).account.address
     testParams.inputAssets[0].address = randomAddress
@@ -93,7 +102,7 @@ describe('unit tests', () => {
   })
 
   it('test try to open the pool with wrong address', async () => {
-    const testParams = testParamsFixture
+    const testParams = JSON.parse(JSON.stringify(testParamsFixture))
     const wrongAddress = PrivateKeyWallet.Random(0,web3.getCurrentNodeProvider()).account.address
     testParams.inputAssets[0].address = wrongAddress
     testParams.initialFields.open = false
@@ -103,7 +112,7 @@ describe('unit tests', () => {
 
 
   it('test buy a ticket', async () => {
-    const testParams = testParamsFixture
+    const testParams = JSON.parse(JSON.stringify(testParamsFixture))
     testParams.initialFields.open = true
    testParams.inputAssets[0] = { address: "1GBvuTs4TosNB9xTCGJL5wABn2xTYCzwa7MnXHphjcj1y", asset: { alphAmount: 100n * 10n ** 18n } }
     
@@ -114,10 +123,23 @@ describe('unit tests', () => {
 
   })
 
+
+  it('test buy a ticket more than 1 ALPH', async () => {
+    const testParams = JSON.parse(JSON.stringify(testParamsFixture))
+    testParams.initialFields.open = true
+   testParams.inputAssets[0] = { address: "1GBvuTs4TosNB9xTCGJL5wABn2xTYCzwa7MnXHphjcj1y", asset: { alphAmount: 100n * 10n ** 18n } }
+   testParams.testArgs.amount = 11n * 10n ** 17n
+
+    await expectAssertionError(Walphle.tests.buyTicket(testParams),testContractAddress,7)
+
+
+  })
+
   it('test buy a ticket when pool full', async () => {
-    const testParams = testParamsFixture
+    const testParams = JSON.parse(JSON.stringify(testParamsFixture))
     testParams.initialFields.open = true
     testParams.initialFields.balance = 100n * 10n ** 18n
+   
     testParams.inputAssets[0] = { address: "1GBvuTs4TosNB9xTCGJL5wABn2xTYCzwa7MnXHphjcj1y", asset: { alphAmount: 100n * 10n ** 18n } }
     
     await expectAssertionError(Walphle.tests.buyTicket(testParams),testContractAddress,0)
@@ -126,16 +148,30 @@ describe('unit tests', () => {
 
 
   it('test buy a ticket and then close the pool', async () => {
-    const testParams = testParamsFixture
+    const testParams = JSON.parse(JSON.stringify(testParamsFixture))
     testParams.initialFields.open = true
-    testParams.initialFields.balance = 99n * 10n ** 18n
+    testParams.initialFields.balance = testParams.initialFields.poolSize - 1 * 10 ** 18
     testParams.inputAssets[0] = { address: "1GBvuTs4TosNB9xTCGJL5wABn2xTYCzwa7MnXHphjcj1y", asset: { alphAmount: 100n * 10n ** 18n } }
     
     const testResult = await Walphle.tests.buyTicket(testParams)
     const contractState = testResult.contracts[0] as WalphleTypes.State
 
-    expect(contractState.fields.balance).toEqual(testParams.initialFields.poolSize)
+    expect(contractState.fields.balance).toEqual(10n * 10n ** 18n)
     expect(contractState.fields.open).toEqual(false)
+
+  })
+
+  it('test distribute prize pool', async () => {
+    const testParams = JSON.parse(JSON.stringify(testParamsFixture))
+    testParams.initialFields.open = false
+    testParams.initialFields.balance = testParams.initialFields.poolSize
+    testParams.initialAsset.alphAmount = testParams.initialFields.poolSize + 1 * 10 ** 18
+
+    const testResult = await Walphle.tests.distributePrize(testParams)
+    const contractState = testResult.contracts[0] as WalphleTypes.State
+
+    expect(contractState.fields.balance).toEqual(0n)
+    expect(contractState.fields.open).toEqual(true)
 
   })
 
