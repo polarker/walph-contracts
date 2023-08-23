@@ -31,8 +31,6 @@ describe('unit tests', () => {
         ratioAlphAlf: 0n,
         open: false,
         balance: 0n,
-        attendees: [ZERO_ADDRESS,ZERO_ADDRESS,ZERO_ADDRESS,ZERO_ADDRESS,ZERO_ADDRESS,ZERO_ADDRESS,ZERO_ADDRESS,ZERO_ADDRESS,ZERO_ADDRESS,ZERO_ADDRESS],
-        numAttendees: 0n
       },
       initialAsset: {
         alphAmount: 0n,
@@ -165,7 +163,7 @@ describe('unit tests', () => {
     const testParams = JSON.parse(JSON.stringify(testParamsFixture))
     testParams.initialFields.open = false
     testParams.initialFields.balance = testParams.initialFields.poolSize
-    testParams.initialAsset.alphAmount = testParams.initialFields.poolSize + 1 * 10 ** 18
+    testParams.initialAsset.alphAmount = testParams.initialFields.poolSize + 1
 
     const testResult = await Walphle.tests.distributePrize(testParams)
     const contractState = testResult.contracts[0] as WalphleTypes.State

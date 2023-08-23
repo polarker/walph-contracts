@@ -36,19 +36,6 @@ export namespace WalphleTypes {
     ratioAlphAlf: bigint;
     open: boolean;
     balance: bigint;
-    numAttendees: bigint;
-    attendees: [
-      Address,
-      Address,
-      Address,
-      Address,
-      Address,
-      Address,
-      Address,
-      Address,
-      Address,
-      Address
-    ];
   };
 
   export type State = ContractState<Fields>;
@@ -166,7 +153,7 @@ export const Walphle = new Factory(
   Contract.fromJson(
     WalphleContractJson,
     "",
-    "b14e3dca4e5c0635c69207d43b0acdab658062724a464b1c33092e560101d264"
+    "80dd4d967645dd31bc0499d2cd5a826a146c3d08b09d8e26b5454c0e3d7c1d3f"
   )
 );
 

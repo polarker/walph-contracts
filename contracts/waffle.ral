@@ -8,9 +8,7 @@ Contract Walphle(
     poolFees: U256,
     ratioAlphAlf: U256,
     mut open: Bool,
-    mut balance: U256,
-    mut numAttendees: U256,
-    mut attendees: [Address;10]
+    mut balance: U256
 ){
     
 
@@ -71,10 +69,6 @@ Contract Walphle(
         balance = balance + amount
         emit TicketBought(callerAddress!(), amount)
 
-        
-        attendees[numAttendees] = callerAddress!()
-        numAttendees = numAttendees + 1
-
         // last person to complete the pool close it
         if(balance >= poolSize){
             closePoolWhenFull()
@@ -82,23 +76,19 @@ Contract Walphle(
         
     }
 
-    @using(preapprovedAssets = true, assetsInContract = true, updateFields = true, checkExternalCaller = true)
+    @using(preapprovedAssets = false, assetsInContract = true, updateFields = true, checkExternalCaller = true)
     pub fn distributePrize(winner: Address) -> (){
         assert!(!open, ErrorCodes.PoolAlreadyClose)
         checkCaller!(callerAddress!() == poolOwner, ErrorCodes.InvalidCaller)
 
         
         transferTokenFromSelf!(callerAddress!(), ALPH, balance * poolFees/100 )
-        balance = balance - (balance * poolFees/100)
-        transferTokenFromSelf!(winner, ALPH, balance)
+        transferTokenFromSelf!(winner, ALPH, balance - (balance * poolFees/100))
+        balance = 0
 
-        numAttendees = 0
+        open = true
 
-        //for (let mut index = 0; index <= attendees.size!(); index = index + 1) {
-        //    attendees[index] = nullContractAddress!()
-        //  }
-
-        //openPool()
+        emit PoolOpen()
 
     }
 
