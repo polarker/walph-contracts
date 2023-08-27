@@ -13,7 +13,7 @@ describe('unit tests', () => {
   // We initialize the fixture variables before all tests
   beforeAll(async () => {
 
-    web3.setCurrentNodeProvider('http://127.0.0.1:12973', undefined, fetch)
+    web3.setCurrentNodeProvider('http://127.0.0.1:22973', undefined, fetch)
     await Project.build()
     testContractId = randomContractId()
     
@@ -31,6 +31,9 @@ describe('unit tests', () => {
         ratioAlphAlf: 0n,
         open: false,
         balance: 0n,
+        numAttendees: 0n,
+        attendees: Array(10).fill(ZERO_ADDRESS) as WalphleTypes.Fields["attendees"],
+        lastWinner: ZERO_ADDRESS
       },
       initialAsset: {
         alphAmount: 0n,
@@ -118,6 +121,9 @@ describe('unit tests', () => {
     const contractState = testResult.contracts[0] as WalphleTypes.State
 
     expect(contractState.fields.balance).toEqual(10n**18n)
+    expect(contractState.fields.attendees.length).toEqual(10)
+    expect(contractState.fields.numAttendees).toEqual(1n)
+    expect(contractState.fields.attendees).toEqual(['1GBvuTs4TosNB9xTCGJL5wABn2xTYCzwa7MnXHphjcj1y',ZERO_ADDRESS,ZERO_ADDRESS,ZERO_ADDRESS,ZERO_ADDRESS,ZERO_ADDRESS,ZERO_ADDRESS,ZERO_ADDRESS,ZERO_ADDRESS,ZERO_ADDRESS])
 
   })
 
@@ -170,6 +176,9 @@ describe('unit tests', () => {
 
     expect(contractState.fields.balance).toEqual(0n)
     expect(contractState.fields.open).toEqual(true)
+    expect(contractState.fields.numAttendees).toEqual(0n)
+    expect(contractState.fields.attendees.length).toEqual(10)
+
 
   })
 

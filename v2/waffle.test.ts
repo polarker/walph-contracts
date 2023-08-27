@@ -13,7 +13,7 @@ describe('unit tests', () => {
   // We initialize the fixture variables before all tests
   beforeAll(async () => {
 
-    web3.setCurrentNodeProvider('http://127.0.0.1:12973', undefined, fetch)
+    web3.setCurrentNodeProvider('https://wallet-v20.testnet.alephium.org', undefined, fetch)
     await Project.build()
     testContractId = randomContractId()
     

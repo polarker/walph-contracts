@@ -13,10 +13,18 @@ const configuration: Configuration<Settings> = {
       settings: {
         privateKeys: []
       },
-      privateKeys: [process.env.PRIVKEY_TESTNET]
+      privateKeys: [process.env.PRIVKEY_TESTNET, process.env.PRIVKEY_BUY]
     },
     mainnet: undefined,
-    devnet: undefined
+    devnet: {//Make sure the two values match what's in your devnet configuration
+    nodeUrl: 'http://127.0.0.1:22973',
+    settings: {
+      privateKeys: []
+    },
+    privateKeys: [process.env.PRIVKEY_TESTNET]
+    //privateKeys: [process.env.PRIVKEY_TESTNET, process.env.PRIVKEY_BUY] to pass the test uncomment
+    
+  }
   }
 }
 

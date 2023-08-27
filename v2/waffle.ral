@@ -91,6 +91,9 @@ Contract Walphle(
         transferTokenFromSelf!(callerAddress!(), ALPH, balance * poolFees/100 )
         transferTokenFromSelf!(callerAddress!(), ALPH, balance - (balance * poolFees/100))
         balance = 0
+        numAttendees = 0
+        attendees = []
+        
         //for (let mut index = 0; index <= attendees.size!(); index = index + 1) {
         //    attendees[index] = nullContractAddress!()
         //  }
