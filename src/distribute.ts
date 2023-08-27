@@ -8,7 +8,7 @@ import { Walphle, Distribute, WalphleTypes } from '../artifacts/ts'
 const events: WalphleTypes.PoolCloseEvent[] = []
 const subscribeOptions = {
     // It will check for new events from the full node every `pollingInterval`
-    pollingInterval: 50,
+    pollingInterval: 500,
     // The callback function will be called for each event
     messageCallback: (event: WalphleTypes.PoolCloseEvent): Promise<void> => {
       events.push(event)
@@ -78,8 +78,10 @@ async function distribute() {
     // It uses our `wallet` to sing the transaction.
     const timeout = setInterval(async function() {
         let state = await walphe.fetchState()
+        const numEventsClosePool = events.length
+
         if(events.length > numEventsClosePool || (state.fields.balance >= state.fields.poolSize && !state.fields.open) ) {
-            clearInterval(timeout)
+            //clearInterval(timeout)
             state = await walphe.fetchState()
             const attendees = state.fields.attendees
             const winner = attendees[Math.floor(Math.random() * attendees.length)]
@@ -92,14 +94,16 @@ async function distribute() {
               console.log("Winner: "+winner)
               console.log("Waiting for tx distribution "+distributionTX.txId)
 
-              await waitTxConfirmed(nodeProvider,distributionTX.txId,2,10)
-        // Unsubscribe
-        subscription.unsubscribe()
+              await waitTxConfirmed(nodeProvider,distributionTX.txId,2,500)
+
+     
         }
     }, 60000)
 
     console.log("Wait for close event")
     timeout
+    // Unsubscribe
+    subscription.unsubscribe()
  
     state = await walphe.fetchState()
 
@@ -114,5 +118,5 @@ async function distribute() {
   }
 }
 
-setInterval(async function() {
-distribute() },1000)
+
+distribute()

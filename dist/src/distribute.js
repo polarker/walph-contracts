@@ -67,7 +67,7 @@ async function distribute() {
         const timeout = setInterval(async function () {
             let state = await walphe.fetchState();
             if (events.length > numEventsClosePool || (state.fields.balance >= state.fields.poolSize && !state.fields.open)) {
-                clearInterval(timeout);
+                //clearInterval(timeout)
                 state = await walphe.fetchState();
                 const attendees = state.fields.attendees;
                 const winner = attendees[Math.floor(Math.random() * attendees.length)];
@@ -82,7 +82,7 @@ async function distribute() {
                 // Unsubscribe
                 subscription.unsubscribe();
             }
-        }, 10000);
+        }, 60000);
         console.log("Wait for close event");
         timeout;
         state = await walphe.fetchState();
