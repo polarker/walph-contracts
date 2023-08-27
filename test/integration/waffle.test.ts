@@ -1,12 +1,10 @@
 import { web3, Project, stringToHex, ONE_ALPH, DUST_AMOUNT, sleep, ZERO_ADDRESS } from '@alephium/web3'
 import { testNodeWallet,  } from '@alephium/web3-test'
 import { NodeWallet, PrivateKeyWallet } from '@alephium/web3-wallet'
-import { Walphle, Distribute, Buy, Open,Close, WalphleTypes } from '../../artifacts/ts'
+import { Walphle, Distribute, Buy, Open,Close, WalphleTypes, Destroy } from '../../artifacts/ts'
 import configuration, { Settings } from '../../alephium.config'
 import * as dotenv from 'dotenv'
 
-jest.setTimeout(1000000)
-const fullTest = true
 dotenv.config()
 
 
@@ -15,24 +13,24 @@ let signerAddress
 let rndSignerBuy
 let testGroup
 
+const networkToUse = 'devnet'
 
 describe('integration tests', () => {
   beforeAll(async () => {
-    web3.setCurrentNodeProvider('http:/127.0.0.1:22973', undefined, fetch)
+    web3.setCurrentNodeProvider(configuration.networks[networkToUse].nodeUrl, undefined, fetch)
     await Project.build()
 
-  signer = new PrivateKeyWallet({privateKey: configuration.networks.testnet.privateKeys[0] , keyType: undefined, nodeProvider: web3.getCurrentNodeProvider()})
+  signer = new PrivateKeyWallet({privateKey: configuration.networks[networkToUse].privateKeys[0] , keyType: undefined, nodeProvider: web3.getCurrentNodeProvider()})
   
-  rndSignerBuy = new PrivateKeyWallet({privateKey: configuration.networks.testnet.privateKeys[1] , keyType: undefined, nodeProvider: web3.getCurrentNodeProvider()})
+  rndSignerBuy = new PrivateKeyWallet({privateKey: configuration.networks[networkToUse].privateKeys[1] , keyType: undefined, nodeProvider: web3.getCurrentNodeProvider()})
 
   signerAddress = await signer.account.address
   testGroup = signer.account.group
+  
   })
   
 
   it('should test Walphe', async () => {
-    // Create a node wallet by wallet name
-    // Create a PrivateKeyWallet from private key
     
     const deployResult = await Walphle.deploy(
       signer,
@@ -125,9 +123,19 @@ describe('integration tests', () => {
       expect(afterPoolDistributionOpenState).toEqual(true)
       expect(afterPoolDistributionBalanceState).toEqual(0n)
       expect(afterPoolDistributionNumAttendeesState).toEqual(0n)
-      expect(afterPoolDistributionWinner).toEqual(signer.address)
+      expect(afterPoolDistributionWinner).toEqual('18vsJ3xDBnSt2aXRSQ7QRTPrVVkjZuTXtxvV1x8mvm3Nz')
 
       subscription.unsubscribe()
+
+      await Destroy.execute(signer, {
+        initialFields: { walpheContract: walphleContractId},
+        attoAlphAmount: DUST_AMOUNT
+
+      })
+
+      /*
+      const contractBalance = await web3.getCurrentNodeProvider().addresses.getAddressesAddressBalance(walpheContractAddress)
+      expect(web3.getCurrentNodeProvider().addresses.getAddressesAddressBalance(walpheContractAddress)).toEqual(0n)*/
 
   }
 )

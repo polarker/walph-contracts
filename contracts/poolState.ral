@@ -9,3 +9,7 @@ TxScript Open(walpheContract: Walphle){
 TxScript Close(walpheContract: Walphle){
     walpheContract.closePool()
 }
+
+TxScript Destroy(walpheContract: Walphle){
+    walpheContract.destroyPool()
+}

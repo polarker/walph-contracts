@@ -37,18 +37,7 @@ export namespace WalphleTypes {
     open: boolean;
     balance: bigint;
     numAttendees: bigint;
-    attendees: [
-      Address,
-      Address,
-      Address,
-      Address,
-      Address,
-      Address,
-      Address,
-      Address,
-      Address,
-      Address
-    ];
+    attendees: [Address, Address];
     lastWinner: Address;
   };
 
@@ -60,6 +49,7 @@ export namespace WalphleTypes {
   }>;
   export type PoolOpenEvent = Omit<ContractEvent, "fields">;
   export type PoolCloseEvent = Omit<ContractEvent, "fields">;
+  export type DestroyEvent = ContractEvent<{ from: Address }>;
 
   export interface CallMethodTable {
     getPoolState: {
@@ -90,7 +80,7 @@ export namespace WalphleTypes {
 }
 
 class Factory extends ContractFactory<WalphleInstance, WalphleTypes.Fields> {
-  eventIndex = { TicketBought: 0, PoolOpen: 1, PoolClose: 2 };
+  eventIndex = { TicketBought: 0, PoolOpen: 1, PoolClose: 2, Destroy: 3 };
   consts = {
     ErrorCodes: {
       PoolFull: BigInt(0),
@@ -159,6 +149,11 @@ class Factory extends ContractFactory<WalphleInstance, WalphleTypes.Fields> {
     ): Promise<TestContractResult<null>> => {
       return testMethod(this, "openPool", params);
     },
+    destroyPool: async (
+      params: Omit<TestContractParams<WalphleTypes.Fields, never>, "testArgs">
+    ): Promise<TestContractResult<null>> => {
+      return testMethod(this, "destroyPool", params);
+    },
   };
 }
 
@@ -167,7 +162,7 @@ export const Walphle = new Factory(
   Contract.fromJson(
     WalphleContractJson,
     "",
-    "65156d9dc9b2f9ef93fd363f9c2f83ef8ff36b221b3d5b8650e304aacf7882cb"
+    "4581c31d83e81c1697c860f304fa76ec1ec4d296aefb37beae793f396e319ed6"
   )
 );
 
@@ -224,11 +219,25 @@ export class WalphleInstance extends ContractInstance {
     );
   }
 
+  subscribeDestroyEvent(
+    options: EventSubscribeOptions<WalphleTypes.DestroyEvent>,
+    fromCount?: number
+  ): EventSubscription {
+    return subscribeContractEvent(
+      Walphle.contract,
+      this,
+      options,
+      "Destroy",
+      fromCount
+    );
+  }
+
   subscribeAllEvents(
     options: EventSubscribeOptions<
       | WalphleTypes.TicketBoughtEvent
       | WalphleTypes.PoolOpenEvent
       | WalphleTypes.PoolCloseEvent
+      | WalphleTypes.DestroyEvent
     >,
     fromCount?: number
   ): EventSubscription {

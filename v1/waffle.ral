@@ -1,20 +1,20 @@
+// state:
+//    open
+//    closed
+
 Contract Walphle(
     poolSize: U256,
     poolOwner: Address,
     poolFees: U256,
     ratioAlphAlf: U256,
     mut open: Bool,
-    mut balance: U256,
-    mut numAttendees: U256,
-    mut attendees: [Address;2],
-    mut lastWinner: Address
+    mut balance: U256
 ){
     
 
     event TicketBought(from: Address, amount: U256)
-    event PoolOpen()
-    event PoolClose()
-    event Destroy(from: Address)
+    event PoolOpen(state: Bool)
+    event PoolClose(state: Bool)
 
     enum ErrorCodes {
         PoolFull = 0
@@ -69,10 +69,6 @@ Contract Walphle(
         balance = balance + amount
         emit TicketBought(callerAddress!(), amount)
 
-        
-        attendees[numAttendees] = callerAddress!()
-        numAttendees = numAttendees + 1
-
         // last person to complete the pool close it
         if(balance >= poolSize){
             closePoolWhenFull()
@@ -88,12 +84,10 @@ Contract Walphle(
         
         transferTokenFromSelf!(callerAddress!(), ALPH, balance * poolFees/100 )
         transferTokenFromSelf!(winner, ALPH, balance - (balance * poolFees/100))
-        lastWinner = winner
         balance = 0
-        numAttendees = 0
 
         open = true
-        emit PoolOpen()
+        emit PoolOpen(open)
 
     }
 
@@ -104,7 +98,7 @@ Contract Walphle(
 
         open = false
 
-        emit PoolClose()
+        emit PoolClose(open)
     }
 
     @using(updateFields = true, checkExternalCaller = true)
@@ -114,7 +108,7 @@ Contract Walphle(
 
         open = false
 
-        emit PoolClose()
+        emit PoolClose(open)
     }
 
     @using(updateFields = true, checkExternalCaller = true)
@@ -124,17 +118,9 @@ Contract Walphle(
 
         open = true
 
-        emit PoolOpen()
+        emit PoolOpen(open)
     }
 
-    @using(assetsInContract = true, updateFields = false, checkExternalCaller = true)
-    pub fn destroyPool() -> () {
-        checkCaller!(callerAddress!() == poolOwner, ErrorCodes.InvalidCaller)
-
-        destroySelf!(poolOwner)
-
-        emit Destroy(poolOwner)
-    }
 
 
 }

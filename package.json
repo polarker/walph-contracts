@@ -11,7 +11,9 @@
     "devcompile": "cli compile -n devnet",
     "test": "cli test",
     "devdeploy": "cli deploy --network devnet",
-    "execute4ever": "tsc --build . && forever dist/src/distribute.js",
+    "testdeploy": "cli deploy --network testnet",
+    "build": "tsc --build .",
+    "execute4ever": "node dist/src/distribute.js",
     "execute": "tsc --build . && node dist/src/distribute.js"
   },
   "author": "",
