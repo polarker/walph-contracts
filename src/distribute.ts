@@ -38,7 +38,7 @@ async function distribute() {
 
   //Select our network defined in alephium.config.ts
   const network = configuration.networks.testnet
-
+console.log(network)
   //NodeProvider is an abstraction of a connection to the Alephium network
   const nodeProvider = new NodeProvider(network.nodeUrl)
 
@@ -76,13 +76,15 @@ async function distribute() {
     const numEventsClosePool = events.length
     // Submit a transaction to use the transaction script
     // It uses our `wallet` to sing the transaction.
-    const timeout = setInterval(async function() {
+    console.log("Wait for close event")
+    const waitDistribution = setInterval(async function() {
         let state = await walphe.fetchState()
-        const numEventsClosePool = events.length
+        let numEventsClosePool = events.length
 
         if(events.length > numEventsClosePool || (state.fields.balance >= state.fields.poolSize && !state.fields.open) ) {
             //clearInterval(timeout)
             state = await walphe.fetchState()
+            numEventsClosePool = events.length
             const attendees = state.fields.attendees
             const winner = attendees[Math.floor(Math.random() * attendees.length)]
 
@@ -100,10 +102,11 @@ async function distribute() {
         }
     }, 60000)
 
-    console.log("Wait for close event")
-    timeout
-    // Unsubscribe
-    subscription.unsubscribe()
+    if(waitDistribution === undefined){
+       // Unsubscribe
+       subscription.unsubscribe()
+      console.log("unsubscribe")
+    }
  
     state = await walphe.fetchState()
 
@@ -117,6 +120,5 @@ async function distribute() {
     console.log('`deployed` is undefined')
   }
 }
-
 
 distribute()
