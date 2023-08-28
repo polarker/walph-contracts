@@ -96,7 +96,8 @@ console.log(network)
               console.log("Winner: "+winner)
               console.log("Waiting for tx distribution "+distributionTX.txId)
 
-              await waitTxConfirmed(nodeProvider,distributionTX.txId,2,500)
+              await waitTxConfirmed(nodeProvider,distributionTX.txId,2,10)
+              console.log("distribution done")
 
      
         }
