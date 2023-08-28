@@ -9,7 +9,7 @@ dotenv.config()
 const configuration: Configuration<Settings> = {
   networks: {
     testnet: {
-      nodeUrl: 'http://127.0.0.1:12973',
+      nodeUrl: 'https://wallet.testnet.alephium.org',
       settings: {
         privateKeys: []
       },

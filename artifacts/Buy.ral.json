@@ -1,5 +1,5 @@
 {
-  "version": "v2.5.0",
+  "version": "v2.5.1",
   "name": "Buy",
   "bytecodeTemplate": "01010300000008b4{1}a2{1}0d0c{0}0105",
   "fieldsSig": {
