@@ -46,9 +46,9 @@
     },
     "Walphle": {
       "sourceFile": "waffle.ral",
-      "sourceCodeHash": "f93dd802915fd0b1540f2d98f7ba58f89340c2467a7040a95caaba35614858ca",
+      "sourceCodeHash": "6e687f9115ac72fa0a26d6a40768d881eb0c964c611194b75803c75a63a4800c",
       "bytecodeDebugPatch": "",
-      "codeHashDebug": "4581c31d83e81c1697c860f304fa76ec1ec4d296aefb37beae793f396e319ed6",
+      "codeHashDebug": "a7bed4d7a05a234b216ef86dcaab8712e7c1094f39c8b6d5de58ac63038724f2",
       "warnings": []
     }
   }

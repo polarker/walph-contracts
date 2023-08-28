@@ -1,22 +1,20 @@
-// state:
-//    open
-//    closed
-
 Contract Walphle(
     poolSize: U256,
     poolOwner: Address,
     poolFees: U256,
-    ratioAlphAlf: U256,
+    minAlfAmount: U256,
     mut open: Bool,
     mut balance: U256,
     mut numAttendees: U256,
-    mut attendees: [Address;10]
+    mut attendees: [Address;10],
+    mut lastWinner: Address
 ){
     
 
     event TicketBought(from: Address, amount: U256)
     event PoolOpen()
     event PoolClose()
+    event Destroy(from: Address)
 
     enum ErrorCodes {
         PoolFull = 0
@@ -48,22 +46,12 @@ Contract Walphle(
     )
     }
 
-
-    fn ratioAlphAlfRatio() -> (U256) {
-        // if ratioAlphAlf is set to 0 it means you don't need Alf to access the pool
-        if(ratioAlphAlf > 0){
-            return getNumALF() / ratioAlphAlf
-        }
-    
-        return 1
-    }
-
     @using(preapprovedAssets = true, assetsInContract = true, updateFields = true, checkExternalCaller = false)
     pub fn buyTicket(amount: U256) -> (){
 
         assert!(balance + amount <= poolSize, ErrorCodes.PoolFull)
         assert!(open, ErrorCodes.PoolClosed)
-        assert!(ratioAlphAlfRatio() >= 1, ErrorCodes.NotEnoughALF)
+        assert!(getNumALF() >= minAlfAmount, ErrorCodes.NotEnoughALF)
         assert!(amount == 1 * 10 ** 18, ErrorCodes.InvalidAmount)
         
         transferTokenToSelf!(callerAddress!(), ALPH, amount)
@@ -82,26 +70,19 @@ Contract Walphle(
         
     }
 
-    @using(preapprovedAssets = true, assetsInContract = true, updateFields = true, checkExternalCaller = true)
-    pub fn distributePrize() -> (){
+    @using(preapprovedAssets = false, assetsInContract = true, updateFields = true, checkExternalCaller = true)
+    pub fn distributePrize(winner: Address) -> (){
         assert!(!open, ErrorCodes.PoolAlreadyClose)
         checkCaller!(callerAddress!() == poolOwner, ErrorCodes.InvalidCaller)
 
         
         transferTokenFromSelf!(callerAddress!(), ALPH, balance * poolFees/100 )
-        transferTokenFromSelf!(callerAddress!(), ALPH, balance - (balance * poolFees/100))
+        transferTokenFromSelf!(winner, ALPH, balance - (balance * poolFees/100))
+        lastWinner = winner
         balance = 0
         numAttendees = 0
-        attendees = []
-        
-        //for (let mut index = 0; index <= attendees.size!(); index = index + 1) {
-        //    attendees[index] = nullContractAddress!()
-        //  }
-
-        //openPool()
 
         open = true
-
         emit PoolOpen()
 
     }
@@ -136,6 +117,14 @@ Contract Walphle(
         emit PoolOpen()
     }
 
+    @using(assetsInContract = true, updateFields = false, checkExternalCaller = true)
+    pub fn destroyPool() -> () {
+        checkCaller!(callerAddress!() == poolOwner, ErrorCodes.InvalidCaller)
+
+        destroySelf!(poolOwner)
+
+        emit Destroy(poolOwner)
+    }
 
 
 }

@@ -8,7 +8,7 @@ import { Walphle, Distribute, WalphleTypes } from '../artifacts/ts'
 const events: WalphleTypes.PoolCloseEvent[] = []
 const subscribeOptions = {
     // It will check for new events from the full node every `pollingInterval`
-    pollingInterval: 500,
+    pollingInterval: 40000,
     // The callback function will be called for each event
     messageCallback: (event: WalphleTypes.PoolCloseEvent): Promise<void> => {
       events.push(event)
@@ -67,21 +67,21 @@ console.log(network)
 
     // Fetch the latest state of the token contract, `mut balance` should have change
     const walphe = Walphle.at(walpheContractAddress)
-    let state = await walphe.fetchState()
-    console.log(state.fields)
+
 
     // Subscribe the contract events from index 0
     const subscription =  walphe.subscribePoolCloseEvent(subscribeOptions, 0)
     await new Promise((resolve) => setTimeout(resolve, 1000))
-    const numEventsClosePool = events.length
+
+    let awaitForTx = false
     // Submit a transaction to use the transaction script
     // It uses our `wallet` to sing the transaction.
-    console.log("Wait for close event")
     const waitDistribution = setInterval(async function() {
+        console.log("Wait for close event")
         let state = await walphe.fetchState()
         let numEventsClosePool = events.length
-
-        if(events.length > numEventsClosePool || (state.fields.balance >= state.fields.poolSize && !state.fields.open) ) {
+        
+        if((events.length > numEventsClosePool || (state.fields.balance >= state.fields.poolSize && !state.fields.open)) && !awaitForTx ) {
             //clearInterval(timeout)
             state = await walphe.fetchState()
             numEventsClosePool = events.length
@@ -95,13 +95,14 @@ console.log(network)
               })
               console.log("Winner: "+winner)
               console.log("Waiting for tx distribution "+distributionTX.txId)
-
-              await waitTxConfirmed(nodeProvider,distributionTX.txId,2,10)
+              
+              awaitForTx = true
+              await waitTxConfirmed(nodeProvider,distributionTX.txId,1,1000)
               console.log("distribution done")
+              awaitForTx = false
 
-     
         }
-    }, 60000)
+    }, 40000)
 
     if(waitDistribution === undefined){
        // Unsubscribe
@@ -109,8 +110,7 @@ console.log(network)
       console.log("unsubscribe")
     }
  
-    state = await walphe.fetchState()
-
+    let state = await walphe.fetchState()
     console.log(state.fields)
 
     // Fetch wallet balance see if token is there

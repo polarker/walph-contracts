@@ -6,7 +6,7 @@ Contract Walphle(
     mut open: Bool,
     mut balance: U256,
     mut numAttendees: U256,
-    mut attendees: [Address;2],
+    mut attendees: [Address;10],
     mut lastWinner: Address
 ){
     

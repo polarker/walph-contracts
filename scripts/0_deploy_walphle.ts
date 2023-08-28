@@ -14,14 +14,14 @@ const deployWalphe: DeployFunction<Settings> = async (
 
     // The initial states of the faucet contract
     initialFields: {
-        poolSize: 2n * 10n ** 18n,
+        poolSize: 10n * 10n ** 18n,
         poolOwner: "1GBvuTs4TosNB9xTCGJL5wABn2xTYCzwa7MnXHphjcj1y",
         poolFees: 10n,
         ratioAlphAlf: 0n,
         open: true,
         balance: 0n,
         numAttendees: 0n,
-        attendees: Array(2).fill(ZERO_ADDRESS) as WalphleTypes.Fields["attendees"],
+        attendees: Array(10).fill(ZERO_ADDRESS) as WalphleTypes.Fields["attendees"],
         lastWinner: ZERO_ADDRESS
 
       },
