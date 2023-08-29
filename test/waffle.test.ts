@@ -45,7 +45,9 @@ describe("unit tests", () => {
         poolSize: 10n * 10n ** 18n,
         poolOwner: testAddress,
         poolFees: 1n,
-        minAlfAmount: 1n,
+        minTokenAmountToHold: 1n,
+        tokenIdToHold:
+          "47504df5a7b18dcecdbf1ea00b7e644d0a7c93919f2d2061ba153f241f03b801",
         open: false,
         balance: 0n,
         numAttendees: 0n,
@@ -69,6 +71,12 @@ describe("unit tests", () => {
           address: testAddress,
           asset: {
             alphAmount: 100n * 10n ** 18n,
+            tokens: [
+              {
+                id: "47504df5a7b18dcecdbf1ea00b7e644d0a7c93919f2d2061ba153f241f03b801",
+                amount: 2n,
+              },
+            ],
           },
         },
       ],
@@ -150,16 +158,7 @@ describe("unit tests", () => {
   it("test buy a ticket", async () => {
     const testParams = JSON.parse(JSON.stringify(testParamsFixture));
     testParams.initialFields.open = true;
-    testParams.inputAssets[0] = {
-      address: "1GBvuTs4TosNB9xTCGJL5wABn2xTYCzwa7MnXHphjcj1y",
-      asset: { alphAmount: 100n * 10n ** 18n },
-      tokens: [
-        {
-          id: "#47504df5a7b18dcecdbf1ea00b7e644d0a7c93919f2d2061ba153f241f03b801",
-          amount: 2n,
-        },
-      ],
-    };
+    testParams.inputAssets[0].address = "1GBvuTs4TosNB9xTCGJL5wABn2xTYCzwa7MnXHphjcj1y"
 
     const testResult = await Walphle.tests.buyTicket(testParams);
     const contractState = testResult.contracts[0] as WalphleTypes.State;
@@ -182,13 +181,14 @@ describe("unit tests", () => {
   });
 
 
+
+
+
   it("test buy a ticket more than 1 ALPH", async () => {
     const testParams = JSON.parse(JSON.stringify(testParamsFixture));
     testParams.initialFields.open = true;
-    testParams.inputAssets[0] = {
-      address: "1GBvuTs4TosNB9xTCGJL5wABn2xTYCzwa7MnXHphjcj1y",
-      asset: { alphAmount: 100n * 10n ** 18n },
-    };
+    testParams.inputAssets[0].address = "1GBvuTs4TosNB9xTCGJL5wABn2xTYCzwa7MnXHphjcj1y"
+
     testParams.testArgs.amount = 11n * 10n ** 17n;
 
     await expectAssertionError(
@@ -198,15 +198,27 @@ describe("unit tests", () => {
     );
   });
 
+
+  it("test buy a ticket without holding token", async () => {
+    const testParams = JSON.parse(JSON.stringify(testParamsFixture));
+    testParams.initialFields.open = true;
+    testParams.inputAssets[0].address = "1GBvuTs4TosNB9xTCGJL5wABn2xTYCzwa7MnXHphjcj1y"
+    testParams.inputAssets[0].asset.tokens[0].amount = 0n
+    testParams.testArgs.amount = 1n * 10n ** 18n;
+
+    await expectAssertionError(
+      Walphle.tests.buyTicket(testParams),
+      testContractAddress,
+      5
+    );
+  });
+
+
   it("test buy a ticket when pool full", async () => {
     const testParams = JSON.parse(JSON.stringify(testParamsFixture));
     testParams.initialFields.open = true;
     testParams.initialFields.balance = 100n * 10n ** 18n;
-
-    testParams.inputAssets[0] = {
-      address: "1GBvuTs4TosNB9xTCGJL5wABn2xTYCzwa7MnXHphjcj1y",
-      asset: { alphAmount: 100n * 10n ** 18n },
-    };
+    testParams.inputAssets[0].address = "1GBvuTs4TosNB9xTCGJL5wABn2xTYCzwa7MnXHphjcj1y"
 
     await expectAssertionError(
       Walphle.tests.buyTicket(testParams),
@@ -220,10 +232,8 @@ describe("unit tests", () => {
     testParams.initialFields.open = true;
     testParams.initialFields.balance =
       testParams.initialFields.poolSize - 1 * 10 ** 18;
-    testParams.inputAssets[0] = {
-      address: "1GBvuTs4TosNB9xTCGJL5wABn2xTYCzwa7MnXHphjcj1y",
-      asset: { alphAmount: 100n * 10n ** 18n },
-    };
+      testParams.inputAssets[0].address = "1GBvuTs4TosNB9xTCGJL5wABn2xTYCzwa7MnXHphjcj1y"
+
 
     const testResult = await Walphle.tests.buyTicket(testParams);
     const contractState = testResult.contracts[0] as WalphleTypes.State;

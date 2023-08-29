@@ -2,7 +2,7 @@
 // A transaction script is a piece of code to interact with contracts on the blockchain.
 // Transaction scripts can use the input assets of transactions in general.
 // A script is disposable and will only be executed once along with the holder transaction.
-TxScript Buy(walpheContract: Walphle, amount: U256, minAmountToken: U256){
+TxScript Buy(walpheContract: Walphle, amount: U256){
     let caller = callerAddress!()
-    walpheContract.buyTicket{caller -> ALPH: amount, #47504df5a7b18dcecdbf1ea00b7e644d0a7c93919f2d2061ba153f241f03b801: minAmountToken }(amount)
+    walpheContract.buyTicket{caller -> ALPH: amount}(amount)
 }

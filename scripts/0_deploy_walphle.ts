@@ -17,7 +17,7 @@ const deployWalphe: DeployFunction<Settings> = async (
         poolSize: 10n * 10n ** 18n,
         poolOwner: "1GBvuTs4TosNB9xTCGJL5wABn2xTYCzwa7MnXHphjcj1y",
         poolFees: 10n,
-        ratioAlphAlf: 0n,
+        minAlfAmount: 1n,
         open: true,
         balance: 0n,
         numAttendees: 0n,

@@ -1,14 +1,15 @@
 {
   "version": "v2.5.0",
   "name": "Walphle",
-  "bytecode": "120a09121b404840cb4106411d41324148415b010000000102a00002010000000102ce0002010000000102a00102000301010104160014402047504df5a7b18dcecdbf1ea00b7e644d0a7c93919f2d2061ba153f241f03b801a5020101010200403cb41701a00116002ace00320c7ba0000f7b160114402047504df5a7b18dcecdbf1ea00b7e644d0a7c93919f2d2061ba153f241f03b801ce03a316010003ce0334117b16000d130a1312832c2f13077b16011600a9a00116002aa10105160116005f1601a0027a130a314d0f2ac4a0020d2aa102a001ce00344c01000601020101004023a000190d7bb4ce0145107bb4a001ce022c1340642da81600a001a001ce022c1340642d2ba81600a10d0ca1010ca10203a100065d01000000000ca0000d7ba001ce003413067b04a100075d01000000000ca0000d7bb4ce0145107b04a100075d01000000000da000190e7bb4ce0145107b03a100065d01020000000ab4ce0145107bce01b008ce015e",
-  "codeHash": "7c6ebe3c02ac552873ce548c89bf5d45d5e811c44fd94a3dea50b94aaaedbc18",
+  "bytecode": "130909121b407a40ba40d140e640fc410f010000000102a00002010000000102ce0002010000000102a0010201010102004035b41701a00116002ace00320c7ba0000f7b1601ce04a5ce0334117b160013c40de0b6b3a76400002f13077b16011600a9a00116002aa10105160116005f1601a0027a130a314d0f2ac4a0020d2aa102a001ce00344c01000501020102004025b41701a000190d7b1601ce0145107b1601a001ce022c1340642da81600a001a001ce022c1340642d2ba81600a10d0ca1010ca10203a100065d01000000000ca0000d7ba001ce003413067b04a100075d01000000000ca0000d7bb4ce0145107b04a100075d01000000000da000190e7bb4ce0145107b03a100065d01020000000ab4ce0145107bce01b008ce015e",
+  "codeHash": "9569910b27cece604bec37038a5929d434a04bb454d069cc7129f826198e1923",
   "fieldsSig": {
     "names": [
       "poolSize",
       "poolOwner",
       "poolFees",
-      "minAlfAmount",
+      "minTokenAmountToHold",
+      "tokenIdToHold",
       "open",
       "balance",
       "numAttendees",
@@ -20,6 +21,7 @@
       "Address",
       "U256",
       "U256",
+      "ByteVec",
       "Bool",
       "U256",
       "U256",
@@ -27,6 +29,7 @@
       "Address"
     ],
     "isMutable": [
+      false,
       false,
       false,
       false,
@@ -103,24 +106,6 @@
       "paramNames": [],
       "paramTypes": [],
       "paramIsMutable": [],
-      "returnTypes": [
-        "U256"
-      ]
-    },
-    {
-      "name": "getNumALF",
-      "usePreapprovedAssets": true,
-      "useAssetsInContract": false,
-      "isPublic": false,
-      "paramNames": [
-        "from"
-      ],
-      "paramTypes": [
-        "Address"
-      ],
-      "paramIsMutable": [
-        false
-      ],
       "returnTypes": [
         "U256"
       ]
@@ -239,7 +224,7 @@
           }
         },
         {
-          "name": "NotEnoughALF",
+          "name": "NotEnoughToken",
           "value": {
             "type": "U256",
             "value": "5"

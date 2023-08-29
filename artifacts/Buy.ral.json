@@ -1,20 +1,17 @@
 {
   "version": "v2.5.0",
   "name": "Buy",
-  "bytecodeTemplate": "0101030001000eb4170016007a{1}a214402047504df5a7b18dcecdbf1ea00b7e644d0a7c93919f2d2061ba153f241f03b801{2}a3{1}0d0c{0}0104",
+  "bytecodeTemplate": "0101030001000ab417001600{1}a2{1}0d0c{0}0103",
   "fieldsSig": {
     "names": [
       "walpheContract",
-      "amount",
-      "minAmountToken"
+      "amount"
     ],
     "types": [
       "ByteVec",
-      "U256",
       "U256"
     ],
     "isMutable": [
-      false,
       false,
       false
     ]

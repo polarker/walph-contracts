@@ -39,7 +39,8 @@ describe('integration tests', () => {
             poolSize: 10n * 10n ** 18n,
             poolOwner: signerAddress,
             poolFees: 10n,
-            minAlfAmount: 0n,
+            minTokenAmountToHold: 0n,
+            tokenIdToHold: "47504df5a7b18dcecdbf1ea00b7e644d0a7c93919f2d2061ba153f241f03b801",
             open: true,
             balance: 0n,
             numAttendees: 0n,
@@ -85,7 +86,7 @@ describe('integration tests', () => {
       // simulate someone buying tickets until pool full
       for (let i = 0; i < 10; i++) {
         await Buy.execute(rndSignerBuy, {
-          initialFields: {walpheContract: walphleContractId , amount: ONE_ALPH, minAmountToken: initialState.fields.minAlfAmount },
+          initialFields: {walpheContract: walphleContractId , amount: ONE_ALPH},
           attoAlphAmount: ONE_ALPH + 3n * DUST_AMOUNT
         })
         
@@ -151,7 +152,8 @@ it('should close and open pool', async () => {
           poolSize: 10n * 10n ** 18n,
           poolOwner: signerAddress,
           poolFees: 10n,
-          minAlfAmount: 0n,
+          minTokenAmountToHold: 0n,
+          tokenIdToHold: "47504df5a7b18dcecdbf1ea00b7e644d0a7c93919f2d2061ba153f241f03b801",
           open: true,
           balance: 0n,
           numAttendees: 0n,
