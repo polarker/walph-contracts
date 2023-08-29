@@ -1,14 +1,14 @@
 {
-  "version": "v2.5.1",
+  "version": "v2.5.0",
   "name": "Walphle",
-  "bytecode": "120b09121b4047405b40ad40e840ff4114412a413d010000000102a00002010000000102ce0002010000000102a00102000000000104b414402066da610efb5129c062e88e5fd65fe810f31efd1597021b2edf887a4360fa0800a50200000000010ace030c334c040003ce032d020d0201010101004035a00116002ace00320c7ba0000f7b00040d34117b16000d130a1312832c2f13077bb41600a9a00116002aa10105b416005fb4a0027a130a314d0f2ac4a0020d2aa102a001ce00344c01000701020101004023a000190d7bb4ce0145107bb4a001ce022c1340642da81600a001a001ce022c1340642d2ba81600a10d0ca1010ca10203a100065d01000000000ca0000d7ba001ce003413067b04a100075d01000000000ca0000d7bb4ce0145107b04a100075d01000000000da000190e7bb4ce0145107b03a100065d01020000000ab4ce0145107bce01b008ce015e",
-  "codeHash": "a7bed4d7a05a234b216ef86dcaab8712e7c1094f39c8b6d5de58ac63038724f2",
+  "bytecode": "120a09121b404840cb4106411d41324148415b010000000102a00002010000000102ce0002010000000102a00102000301010104160014402047504df5a7b18dcecdbf1ea00b7e644d0a7c93919f2d2061ba153f241f03b801a5020101010200403cb41701a00116002ace00320c7ba0000f7b160114402047504df5a7b18dcecdbf1ea00b7e644d0a7c93919f2d2061ba153f241f03b801ce03a316010003ce0334117b16000d130a1312832c2f13077b16011600a9a00116002aa10105160116005f1601a0027a130a314d0f2ac4a0020d2aa102a001ce00344c01000601020101004023a000190d7bb4ce0145107bb4a001ce022c1340642da81600a001a001ce022c1340642d2ba81600a10d0ca1010ca10203a100065d01000000000ca0000d7ba001ce003413067b04a100075d01000000000ca0000d7bb4ce0145107b04a100075d01000000000da000190e7bb4ce0145107b03a100065d01020000000ab4ce0145107bce01b008ce015e",
+  "codeHash": "7c6ebe3c02ac552873ce548c89bf5d45d5e811c44fd94a3dea50b94aaaedbc18",
   "fieldsSig": {
     "names": [
       "poolSize",
       "poolOwner",
       "poolFees",
-      "ratioAlphAlf",
+      "minAlfAmount",
       "open",
       "balance",
       "numAttendees",
@@ -109,24 +109,18 @@
     },
     {
       "name": "getNumALF",
-      "usePreapprovedAssets": false,
+      "usePreapprovedAssets": true,
       "useAssetsInContract": false,
       "isPublic": false,
-      "paramNames": [],
-      "paramTypes": [],
-      "paramIsMutable": [],
-      "returnTypes": [
-        "U256"
-      ]
-    },
-    {
-      "name": "ratioAlphAlfRatio",
-      "usePreapprovedAssets": false,
-      "useAssetsInContract": false,
-      "isPublic": false,
-      "paramNames": [],
-      "paramTypes": [],
-      "paramIsMutable": [],
+      "paramNames": [
+        "from"
+      ],
+      "paramTypes": [
+        "Address"
+      ],
+      "paramIsMutable": [
+        false
+      ],
       "returnTypes": [
         "U256"
       ]

@@ -1,5 +1,5 @@
 {
-  "fullNodeVersion": "v2.5.1",
+  "fullNodeVersion": "v2.5.0",
   "compilerOptionsUsed": {
     "ignoreUnusedConstantsWarnings": false,
     "ignoreUnusedVariablesWarnings": false,
@@ -11,7 +11,7 @@
   "infos": {
     "Buy": {
       "sourceFile": "buyTicket.ral",
-      "sourceCodeHash": "e91a0da1ea28db34d5e78106c8904f5906061a25bcc4a6658f64e154ad8487ee",
+      "sourceCodeHash": "ba889a6a5f8f7a9a72331a1f519c72c7d3e35b761e329abbf3da33af81915401",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "",
       "warnings": []
@@ -46,9 +46,9 @@
     },
     "Walphle": {
       "sourceFile": "waffle.ral",
-      "sourceCodeHash": "6e687f9115ac72fa0a26d6a40768d881eb0c964c611194b75803c75a63a4800c",
+      "sourceCodeHash": "83ade8c31d4f7397258df987ecb38b621415a394e65595e4e432446cf796d747",
       "bytecodeDebugPatch": "",
-      "codeHashDebug": "a7bed4d7a05a234b216ef86dcaab8712e7c1094f39c8b6d5de58ac63038724f2",
+      "codeHashDebug": "7c6ebe3c02ac552873ce548c89bf5d45d5e811c44fd94a3dea50b94aaaedbc18",
       "warnings": []
     }
   }

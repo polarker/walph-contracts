@@ -42,7 +42,7 @@ Contract Walphle(
     }
 
     fn getNumALF() -> (U256){
-        return tokenRemaining!(callerAddress!(), #66da610efb5129c062e88e5fd65fe810f31efd1597021b2edf887a4360fa0800
+        return tokenRemaining!(callerAddress!(), #47504df5a7b18dcecdbf1ea00b7e644d0a7c93919f2d2061ba153f241f03b801
     )
     }
 

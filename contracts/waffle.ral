@@ -2,7 +2,7 @@ Contract Walphle(
     poolSize: U256,
     poolOwner: Address,
     poolFees: U256,
-    ratioAlphAlf: U256,
+    minAlfAmount: U256,
     mut open: Bool,
     mut balance: U256,
     mut numAttendees: U256,
@@ -27,8 +27,6 @@ Contract Walphle(
         InvalidAmount = 7
     }
 
-    //const AlfTokenId = #66da610efb5129c062e88e5fd65fe810f31efd1597021b2edf887a4360fa0800
-
     pub fn getPoolState() -> (Bool) {
         return open
     }
@@ -41,36 +39,26 @@ Contract Walphle(
         return balance
     }
 
-    fn getNumALF() -> (U256){
-        return tokenRemaining!(callerAddress!(), #66da610efb5129c062e88e5fd65fe810f31efd1597021b2edf887a4360fa0800
-    )
-    }
-
-
-    fn ratioAlphAlfRatio() -> (U256) {
-        // if ratioAlphAlf is set to 0 it means you don't need Alf to access the pool
-        if(ratioAlphAlf > 0){
-            return getNumALF() / ratioAlphAlf
-        }
-    
-        return 1
+   @using(preapprovedAssets = true) 
+   fn getNumALF(from: Address) -> (U256){
+        return tokenRemaining!(from, #47504df5a7b18dcecdbf1ea00b7e644d0a7c93919f2d2061ba153f241f03b801)
     }
 
     @using(preapprovedAssets = true, assetsInContract = true, updateFields = true, checkExternalCaller = false)
     pub fn buyTicket(amount: U256) -> (){
-
+        let caller = callerAddress!()
         assert!(balance + amount <= poolSize, ErrorCodes.PoolFull)
         assert!(open, ErrorCodes.PoolClosed)
-        assert!(ratioAlphAlfRatio() >= 1, ErrorCodes.NotEnoughALF)
+        assert!(getNumALF{caller -> #47504df5a7b18dcecdbf1ea00b7e644d0a7c93919f2d2061ba153f241f03b801: minAlfAmount}(caller) >= minAlfAmount, ErrorCodes.NotEnoughALF)
         assert!(amount == 1 * 10 ** 18, ErrorCodes.InvalidAmount)
-        
-        transferTokenToSelf!(callerAddress!(), ALPH, amount)
+
+        transferTokenToSelf!(caller, ALPH, amount)
 
         balance = balance + amount
-        emit TicketBought(callerAddress!(), amount)
+        emit TicketBought(caller, amount)
 
         
-        attendees[numAttendees] = callerAddress!()
+        attendees[numAttendees] = caller
         numAttendees = numAttendees + 1
 
         // last person to complete the pool close it
