@@ -1,5 +1,4 @@
 import { web3, Project, stringToHex, ONE_ALPH, DUST_AMOUNT, sleep, ZERO_ADDRESS } from '@alephium/web3'
-import { testNodeWallet,  } from '@alephium/web3-test'
 import { NodeWallet, PrivateKeyWallet } from '@alephium/web3-wallet'
 import { Walphle, Distribute, Buy, Open,Close, WalphleTypes, Destroy } from '../../artifacts/ts'
 import configuration, { Settings } from '../../alephium.config'
@@ -13,6 +12,7 @@ let signerAddress
 let rndSignerBuy
 let testGroup
 
+const tokenIdToHold = "3f52b6bdb8678b8931d683bbae1bd7c5296f70a2ab87bbd1792cb24f9b1d1500"
 const networkToUse = 'devnet'
 
 describe('integration tests', () => {
@@ -40,7 +40,7 @@ describe('integration tests', () => {
             poolOwner: signerAddress,
             poolFees: 10n,
             minTokenAmountToHold: 0n,
-            tokenIdToHold: "47504df5a7b18dcecdbf1ea00b7e644d0a7c93919f2d2061ba153f241f03b801",
+            tokenIdToHold: tokenIdToHold,
             open: true,
             balance: 0n,
             numAttendees: 0n,
@@ -86,7 +86,7 @@ describe('integration tests', () => {
       // simulate someone buying tickets until pool full
       for (let i = 0; i < 10; i++) {
         await Buy.execute(rndSignerBuy, {
-          initialFields: {walpheContract: walphleContractId , amount: ONE_ALPH},
+          initialFields: {walpheContract: walphleContractId , amount: ONE_ALPH, tokenId: tokenIdToHold, tokenIdAmount: 1n},
           attoAlphAmount: ONE_ALPH + 3n * DUST_AMOUNT
         })
         
@@ -153,7 +153,7 @@ it('should close and open pool', async () => {
           poolOwner: signerAddress,
           poolFees: 10n,
           minTokenAmountToHold: 0n,
-          tokenIdToHold: "47504df5a7b18dcecdbf1ea00b7e644d0a7c93919f2d2061ba153f241f03b801",
+          tokenIdToHold: tokenIdToHold,
           open: true,
           balance: 0n,
           numAttendees: 0n,

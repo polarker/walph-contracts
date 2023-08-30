@@ -20,6 +20,8 @@ import { default as DestroyScriptJson } from "../Destroy.ral.json";
 export const Buy = new ExecutableScript<{
   walpheContract: HexString;
   amount: bigint;
+  tokenId: HexString;
+  tokenIdAmount: bigint;
 }>(Script.fromJson(BuyScriptJson));
 export const Distribute = new ExecutableScript<{
   walpheContract: HexString;

@@ -33,8 +33,8 @@ export namespace WalphleTypes {
     poolSize: bigint;
     poolOwner: Address;
     poolFees: bigint;
-    minTokenAmountToHold: bigint;
     tokenIdToHold: HexString;
+    minTokenAmountToHold: bigint;
     open: boolean;
     balance: bigint;
     numAttendees: bigint;
@@ -62,6 +62,9 @@ export namespace WalphleTypes {
   export type PoolOpenEvent = Omit<ContractEvent, "fields">;
   export type PoolCloseEvent = Omit<ContractEvent, "fields">;
   export type DestroyEvent = ContractEvent<{ from: Address }>;
+  export type NewMinTokenAmountToHoldEvent = ContractEvent<{
+    newAmount: bigint;
+  }>;
 
   export interface CallMethodTable {
     getPoolState: {
@@ -92,7 +95,13 @@ export namespace WalphleTypes {
 }
 
 class Factory extends ContractFactory<WalphleInstance, WalphleTypes.Fields> {
-  eventIndex = { TicketBought: 0, PoolOpen: 1, PoolClose: 2, Destroy: 3 };
+  eventIndex = {
+    TicketBought: 0,
+    PoolOpen: 1,
+    PoolClose: 2,
+    Destroy: 3,
+    NewMinTokenAmountToHold: 4,
+  };
   consts = {
     ErrorCodes: {
       PoolFull: BigInt(0),
@@ -156,6 +165,11 @@ class Factory extends ContractFactory<WalphleInstance, WalphleTypes.Fields> {
     ): Promise<TestContractResult<null>> => {
       return testMethod(this, "destroyPool", params);
     },
+    changeMinAmountToHold: async (
+      params: TestContractParams<WalphleTypes.Fields, { amount: bigint }>
+    ): Promise<TestContractResult<null>> => {
+      return testMethod(this, "changeMinAmountToHold", params);
+    },
   };
 }
 
@@ -164,7 +178,7 @@ export const Walphle = new Factory(
   Contract.fromJson(
     WalphleContractJson,
     "",
-    "9569910b27cece604bec37038a5929d434a04bb454d069cc7129f826198e1923"
+    "47b9ec48e3511eb77738306cb5b832b3d21d8c2695f2a0dacb6e1954ede75793"
   )
 );
 
@@ -234,12 +248,26 @@ export class WalphleInstance extends ContractInstance {
     );
   }
 
+  subscribeNewMinTokenAmountToHoldEvent(
+    options: EventSubscribeOptions<WalphleTypes.NewMinTokenAmountToHoldEvent>,
+    fromCount?: number
+  ): EventSubscription {
+    return subscribeContractEvent(
+      Walphle.contract,
+      this,
+      options,
+      "NewMinTokenAmountToHold",
+      fromCount
+    );
+  }
+
   subscribeAllEvents(
     options: EventSubscribeOptions<
       | WalphleTypes.TicketBoughtEvent
       | WalphleTypes.PoolOpenEvent
       | WalphleTypes.PoolCloseEvent
       | WalphleTypes.DestroyEvent
+      | WalphleTypes.NewMinTokenAmountToHoldEvent
     >,
     fromCount?: number
   ): EventSubscription {

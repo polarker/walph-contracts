@@ -1,15 +1,15 @@
 {
   "version": "v2.5.0",
   "name": "Walphle",
-  "bytecode": "130909121b407a40ba40d140e640fc410f010000000102a00002010000000102ce0002010000000102a0010201010102004035b41701a00116002ace00320c7ba0000f7b1601ce04a5ce0334117b160013c40de0b6b3a76400002f13077b16011600a9a00116002aa10105160116005f1601a0027a130a314d0f2ac4a0020d2aa102a001ce00344c01000501020102004025b41701a000190d7b1601ce0145107b1601a001ce022c1340642da81600a001a001ce022c1340642d2ba81600a10d0ca1010ca10203a100065d01000000000ca0000d7ba001ce003413067b04a100075d01000000000ca0000d7bb4ce0145107b04a100075d01000000000da000190e7bb4ce0145107b03a100065d01020000000ab4ce0145107bce01b008ce015e",
-  "codeHash": "9569910b27cece604bec37038a5929d434a04bb454d069cc7129f826198e1923",
+  "bytecode": "130a09121b40c141014118412d41434156416a010000000102a00102010000000102ce0002010000000102a0020201010104004052b41701a00216002ace00320c7ba0010f7b160013c40de0b6b3a76400002f160013c429a2241af62c00002f1b160013c44563918244f400002f1b160013c48ac7230489e800002f1b13077b1601ce03a5a00034117b16011600a9a00216002aa10205160116005f1600130a1312832d17020c170316031602314c0e160116037a130a314d102ac416030d2a17034a2ea00316022aa103a002ce00344c01000501020102004025b41701a001190d7b1601ce0145107b1601a002ce022c1340642da81600a002a002ce022c1340642d2ba81600a10e0ca1020ca10303a101065d01000000000ca0010d7ba002ce003413067b04a101075d01000000000ca0010d7bb4ce0145107b04a101075d01000000000da001190e7bb4ce0145107b03a101065d01020000000ab4ce0145107bce01b008ce015e01000101000ab4ce0145107b1600a1000916005e",
+  "codeHash": "47b9ec48e3511eb77738306cb5b832b3d21d8c2695f2a0dacb6e1954ede75793",
   "fieldsSig": {
     "names": [
       "poolSize",
       "poolOwner",
       "poolFees",
-      "minTokenAmountToHold",
       "tokenIdToHold",
+      "minTokenAmountToHold",
       "open",
       "balance",
       "numAttendees",
@@ -20,8 +20,8 @@
       "U256",
       "Address",
       "U256",
-      "U256",
       "ByteVec",
+      "U256",
       "Bool",
       "U256",
       "U256",
@@ -33,7 +33,7 @@
       false,
       false,
       false,
-      false,
+      true,
       true,
       true,
       true,
@@ -70,6 +70,15 @@
       ],
       "fieldTypes": [
         "Address"
+      ]
+    },
+    {
+      "name": "NewMinTokenAmountToHold",
+      "fieldNames": [
+        "newAmount"
+      ],
+      "fieldTypes": [
+        "U256"
       ]
     }
   ],
@@ -180,6 +189,22 @@
       "paramNames": [],
       "paramTypes": [],
       "paramIsMutable": [],
+      "returnTypes": []
+    },
+    {
+      "name": "changeMinAmountToHold",
+      "usePreapprovedAssets": false,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [
+        "amount"
+      ],
+      "paramTypes": [
+        "U256"
+      ],
+      "paramIsMutable": [
+        false
+      ],
       "returnTypes": []
     }
   ],

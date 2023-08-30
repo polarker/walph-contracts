@@ -11,7 +11,7 @@
   "infos": {
     "Buy": {
       "sourceFile": "buyTicket.ral",
-      "sourceCodeHash": "a7a1366fd1ad32fd1a9b1126b24c41320985a370f44ee074ef35cc172b5d16da",
+      "sourceCodeHash": "3293f95ae2db62cd3810fefb2c68bff10f6743a5766587f5519744850d376330",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "",
       "warnings": []
@@ -46,9 +46,9 @@
     },
     "Walphle": {
       "sourceFile": "waffle.ral",
-      "sourceCodeHash": "22ea091b7a82c7d62815084d40232107cbf300d46cdcba3801c39d9aa4451e9b",
+      "sourceCodeHash": "73df23d911f0407b1ebc9b3309072e12f0a37b0048bf9e27faa76ff5b62d0cf6",
       "bytecodeDebugPatch": "",
-      "codeHashDebug": "9569910b27cece604bec37038a5929d434a04bb454d069cc7129f826198e1923",
+      "codeHashDebug": "47b9ec48e3511eb77738306cb5b832b3d21d8c2695f2a0dacb6e1954ede75793",
       "warnings": []
     }
   }

@@ -181,7 +181,30 @@ describe("unit tests", () => {
   });
 
 
+  it("test buy 5 tickets", async () => {
+    const testParams = JSON.parse(JSON.stringify(testParamsFixture));
+    testParams.initialFields.open = true;
+    testParams.inputAssets[0].address = "1GBvuTs4TosNB9xTCGJL5wABn2xTYCzwa7MnXHphjcj1y"
+    testParams.testArgs.amount = 5n * 10n ** 18n
+    const testResult = await Walphle.tests.buyTicket(testParams);
+    const contractState = testResult.contracts[0] as WalphleTypes.State;
 
+    expect(contractState.fields.balance).toEqual(5n * 10n ** 18n);
+    expect(contractState.fields.attendees.length).toEqual(10);
+    expect(contractState.fields.numAttendees).toEqual(5n);
+    expect(contractState.fields.attendees).toEqual([
+      "1GBvuTs4TosNB9xTCGJL5wABn2xTYCzwa7MnXHphjcj1y",
+      "1GBvuTs4TosNB9xTCGJL5wABn2xTYCzwa7MnXHphjcj1y",
+      "1GBvuTs4TosNB9xTCGJL5wABn2xTYCzwa7MnXHphjcj1y",
+      "1GBvuTs4TosNB9xTCGJL5wABn2xTYCzwa7MnXHphjcj1y",
+      "1GBvuTs4TosNB9xTCGJL5wABn2xTYCzwa7MnXHphjcj1y",
+      ZERO_ADDRESS,
+      ZERO_ADDRESS,
+      ZERO_ADDRESS,
+      ZERO_ADDRESS,
+      ZERO_ADDRESS,
+    ]);
+  });
 
 
   it("test buy a ticket more than 1 ALPH", async () => {

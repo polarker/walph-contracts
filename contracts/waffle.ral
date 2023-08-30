@@ -2,8 +2,8 @@ Contract Walphle(
     poolSize: U256,
     poolOwner: Address,
     poolFees: U256,
-    minTokenAmountToHold: U256,
     tokenIdToHold: ByteVec,
+    mut minTokenAmountToHold: U256,
     mut open: Bool,
     mut balance: U256,
     mut numAttendees: U256,
@@ -16,6 +16,7 @@ Contract Walphle(
     event PoolOpen()
     event PoolClose()
     event Destroy(from: Address)
+    event NewMinTokenAmountToHold(newAmount: U256)
 
     enum ErrorCodes {
         PoolFull = 0
@@ -45,17 +46,20 @@ Contract Walphle(
         let caller = callerAddress!()
         assert!(balance + amount <= poolSize, ErrorCodes.PoolFull)
         assert!(open, ErrorCodes.PoolClosed)
+        assert!(amount == 1 alph || amount == 3 alph || amount == 5 alph || amount == 10 alph, ErrorCodes.InvalidAmount) //dirty
         assert!(tokenRemaining!(caller, tokenIdToHold) >= minTokenAmountToHold, ErrorCodes.NotEnoughToken)
-        assert!(amount == 1 alph, ErrorCodes.InvalidAmount)
+        
 
         transferTokenToSelf!(caller, ALPH, amount)
 
         balance = balance + amount
         emit TicketBought(caller, amount)
 
-        
-        attendees[numAttendees] = caller
-        numAttendees = numAttendees + 1
+        let numberTicketsBought = amount / 10 ** 18
+        for(let mut i = 0; i < numberTicketsBought; i = i + 1){
+            attendees[i] = caller
+        }
+        numAttendees = numAttendees + numberTicketsBought
 
         // last person to complete the pool close it
         if(balance >= poolSize){
@@ -119,6 +123,15 @@ Contract Walphle(
         destroySelf!(poolOwner)
 
         emit Destroy(poolOwner)
+    }
+
+    @using(assetsInContract = false, updateFields = true, checkExternalCaller = true)
+    pub fn changeMinAmountToHold(amount: U256) -> () {
+        checkCaller!(callerAddress!() == poolOwner, ErrorCodes.InvalidCaller)
+
+        minTokenAmountToHold = amount
+
+        emit NewMinTokenAmountToHold(amount)
     }
 
 
