@@ -87,7 +87,10 @@ describe('integration tests', () => {
       for (let i = 0; i < 10; i++) {
         await Buy.execute(rndSignerBuy, {
           initialFields: {walpheContract: walphleContractId , amount: ONE_ALPH, tokenId: tokenIdToHold, tokenIdAmount: 1n},
-          attoAlphAmount: ONE_ALPH + 3n * DUST_AMOUNT
+          attoAlphAmount: ONE_ALPH + 3n * DUST_AMOUNT,
+          tokens: [
+           { id: tokenIdToHold, amount: 1n }
+          ]
         })
         
       }

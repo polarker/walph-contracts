@@ -21,7 +21,7 @@ const configuration: Configuration<Settings> = {
     settings: {
       privateKeys: []
     },
-    privateKeys: process.env.PRIVKEY_DEVNET !== undefined ? process.env.PRIVKEY_DEVNET.split(',') : process.env.PRIVKEY_DEVNET_TEST.split(',')  //to pass the test uncomment
+    privateKeys: process.env.RUN_TEST !== undefined ? process.env.PRIVKEY_DEVNET.split(',') : process.env.PRIVKEY_DEVNET_TEST.split(',')  //to pass the test uncomment
     
   }
   }

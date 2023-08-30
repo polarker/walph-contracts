@@ -51,15 +51,18 @@ Contract Walphle(
         
 
         transferTokenToSelf!(caller, ALPH, amount)
-
         balance = balance + amount
         emit TicketBought(caller, amount)
 
         let numberTicketsBought = amount / 10 ** 18
-        for(let mut i = 0; i < numberTicketsBought; i = i + 1){
-            attendees[i] = caller
+        let mut numberPlaceCounter = 0
+        while(numberPlaceCounter < numberTicketsBought){
+            attendees[numAttendees] = caller
+            numAttendees = numAttendees + 1
+            numberPlaceCounter = numberPlaceCounter + 1
+
         }
-        numAttendees = numAttendees + numberTicketsBought
+
 
         // last person to complete the pool close it
         if(balance >= poolSize){
