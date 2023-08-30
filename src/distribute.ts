@@ -37,7 +37,7 @@ for (var event of eventsObject['events'])
 async function distribute() {
 
   //Select our network defined in alephium.config.ts
-  const network = configuration.networks.devnet
+  const network = configuration.networks.testnet
 console.log(network)
   //NodeProvider is an abstraction of a connection to the Alephium network
   const nodeProvider = new NodeProvider(network.nodeUrl)
@@ -53,7 +53,7 @@ console.log(network)
 
   //.deployments contains the info of our `TokenFaucet` deployement, as we need to now the contractId and address
   //This was auto-generated with the `cli deploy` of our `scripts/0_deploy_faucet.ts`
-  const deployments = await Deployments.from('./artifacts/.deployments.devnet.json')
+  const deployments = await Deployments.from('./artifacts/.deployments.testnet.json')
     console.log(deployments)
   //Make sure it match your address group
   const accountGroup = 0

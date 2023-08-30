@@ -1,6 +1,6 @@
 import { web3, Project, stringToHex, ONE_ALPH, DUST_AMOUNT, sleep, ZERO_ADDRESS } from '@alephium/web3'
 import { NodeWallet, PrivateKeyWallet } from '@alephium/web3-wallet'
-import { Walphle, Distribute, Buy, Open,Close, WalphleTypes, Destroy } from '../../artifacts/ts'
+import { Walphle, Distribute, Buy, Open,Close, WalphleTypes, Destroy, BuyWithoutToken } from '../../artifacts/ts'
 import configuration, { Settings } from '../../alephium.config'
 import * as dotenv from 'dotenv'
 
@@ -85,8 +85,8 @@ describe('integration tests', () => {
 
       // simulate someone buying tickets until pool full
       for (let i = 0; i < 10; i++) {
-        await Buy.execute(rndSignerBuy, {
-          initialFields: {walpheContract: walphleContractId , amount: ONE_ALPH, tokenId: tokenIdToHold, tokenIdAmount: 1n},
+        await BuyWithoutToken.execute(rndSignerBuy, {
+          initialFields: {walpheContract: walphleContractId , amount: ONE_ALPH},
           attoAlphAmount: ONE_ALPH + 3n * DUST_AMOUNT,
           tokens: [
            { id: tokenIdToHold, amount: 1n }
