@@ -5,11 +5,10 @@ import * as dotenv from 'dotenv'
 export type Settings = {}
 
 dotenv.config()
-console.log()
 const configuration: Configuration<Settings> = {
   networks: {
     testnet: {
-      nodeUrl: 'https://wallet.testnet.alephium.org',
+      nodeUrl: 'http://127.0.0.1:12973',
       settings: {
         privateKeys: []
       },
@@ -21,7 +20,7 @@ const configuration: Configuration<Settings> = {
     settings: {
       privateKeys: []
     },
-    privateKeys: process.env.RUN_TEST !== undefined ? process.env.PRIVKEY_DEVNET.split(',') : process.env.PRIVKEY_DEVNET_TEST.split(',')  //to pass the test uncomment
+    privateKeys: process.env.npm_config_testing === 'true' ?  process.env.PRIVKEY_DEVNET_TEST.split(',') : process.env.PRIVKEY_DEVNET.split(',')  //to pass the test uncomment
     
   }
   }

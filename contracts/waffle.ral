@@ -46,8 +46,10 @@ Contract Walphle(
         let caller = callerAddress!()
         assert!(balance + amount <= poolSize, ErrorCodes.PoolFull)
         assert!(open, ErrorCodes.PoolClosed)
-        assert!(amount == 1 alph || amount == 3 alph || amount == 5 alph || amount == 10 alph, ErrorCodes.InvalidAmount) //dirty
-        assert!(tokenRemaining!(caller, tokenIdToHold) >= minTokenAmountToHold, ErrorCodes.NotEnoughToken)
+        assert!(addModN!(amount,0,10**18) == 0, ErrorCodes.InvalidAmount) //dirty
+        if(minTokenAmountToHold > 0){
+            assert!(tokenRemaining!(caller, tokenIdToHold) >= minTokenAmountToHold, ErrorCodes.NotEnoughToken)
+        }
         
 
         transferTokenToSelf!(caller, ALPH, amount)

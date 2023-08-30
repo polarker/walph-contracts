@@ -7,13 +7,13 @@
     "test": "test"
   },
   "scripts": {
-    "testcompile": "RUN_TEST=true cli compile -n testnet",
+    "testnetcompile": "cli compile -n testnet" ,
     "devcompile": "cli compile -n devnet",
     "test": "cli test",
     "devdeploy": "cli deploy --network devnet",
-    "testdeploy": "cli deploy --network testnet",
+    "testnetdeploy": "cli deploy --network testnet",
     "build": "tsc --build .",
-    "execute4ever": "node dist/src/distribute.js",
+    "execute4ever": "tsc --build . && node dist/src/distribute.js",
     "execute": "tsc --build . && node dist/src/distribute.js"
   },
   "author": "",

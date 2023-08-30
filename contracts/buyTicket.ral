@@ -6,3 +6,9 @@ TxScript Buy(walpheContract: Walphle, amount: U256, tokenId: ByteVec, tokenIdAmo
     let caller = callerAddress!()
     walpheContract.buyTicket{caller -> ALPH: amount, tokenId: tokenIdAmount}(amount)
 }
+
+
+TxScript BuyWithoutToken(walpheContract: Walphle, amount: U256){
+    let caller = callerAddress!()
+    walpheContract.buyTicket{caller -> ALPH: amount}(amount)
+}

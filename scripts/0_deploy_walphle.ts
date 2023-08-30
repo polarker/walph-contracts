@@ -18,7 +18,7 @@ const deployWalphe: DeployFunction<Settings> = async (
         poolOwner: "1GBvuTs4TosNB9xTCGJL5wABn2xTYCzwa7MnXHphjcj1y",
         poolFees: 10n,
         minTokenAmountToHold: 0n,
-        tokenIdToHold: "3f52b6bdb8678b8931d683bbae1bd7c5296f70a2ab87bbd1792cb24f9b1d1500",
+        tokenIdToHold: "47504df5a7b18dcecdbf1ea00b7e644d0a7c93919f2d2061ba153f241f03b801",
         open: true,
         balance: 0n,
         numAttendees: 0n,

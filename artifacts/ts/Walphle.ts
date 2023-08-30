@@ -178,7 +178,7 @@ export const Walphle = new Factory(
   Contract.fromJson(
     WalphleContractJson,
     "",
-    "cf31e9d05754cdf69f34049698dd2bb5a77ec475f75b1cae4b4cfe64e5435ff5"
+    "0466a3ff92f2a4be552c47d45dd01bbba568c2caa9d8e07b3dfa81f1a3ee46de"
   )
 );
 
