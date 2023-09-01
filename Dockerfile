@@ -8,12 +8,12 @@ WORKDIR /usr/src/app
 # where available (npm@5+)
 COPY package*.json ./
 
-RUN npm install
+RUN yarn
 # If you are building your code for production
 # RUN npm ci --omit=dev
 
 # Bundle app source
 COPY . .
-RUN npm run build
+RUN yarn run build
 
-CMD [ "npm", "run", "execute4ever" ]
+CMD [ "yarn", "run", "execute4ever" ]
