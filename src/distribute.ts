@@ -23,40 +23,21 @@ const subscribeOptions = {
   }
 
 
-function getCloseEvents(eventsObject){
+async function distribute(wallet, group: number) {
 
-const closeEvents = []
-for (var event of eventsObject['events']) 
-{
-  if (event.eventIndex == 2)
-    closeEvents.push(event)
-}
-    return closeEvents
-}
-
-async function distribute() {
-
-  //Select our network defined in alephium.config.ts
-  const network = configuration.networks.testnet
-console.log(network)
-  //NodeProvider is an abstraction of a connection to the Alephium network
-  const nodeProvider = new NodeProvider(network.nodeUrl)
-
-  //Sometimes, it's convenient to setup a global NodeProvider for your project:
-  web3.setCurrentNodeProvider(nodeProvider)
 
   //Connect our wallet, typically in a real application you would connect your web-extension or desktop wallet
-  const wallet = new PrivateKeyWallet(new PrivateKeyWallet({privateKey: configuration.networks.testnet.privateKeys[0] , keyType: undefined, nodeProvider: web3.getCurrentNodeProvider()}))
+  
 
   // Compile the contracts of the project if they are not compiled
   Project.build()
 
   //.deployments contains the info of our `TokenFaucet` deployement, as we need to now the contractId and address
   //This was auto-generated with the `cli deploy` of our `scripts/0_deploy_faucet.ts`
-  const deployments = await Deployments.from('./artifacts/.deployments.testnet.json')
+  const deployments = await Deployments.from('./artifacts/.deployments.'+networkToUse+'.json')
     console.log(deployments)
   //Make sure it match your address group
-  const accountGroup = 0
+  const accountGroup = group
 
   const deployed = deployments.getDeployedContractResult(accountGroup, 'Walphle')
 
@@ -77,7 +58,7 @@ console.log(network)
     // Submit a transaction to use the transaction script
     // It uses our `wallet` to sing the transaction.
     const waitDistribution = setInterval(async function() {
-        console.log("Wait for close event")
+        console.log("Group" +group+" - Wait for close event")
         let state = await walphe.fetchState()
         let numEventsClosePool = events.length
         
@@ -88,17 +69,18 @@ console.log(network)
             const attendees = state.fields.attendees
             const winner = attendees[Math.floor(Math.random() * attendees.length)]
 
-            console.log("Distribution started")
+            console.log("Group" +group+" - Distribution started")
+            
             const distributionTX = await Distribute.execute(wallet, {
                 initialFields: { walpheContract: walpheContractId, winner: winner },
                 attoAlphAmount: DUST_AMOUNT
               })
-              console.log("Winner: "+winner)
-              console.log("Waiting for tx distribution "+distributionTX.txId)
+              console.log("Group" +group+" - Winner: "+winner)
+              console.log("Group" +group+" - Waiting for tx distribution "+distributionTX.txId)
               
               awaitForTx = true
               await waitTxConfirmed(nodeProvider,distributionTX.txId,1,1000)
-              console.log("distribution done")
+              console.log("Group" +group+" - distribution done")
               awaitForTx = false
 
         }
@@ -122,4 +104,19 @@ console.log(network)
   }
 }
 
-distribute()
+  const networkToUse = 'testnet'
+  //Select our network defined in alephium.config.ts
+  const network = configuration.networks[networkToUse]
+console.log(network)
+  //NodeProvider is an abstraction of a connection to the Alephium network
+  const nodeProvider = new NodeProvider(network.nodeUrl)
+
+  //Sometimes, it's convenient to setup a global NodeProvider for your project:
+  web3.setCurrentNodeProvider(nodeProvider)
+
+const groups = [0, 1, 2, 3]
+groups.forEach(element => {
+const wallet = new PrivateKeyWallet(new PrivateKeyWallet({privateKey: configuration.networks[networkToUse].privateKeys[element] , keyType: undefined, nodeProvider: web3.getCurrentNodeProvider()}))
+  distribute(wallet, element)
+});
+

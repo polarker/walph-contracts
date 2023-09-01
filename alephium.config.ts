@@ -10,7 +10,6 @@ const configuration: Configuration<Settings> = {
     testnet: {
       nodeUrl: 'http://127.0.0.1:12973',
       settings: {
-        privateKeys: []
       },
       privateKeys: process.env.PRIVKEY_TESTNET.split(',')  //to pass the test uncomment
     },
