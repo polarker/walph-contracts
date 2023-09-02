@@ -23,6 +23,13 @@
       "codeHashDebug": "",
       "warnings": []
     },
+    "ChangeMinAmount": {
+      "sourceFile": "changeMinAmount.ral",
+      "sourceCodeHash": "1ab22993f8a6244a693e2089c15c4df71c71f7e3d2b68e019a8e813555ed9aa5",
+      "bytecodeDebugPatch": "",
+      "codeHashDebug": "",
+      "warnings": []
+    },
     "Close": {
       "sourceFile": "poolState.ral",
       "sourceCodeHash": "9408d236a13cfbcfe57a0bb4a54f576a504a714f9c1d393ce7779ab62362b5d7",
@@ -53,9 +60,16 @@
     },
     "Walphle": {
       "sourceFile": "waffle.ral",
-      "sourceCodeHash": "7e1db4e49af44c241e2f1ec39c67c25399154b7803ffe1936d0e8cef4ce3e6ec",
+      "sourceCodeHash": "54f05a264845c33cb429c9b75ce37faa38fbd55e7a3f2590e6f8c2a1a0eafefa",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "71e3ccf3dd8578cf3501dce49dc5be3945d24bd14fba8b0ec4b3b137790b51f8",
+      "warnings": []
+    },
+    "Walphle50HodlAlf": {
+      "sourceFile": "walph50HodlAlf.ral",
+      "sourceCodeHash": "97548d4503c4ecf6a42d814a3f65ea897f1ee9cf206b950c24334f3fb05c9279",
+      "bytecodeDebugPatch": "",
+      "codeHashDebug": "1ba3c8f8e2ac6a7122e4921393ee7f142e64223d0c989579a5b82236e282d34a",
       "warnings": []
     }
   }
