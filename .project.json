@@ -1,5 +1,5 @@
 {
-  "fullNodeVersion": "v2.5.3",
+  "fullNodeVersion": "v2.5.0",
   "compilerOptionsUsed": {
     "ignoreUnusedConstantsWarnings": false,
     "ignoreUnusedVariablesWarnings": false,
@@ -53,9 +53,9 @@
     },
     "Walphle": {
       "sourceFile": "waffle.ral",
-      "sourceCodeHash": "5956e403549265ddf004bd3a3c922e9fafd298ee800a30eb1be2ae4bc506b478",
+      "sourceCodeHash": "7e1db4e49af44c241e2f1ec39c67c25399154b7803ffe1936d0e8cef4ce3e6ec",
       "bytecodeDebugPatch": "",
-      "codeHashDebug": "0466a3ff92f2a4be552c47d45dd01bbba568c2caa9d8e07b3dfa81f1a3ee46de",
+      "codeHashDebug": "71e3ccf3dd8578cf3501dce49dc5be3945d24bd14fba8b0ec4b3b137790b51f8",
       "warnings": []
     }
   }

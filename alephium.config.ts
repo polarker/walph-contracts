@@ -8,7 +8,7 @@ dotenv.config()
 const configuration: Configuration<Settings> = {
   networks: {
     testnet: {
-      nodeUrl: 'https://wallet.testnet.alephium.org',//'http://127.0.0.1:12973',
+      nodeUrl: process.env.NODE_URL ?? 'https://wallet.testnet.alephium.org',
       settings: {
       },
       privateKeys: process.env.PRIVKEY_TESTNET.split(',')  //to pass the test uncomment

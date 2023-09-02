@@ -46,6 +46,7 @@ describe("unit tests", () => {
         poolOwner: testAddress,
         poolFees: 1n,
         minTokenAmountToHold: 1n,
+        ticketPrice: 10n ** 18n,
         tokenIdToHold:
           "47504df5a7b18dcecdbf1ea00b7e644d0a7c93919f2d2061ba153f241f03b801",
         open: false,
@@ -308,5 +309,19 @@ describe("unit tests", () => {
     expect(contractState.fields.open).toEqual(true);
     expect(contractState.fields.numAttendees).toEqual(0n);
     expect(contractState.fields.attendees.length).toEqual(10);
+  });
+
+
+  it("test change token amount to hodl", async () => {
+    const testParams = JSON.parse(JSON.stringify(testParamsFixture));
+    testParams.initialFields.open = false;
+    testParams.initialFields.balance = testParams.initialFields.poolSize;
+    testParams.initialAsset.alphAmount = testParams.initialFields.poolSize + 1;
+    
+    testParams.testArgs.newAmount = 10n
+    const testResult = await Walphle.tests.changeMinAmountToHold(testParams);
+    const contractState = testResult.contracts[0] as WalphleTypes.State;
+
+    expect(contractState.fields.minTokenAmountToHold).toEqual(10n);
   });
 });

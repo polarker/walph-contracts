@@ -3,11 +3,12 @@ Contract Walphle(
     poolOwner: Address,
     poolFees: U256,
     tokenIdToHold: ByteVec,
+    ticketPrice: U256,
     mut minTokenAmountToHold: U256,
     mut open: Bool,
     mut balance: U256,
     mut numAttendees: U256,
-    mut attendees: [Address;10],
+    mut attendees: [Address;21],
     mut lastWinner: Address
 ){
     
@@ -56,7 +57,7 @@ Contract Walphle(
         balance = balance + amount
         emit TicketBought(caller, amount)
 
-        let numberTicketsBought = amount / 10 ** 18
+        let numberTicketsBought = amount / ticketPrice
         let mut numberPlaceCounter = 0
         while(numberPlaceCounter < numberTicketsBought){
             attendees[numAttendees] = caller
@@ -131,12 +132,12 @@ Contract Walphle(
     }
 
     @using(assetsInContract = false, updateFields = true, checkExternalCaller = true)
-    pub fn changeMinAmountToHold(amount: U256) -> () {
+    pub fn changeMinAmountToHold(newAmount: U256) -> () {
         checkCaller!(callerAddress!() == poolOwner, ErrorCodes.InvalidCaller)
 
-        minTokenAmountToHold = amount
+        minTokenAmountToHold = newAmount
 
-        emit NewMinTokenAmountToHold(amount)
+        emit NewMinTokenAmountToHold(newAmount)
     }
 
 

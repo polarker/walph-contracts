@@ -19,13 +19,13 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@alephium/cli": "^0.20.0",
-    "@alephium/web3": "^0.20.0",
-    "@alephium/web3-wallet": "^0.20.0",
+    "@alephium/cli": "^0.21.0",
+    "@alephium/web3": "^0.21.0",
+    "@alephium/web3-wallet": "^0.21.0",
     "dotenv": "^16.3.1"
   },
   "devDependencies": {
-    "@alephium/web3-test": "^0.20.0",
+    "@alephium/web3-test": "^0.21.0",
     "@types/jest": "^29.5.3",
     "jest": "^29.4.2",
     "ts-jest": "^29.1.1",
