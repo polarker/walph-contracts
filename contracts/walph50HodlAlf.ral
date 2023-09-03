@@ -1,0 +1,144 @@
+Contract Walph50HodlAlf(
+    poolSize: U256,
+    poolOwner: Address,
+    poolFees: U256,
+    tokenIdToHold: ByteVec,
+    ticketPrice: U256,
+    mut minTokenAmountToHold: U256,
+    mut open: Bool,
+    mut balance: U256,
+    mut numAttendees: U256,
+    mut attendees: [Address;50],
+    mut lastWinner: Address
+){
+    
+
+    event TicketBought(from: Address, amount: U256)
+    event PoolOpen()
+    event PoolClose()
+    event Destroy(from: Address)
+    event NewMinTokenAmountToHold(newAmount: U256)
+
+    enum ErrorCodes {
+        PoolFull = 0
+        PoolAlreadyClose = 1
+        PoolAlreadyOpen = 2
+        PoolClosed = 3
+        InvalidCaller = 4
+        NotEnoughToken = 5
+        PoolNotFull = 6
+        InvalidAmount = 7
+    }
+
+    pub fn getPoolState() -> (Bool) {
+        return open
+    }
+
+    pub fn getPoolSize() -> (U256) {
+        return poolSize
+    }
+
+    pub fn getBalance() -> (U256){
+        return balance
+    }
+
+    @using(preapprovedAssets = true, assetsInContract = true, updateFields = true, checkExternalCaller = false)
+    pub fn buyTicket(amount: U256) -> (){
+        let caller = callerAddress!()
+        assert!(balance + amount <= poolSize, ErrorCodes.PoolFull)
+        assert!(open, ErrorCodes.PoolClosed)
+        assert!(addModN!(amount,0,10**18) == 0, ErrorCodes.InvalidAmount) //dirty
+        if(minTokenAmountToHold > 0){
+            assert!(tokenRemaining!(caller, tokenIdToHold) >= minTokenAmountToHold, ErrorCodes.NotEnoughToken)
+        }
+        
+
+        transferTokenToSelf!(caller, ALPH, amount)
+        balance = balance + amount
+        emit TicketBought(caller, amount)
+
+        let numberTicketsBought = amount / ticketPrice
+        let mut numberPlaceCounter = 0
+        while(numberPlaceCounter < numberTicketsBought){
+            attendees[numAttendees] = caller
+            numAttendees = numAttendees + 1
+            numberPlaceCounter = numberPlaceCounter + 1
+
+        }
+
+
+        // last person to complete the pool close it
+        if(balance >= poolSize){
+            closePoolWhenFull()
+        }
+        
+    }
+
+    @using(preapprovedAssets = false, assetsInContract = true, updateFields = true, checkExternalCaller = true)
+    pub fn distributePrize(winner: Address) -> (){
+        let caller = callerAddress!()
+        assert!(!open, ErrorCodes.PoolAlreadyClose)
+        checkCaller!(caller == poolOwner, ErrorCodes.InvalidCaller)
+
+        
+        transferTokenFromSelf!(caller, ALPH, balance * poolFees/100 )
+        transferTokenFromSelf!(winner, ALPH, balance - (balance * poolFees/100))
+        lastWinner = winner
+        balance = 0
+        numAttendees = 0
+
+        open = true
+        emit PoolOpen()
+
+    }
+
+    @using(updateFields = true, checkExternalCaller = false)
+    pub fn closePoolWhenFull() -> (){
+        assert!(open, ErrorCodes.PoolAlreadyClose)
+        assert!(balance >= poolSize, ErrorCodes.PoolNotFull)
+
+        open = false
+
+        emit PoolClose()
+    }
+
+    @using(updateFields = true, checkExternalCaller = true)
+    pub fn closePool() -> (){
+        assert!(open, ErrorCodes.PoolAlreadyClose)
+        checkCaller!(callerAddress!() == poolOwner, ErrorCodes.InvalidCaller)
+
+        open = false
+
+        emit PoolClose()
+    }
+
+    @using(updateFields = true, checkExternalCaller = true)
+    pub fn openPool() -> (){
+        assert!(!open, ErrorCodes.PoolAlreadyOpen)
+        checkCaller!(callerAddress!() == poolOwner, ErrorCodes.InvalidCaller)
+
+        open = true
+
+        emit PoolOpen()
+    }
+
+    @using(assetsInContract = true, updateFields = false, checkExternalCaller = true)
+    pub fn destroyPool() -> () {
+        checkCaller!(callerAddress!() == poolOwner, ErrorCodes.InvalidCaller)
+
+        destroySelf!(poolOwner)
+
+        emit Destroy(poolOwner)
+    }
+
+    @using(assetsInContract = false, updateFields = true, checkExternalCaller = true)
+    pub fn changeMinAmountToHold(newAmount: U256) -> () {
+        checkCaller!(callerAddress!() == poolOwner, ErrorCodes.InvalidCaller)
+
+        minTokenAmountToHold = newAmount
+
+        emit NewMinTokenAmountToHold(newAmount)
+    }
+
+
+}
