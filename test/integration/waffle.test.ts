@@ -1,6 +1,6 @@
 import { web3, Project, stringToHex, ONE_ALPH, DUST_AMOUNT, sleep, ZERO_ADDRESS } from '@alephium/web3'
 import { NodeWallet, PrivateKeyWallet } from '@alephium/web3-wallet'
-import { Walphle, Distribute, Buy, Open,Close, WalphleTypes, Destroy, BuyWithoutToken } from '../../artifacts/ts'
+import { Walph, Distribute, Buy, Open,Close, WalphTypes, Destroy, BuyWithoutToken } from '../../artifacts/ts'
 import configuration, { Settings } from '../../alephium.config'
 import * as dotenv from 'dotenv'
 
@@ -30,9 +30,9 @@ describe('integration tests', () => {
   })
   
 
-  it('should test Walphe', async () => {
+  it('should test Walph', async () => {
     
-    const deployResult = await Walphle.deploy(
+    const deployResult = await Walph.deploy(
       signer,
       {
         initialFields: {
@@ -45,7 +45,7 @@ describe('integration tests', () => {
             open: true,
             balance: 0n,
             numAttendees: 0n,
-            attendees: Array(10).fill(ZERO_ADDRESS) as WalphleTypes.Fields["attendees"],
+            attendees: Array(10).fill(ZERO_ADDRESS) as WalphTypes.Fields["attendees"],
             lastWinner: ZERO_ADDRESS
 
           },
@@ -53,27 +53,27 @@ describe('integration tests', () => {
     )
 
     
-    const walphe = deployResult.contractInstance
+    const walph = deployResult.contractInstance
     const walphleContractId = deployResult.contractInstance.contractId
-    const walpheContractAddress = deployResult.contractInstance.address
+    const walphContractAddress = deployResult.contractInstance.address
 
-    console.log("Contract deployed at: "+walphleContractId+" "+walpheContractAddress)
+    console.log("Contract deployed at: "+walphleContractId+" "+walphContractAddress)
     expect(deployResult.contractInstance.groupIndex).toEqual(testGroup)
 
-    const walphleDeployed = Walphle.at(walpheContractAddress)
+    const walphleDeployed = Walph.at(walphContractAddress)
 
 
     const initialState = await walphleDeployed.fetchState()
     const initialBalance = initialState.fields.balance
     expect(initialBalance).toEqual(0n)
 
-    const getPoolSize = await walphe.methods.getPoolSize()
+    const getPoolSize = await walph.methods.getPoolSize()
     expect(getPoolSize.returns).toEqual(10n * 10n ** 18n)
   
-    const ticketBoughtEvents: WalphleTypes.TicketBoughtEvent[] = []
-    const subscription = walphe.subscribeTicketBoughtEvent({
+    const ticketBoughtEvents: WalphTypes.TicketBoughtEvent[] = []
+    const subscription = walph.subscribeTicketBoughtEvent({
       pollingInterval: 1,
-      messageCallback: async (event: WalphleTypes.TicketBoughtEvent) => {
+      messageCallback: async (event: WalphTypes.TicketBoughtEvent) => {
         ticketBoughtEvents.push(event)
         return Promise.resolve()
       },
@@ -87,7 +87,7 @@ describe('integration tests', () => {
       // simulate someone buying tickets until pool full
       for (let i = 0; i < 10; i++) {
         await BuyWithoutToken.execute(rndSignerBuy, {
-          initialFields: {walpheContract: walphleContractId , amount: ONE_ALPH},
+          initialFields: {walphContract: walphleContractId , amount: ONE_ALPH},
           attoAlphAmount: ONE_ALPH + 3n * DUST_AMOUNT,
           tokens: [
            { id: tokenIdToHold, amount: 1n }
@@ -107,13 +107,13 @@ describe('integration tests', () => {
       expect(afterPoolFullOpenState).toEqual(false)
       expect(afterPoolFullBalanceState).toEqual(10n * 10n ** 18n)
       expect(afterPoolFullNumAttendeesState).toEqual(10n)
-      expect(afterPoolFullAttendeesState).toEqual(Array(10).fill(rndSignerBuy.address) as WalphleTypes.Fields["attendees"])
+      expect(afterPoolFullAttendeesState).toEqual(Array(10).fill(rndSignerBuy.address) as WalphTypes.Fields["attendees"])
 
 
       expect(ticketBoughtEvents.length).toEqual(10)
       
       await Distribute.execute(signer, {
-        initialFields: { walpheContract: walphleContractId, winner: "18vsJ3xDBnSt2aXRSQ7QRTPrVVkjZuTXtxvV1x8mvm3Nz"},
+        initialFields: { walphContract: walphleContractId, winner: "18vsJ3xDBnSt2aXRSQ7QRTPrVVkjZuTXtxvV1x8mvm3Nz"},
         attoAlphAmount: ONE_ALPH + 5n * DUST_AMOUNT
 
       })
@@ -133,14 +133,14 @@ describe('integration tests', () => {
       subscription.unsubscribe()
 
       await Destroy.execute(signer, {
-        initialFields: { walpheContract: walphleContractId},
+        initialFields: { walphContract: walphleContractId},
         attoAlphAmount: DUST_AMOUNT
 
       })
 
       /*
-      const contractBalance = await web3.getCurrentNodeProvider().addresses.getAddressesAddressBalance(walpheContractAddress)
-      expect(web3.getCurrentNodeProvider().addresses.getAddressesAddressBalance(walpheContractAddress)).toEqual(0n)*/
+      const contractBalance = await web3.getCurrentNodeProvider().addresses.getAddressesAddressBalance(walphContractAddress)
+      expect(web3.getCurrentNodeProvider().addresses.getAddressesAddressBalance(walphContractAddress)).toEqual(0n)*/
 
   }
 )
@@ -149,7 +149,7 @@ describe('integration tests', () => {
 it('should close and open pool', async () => {
 
 
-  const deployResult = await Walphle.deploy(
+  const deployResult = await Walph.deploy(
     signer,
     {
       initialFields: {
@@ -162,7 +162,7 @@ it('should close and open pool', async () => {
           open: true,
           balance: 0n,
           numAttendees: 0n,
-          attendees: Array(10).fill(ZERO_ADDRESS) as WalphleTypes.Fields["attendees"],
+          attendees: Array(10).fill(ZERO_ADDRESS) as WalphTypes.Fields["attendees"],
           lastWinner: ZERO_ADDRESS
 
         },
@@ -170,19 +170,19 @@ it('should close and open pool', async () => {
   )
 
   
-  const walphe = deployResult.contractInstance
+  const walph = deployResult.contractInstance
   const walphleContractId = deployResult.contractInstance.contractId
-  const walpheContractAddress = deployResult.contractInstance.address
+  const walphContractAddress = deployResult.contractInstance.address
 
-  console.log("Contract deployed at: "+walphleContractId+" "+walpheContractAddress)
+  console.log("Contract deployed at: "+walphleContractId+" "+walphContractAddress)
   expect(deployResult.contractInstance.groupIndex).toEqual(testGroup)
 
-  const walphleDeployed = Walphle.at(walpheContractAddress)
+  const walphleDeployed = Walph.at(walphContractAddress)
 
-  const closePoolEvents: WalphleTypes.PoolCloseEvent[] = []
-      const subscription = walphe.subscribePoolCloseEvent({
+  const closePoolEvents: WalphTypes.PoolCloseEvent[] = []
+      const subscription = walph.subscribePoolCloseEvent({
         pollingInterval: 10,
-        messageCallback: async (event: WalphleTypes.PoolCloseEvent) => {
+        messageCallback: async (event: WalphTypes.PoolCloseEvent) => {
           closePoolEvents.push(event)
           return Promise.resolve()
         },
@@ -194,7 +194,7 @@ it('should close and open pool', async () => {
       })
 
   await Close.execute(signer, {
-    initialFields: {walpheContract: walphleContractId}
+    initialFields: {walphContract: walphleContractId}
   })
 
 
@@ -205,10 +205,10 @@ it('should close and open pool', async () => {
   expect(closePoolEvents.length).toEqual(1)
   subscription.unsubscribe()
 
-  const openPoolEvents: WalphleTypes.PoolOpenEvent[] = []
-  const subscriptionPoolOpen = walphe.subscribePoolCloseEvent({
+  const openPoolEvents: WalphTypes.PoolOpenEvent[] = []
+  const subscriptionPoolOpen = walph.subscribePoolCloseEvent({
     pollingInterval: 10,
-    messageCallback: async (event: WalphleTypes.PoolOpenEvent) => {
+    messageCallback: async (event: WalphTypes.PoolOpenEvent) => {
 
       openPoolEvents.push(event)
       return Promise.resolve()
@@ -222,7 +222,7 @@ it('should close and open pool', async () => {
 
 
   await Open.execute(signer, {
-    initialFields: {walpheContract: walphleContractId}
+    initialFields: {walphContract: walphleContractId}
   })
   
   const poolState = await walphleDeployed.fetchState()

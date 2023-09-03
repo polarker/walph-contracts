@@ -11,51 +11,65 @@
   "infos": {
     "Buy": {
       "sourceFile": "buyTicket.ral",
-      "sourceCodeHash": "70d7d925893eacde4445baa7dea709ffd33bff8ec0d64364526fa695466cde3c",
+      "sourceCodeHash": "65c92e3ec6e467f0ccb0af0fb5e748d4875a711172c3c6b6a4a1b4e90c1a6210",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "",
       "warnings": []
     },
     "BuyWithoutToken": {
       "sourceFile": "buyTicket.ral",
-      "sourceCodeHash": "70d7d925893eacde4445baa7dea709ffd33bff8ec0d64364526fa695466cde3c",
+      "sourceCodeHash": "65c92e3ec6e467f0ccb0af0fb5e748d4875a711172c3c6b6a4a1b4e90c1a6210",
+      "bytecodeDebugPatch": "",
+      "codeHashDebug": "",
+      "warnings": []
+    },
+    "ChangeMinAmount": {
+      "sourceFile": "changeMinAmount.ral",
+      "sourceCodeHash": "8254e054447889414aa09aa8e8f9e28f83d016c1136c603b4d16c74df22783ae",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "",
       "warnings": []
     },
     "Close": {
       "sourceFile": "poolState.ral",
-      "sourceCodeHash": "9408d236a13cfbcfe57a0bb4a54f576a504a714f9c1d393ce7779ab62362b5d7",
+      "sourceCodeHash": "1f8e42ee58c3bebd31a9e925996405ea963e99face163a69ccc0481cd15eeee8",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "",
       "warnings": []
     },
     "Destroy": {
       "sourceFile": "poolState.ral",
-      "sourceCodeHash": "9408d236a13cfbcfe57a0bb4a54f576a504a714f9c1d393ce7779ab62362b5d7",
+      "sourceCodeHash": "1f8e42ee58c3bebd31a9e925996405ea963e99face163a69ccc0481cd15eeee8",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "",
       "warnings": []
     },
     "Distribute": {
       "sourceFile": "distribute.ral",
-      "sourceCodeHash": "ec7f34f4af9a55a7138df4215f041844bef6be5dfbe30a3ece83a51ad3499460",
+      "sourceCodeHash": "677bb217a61e65bdd8861ab45d347cb7444af2a673cdbce15d0e03137b4046e5",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "",
       "warnings": []
     },
     "Open": {
       "sourceFile": "poolState.ral",
-      "sourceCodeHash": "9408d236a13cfbcfe57a0bb4a54f576a504a714f9c1d393ce7779ab62362b5d7",
+      "sourceCodeHash": "1f8e42ee58c3bebd31a9e925996405ea963e99face163a69ccc0481cd15eeee8",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "",
       "warnings": []
     },
-    "Walphle": {
-      "sourceFile": "waffle.ral",
-      "sourceCodeHash": "7e1db4e49af44c241e2f1ec39c67c25399154b7803ffe1936d0e8cef4ce3e6ec",
+    "Walph": {
+      "sourceFile": "walph.ral",
+      "sourceCodeHash": "b8305797805b4092b3ef362654f396b5be70c421617950cab7143ff5f9d3b378",
       "bytecodeDebugPatch": "",
-      "codeHashDebug": "71e3ccf3dd8578cf3501dce49dc5be3945d24bd14fba8b0ec4b3b137790b51f8",
+      "codeHashDebug": "286be52bf6933528300687d4a56dfb0acf272a942f7b5cd76445bb6c77776b6e",
+      "warnings": []
+    },
+    "Walph50HodlAlf": {
+      "sourceFile": "walph50HodlAlf.ral",
+      "sourceCodeHash": "b7816cab791bafd753273757b75fbbdfaac2e95a431e0e7bc5d627af004483c2",
+      "bytecodeDebugPatch": "",
+      "codeHashDebug": "1ba3c8f8e2ac6a7122e4921393ee7f142e64223d0c989579a5b82236e282d34a",
       "warnings": []
     }
   }

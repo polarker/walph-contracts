@@ -2,6 +2,6 @@
 // A transaction script is a piece of code to interact with contracts on the blockchain.
 // Transaction scripts can use the input assets of transactions in general.
 // A script is disposable and will only be executed once along with the holder transaction.
-TxScript Distribute(walpheContract: Walphle, winner: Address){
-    walpheContract.distributePrize(winner)
+TxScript Distribute(walphContract: Walph, winner: Address){
+    walphContract.distributePrize(winner)
 }

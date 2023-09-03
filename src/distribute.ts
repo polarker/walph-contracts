@@ -8,15 +8,15 @@ import {
 } from "@alephium/web3";
 import { PrivateKeyWallet } from "@alephium/web3-wallet";
 import configuration from "../alephium.config";
-import { Walphle, Distribute, WalphleTypes } from "../artifacts/ts";
+import { Walph, Distribute, WalphTypes } from "../artifacts/ts";
 
 // The `TokenFaucetTypes.WithdrawEvent` is generated in the getting-started guide
-const events: WalphleTypes.PoolCloseEvent[] = [];
+const events: WalphTypes.PoolCloseEvent[] = [];
 const subscribeOptions = {
   // It will check for new events from the full node every `pollingInterval`
   pollingInterval: 40000,
   // The callback function will be called for each event
-  messageCallback: (event: WalphleTypes.PoolCloseEvent): Promise<void> => {
+  messageCallback: (event: WalphTypes.PoolCloseEvent): Promise<void> => {
     events.push(event);
     return Promise.resolve();
   },
@@ -51,14 +51,14 @@ async function distribute(privKey: string, group: number) {
   const accountGroup = group;
   const deployed = deployments.getDeployedContractResult(
     accountGroup,
-    "Walphle"
+    "Walph"
   );
 
   if (deployed !== undefined) {
     const walpheContractId = deployed.contractInstance.contractId;
     const walpheContractAddress = deployed.contractInstance.address;
 
-    const walphe = Walphle.at(walpheContractAddress);
+    const walphe = Walph.at(walpheContractAddress);
 
     // Subscribe the contract events from index 0
     const subscription = walphe.subscribePoolCloseEvent(
@@ -92,7 +92,7 @@ async function distribute(privKey: string, group: number) {
         );
 
         const distributionTX = await Distribute.execute(wallet, {
-          initialFields: { walpheContract: walpheContractId, winner: winner },
+          initialFields: { walphContract: walpheContractId, winner: winner },
           attoAlphAmount: DUST_AMOUNT,
         });
 

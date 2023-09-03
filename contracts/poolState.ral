@@ -2,14 +2,14 @@
 // A transaction script is a piece of code to interact with contracts on the blockchain.
 // Transaction scripts can use the input assets of transactions in general.
 // A script is disposable and will only be executed once along with the holder transaction.
-TxScript Open(walpheContract: Walphle){
-    walpheContract.openPool()
+TxScript Open(walphContract: Walph){
+    walphContract.openPool()
 }
 
-TxScript Close(walpheContract: Walphle){
-    walpheContract.closePool()
+TxScript Close(walphContract: Walph){
+    walphContract.closePool()
 }
 
-TxScript Destroy(walpheContract: Walphle){
-    walpheContract.destroyPool()
+TxScript Destroy(walphContract: Walph){
+    walphContract.destroyPool()
 }
