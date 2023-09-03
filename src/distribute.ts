@@ -5,6 +5,7 @@ import {
   Project,
   NodeProvider,
   SignerProvider,
+  Contract,
 } from "@alephium/web3";
 import { PrivateKeyWallet } from "@alephium/web3-wallet";
 import configuration from "../alephium.config";
@@ -31,7 +32,7 @@ const subscribeOptions = {
   },
 };
 
-async function distribute(privKey: string, group: number) {
+async function distribute(privKey: string, group: number, contractName: string) {
   //Connect our wallet, typically in a real application you would connect your web-extension or desktop wallet
 
   // Compile the contracts of the project if they are not compiled
@@ -51,7 +52,7 @@ async function distribute(privKey: string, group: number) {
   const accountGroup = group;
   const deployed = deployments.getDeployedContractResult(
     accountGroup,
-    "Walph"
+    contractName
   );
 
   if (deployed !== undefined) {
@@ -71,7 +72,7 @@ async function distribute(privKey: string, group: number) {
     // Submit a transaction to use the transaction script
     // It uses our `wallet` to sing the transaction.
     const waitDistribution = setInterval(async function () {
-      console.log("Group " + group + " - Wait for close event");
+      console.log(contractName + " Group " + group + " - Wait for close event");
       let state = await walphe.fetchState();
       let numEventsClosePool = events.length;
 
@@ -88,7 +89,7 @@ async function distribute(privKey: string, group: number) {
         const winner = attendees[Math.floor(Math.random() * attendees.length)];
 
         console.log(
-          "Group" + group + " - Distribution started with " + wallet.address
+          contractName + " Group" + group + " - Distribution started with " + wallet.address
         );
 
         const distributionTX = await Distribute.execute(wallet, {
@@ -96,9 +97,9 @@ async function distribute(privKey: string, group: number) {
           attoAlphAmount: DUST_AMOUNT,
         });
 
-        console.log("Group" + group + " - Winner: " + winner);
+        console.log(contractName + " Group" + group + " - Winner: " + winner);
         console.log(
-          "Group" +
+          contractName + " Group" +
             group +
             " - Waiting for tx distribution " +
             distributionTX.txId
@@ -106,7 +107,7 @@ async function distribute(privKey: string, group: number) {
 
         awaitForTx = true;
         await waitTxConfirmed(nodeProvider, distributionTX.txId, 1, 1000);
-        console.log("Group" + group + " - distribution done");
+        console.log(contractName + " Group" + group + " - distribution done");
         awaitForTx = false;
       }
     }, 40000);
@@ -144,5 +145,6 @@ web3.setCurrentNodeProvider(nodeProvider);
 const numberOfKeys = configuration.networks[networkToUse].privateKeys.length
 
 Array.from(Array(numberOfKeys).keys()).forEach((group) => {
-  distribute(configuration.networks[networkToUse].privateKeys[group], group);
+  distribute(configuration.networks[networkToUse].privateKeys[group], group, "Walph");
+  distribute(configuration.networks[networkToUse].privateKeys[group], group, "Walph50HodlAlf");
 });
