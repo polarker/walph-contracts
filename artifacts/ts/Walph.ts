@@ -49,17 +49,6 @@ export namespace WalphTypes {
       Address,
       Address,
       Address,
-      Address,
-      Address,
-      Address,
-      Address,
-      Address,
-      Address,
-      Address,
-      Address,
-      Address,
-      Address,
-      Address,
       Address
     ];
     lastWinner: Address;
@@ -88,6 +77,10 @@ export namespace WalphTypes {
       result: CallContractResult<bigint>;
     };
     getBalance: {
+      params: Omit<CallContractParams<{}>, "args">;
+      result: CallContractResult<bigint>;
+    };
+    random: {
       params: Omit<CallContractParams<{}>, "args">;
       result: CallContractResult<bigint>;
     };
@@ -151,6 +144,11 @@ class Factory extends ContractFactory<WalphInstance, WalphTypes.Fields> {
     ): Promise<TestContractResult<bigint>> => {
       return testMethod(this, "getBalance", params);
     },
+    random: async (
+      params: Omit<TestContractParams<WalphTypes.Fields, never>, "testArgs">
+    ): Promise<TestContractResult<bigint>> => {
+      return testMethod(this, "random", params);
+    },
     buyTicket: async (
       params: TestContractParams<WalphTypes.Fields, { amount: bigint }>
     ): Promise<TestContractResult<null>> => {
@@ -194,7 +192,7 @@ export const Walph = new Factory(
   Contract.fromJson(
     WalphContractJson,
     "",
-    "71e3ccf3dd8578cf3501dce49dc5be3945d24bd14fba8b0ec4b3b137790b51f8"
+    "c7aea96adf5af497d44ac61e35f253ad4f02d8e67b34a57619599870744f15dd"
   )
 );
 
@@ -320,6 +318,17 @@ export class WalphInstance extends ContractInstance {
         Walph,
         this,
         "getBalance",
+        params === undefined ? {} : params,
+        getContractByCodeHash
+      );
+    },
+    random: async (
+      params?: WalphTypes.CallMethodParams<"random">
+    ): Promise<WalphTypes.CallMethodResult<"random">> => {
+      return callMethod(
+        Walph,
+        this,
+        "random",
         params === undefined ? {} : params,
         getContractByCodeHash
       );

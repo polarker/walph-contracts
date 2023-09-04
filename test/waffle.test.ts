@@ -62,9 +62,7 @@ describe("unit tests", () => {
       },
       // arguments to test the target function of the test contract
       testArgs: {
-        amount: 1n * 10n ** 18n,
-        winner: PrivateKeyWallet.Random(0, web3.getCurrentNodeProvider())
-          .account.address,
+        amount: 1n * 10n ** 18n
       },
       // assets owned by the caller of the function
       inputAssets: [
@@ -83,6 +81,24 @@ describe("unit tests", () => {
       ],
     };
   });
+
+  it("test try random", async () => {
+    const testParams = JSON.parse(JSON.stringify(testParamsFixture));
+    testParams.initialFields.numAttendees = 10
+    let runs = [0n,0n]
+
+    // open the pool
+    let testResult = await Walph.tests.random(testParams);
+    console.log(testResult.returns)
+    runs[0] = testResult.returns
+    
+    testResult = await Walph.tests.random(testParams);
+
+    runs[1] = testResult.returns 
+    console.log(runs)
+    expect(runs[0]).not.toEqual(runs[1])
+
+  })
 
   it("test opening and closing pool", async () => {
     const testParams = JSON.parse(JSON.stringify(testParamsFixture));

@@ -8,7 +8,7 @@ Contract Walph(
     mut open: Bool,
     mut balance: U256,
     mut numAttendees: U256,
-    mut attendees: [Address;21],
+    mut attendees: [Address;10],
     mut lastWinner: Address
 ){
     
@@ -40,6 +40,13 @@ Contract Walph(
 
     pub fn getBalance() -> (U256){
         return balance
+    }
+
+
+    pub fn random() -> (U256){
+        let seed = u256From32Byte!(blockHash!())
+
+        return addModN!(0,seed, numAttendees)
     }
 
     @using(preapprovedAssets = true, assetsInContract = true, updateFields = true, checkExternalCaller = false)
@@ -75,15 +82,17 @@ Contract Walph(
     }
 
     @using(preapprovedAssets = false, assetsInContract = true, updateFields = true, checkExternalCaller = true)
-    pub fn distributePrize(winner: Address) -> (){
+    pub fn distributePrize() -> (){
         let caller = callerAddress!()
         assert!(!open, ErrorCodes.PoolAlreadyClose)
         checkCaller!(caller == poolOwner, ErrorCodes.InvalidCaller)
 
+        let winnerPosition = random()
+        lastWinner = attendees[winnerPosition]
         
         transferTokenFromSelf!(caller, ALPH, balance * poolFees/100 )
-        transferTokenFromSelf!(winner, ALPH, balance - (balance * poolFees/100))
-        lastWinner = winner
+        transferTokenFromSelf!(lastWinner, ALPH, balance - (balance * poolFees/100))
+
         balance = 0
         numAttendees = 0
 

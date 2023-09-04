@@ -53,9 +53,9 @@
     },
     "Walph": {
       "sourceFile": "walph.ral",
-      "sourceCodeHash": "f9e620ba82af51b41437d7e75a19e49cc462a628229acb30b1c017d2202da574",
+      "sourceCodeHash": "16811801e70bcec9ddfdefedb7d9db0518a082085804b86214c0958cc3af6246",
       "bytecodeDebugPatch": "",
-      "codeHashDebug": "71e3ccf3dd8578cf3501dce49dc5be3945d24bd14fba8b0ec4b3b137790b51f8",
+      "codeHashDebug": "c7aea96adf5af497d44ac61e35f253ad4f02d8e67b34a57619599870744f15dd",
       "warnings": []
     },
     "Walph50HodlAlf": {
