@@ -78,14 +78,14 @@ Contract Walph(
 
         // last person to complete the pool close it and start the draw
         if(balance >= poolSize){
-            //open = false
-            //distributePrize()
-            closePoolWhenFull() 
+            open = false
+            distributePrize{selfAddress!() -> ALPH: balance}()
         }
     }
 
-    @using(preapprovedAssets = false, assetsInContract = true, updateFields = true, checkExternalCaller = false)
-    pub fn distributePrize() -> (){
+    @using(preapprovedAssets = true, updateFields = true, checkExternalCaller = false)
+    fn distributePrize() -> (){
+        checkCaller!(callerAddress!() == selfAddress!(), ErrorCodes.InvalidCaller)
         assert!(!open, ErrorCodes.PoolAlreadyClose)
         assert!(balance >= poolSize, ErrorCodes.PoolNotFull)
 
@@ -109,7 +109,6 @@ Contract Walph(
         assert!(balance >= poolSize, ErrorCodes.PoolNotFull)
 
         open = false
-        distributePrize()
 
         emit PoolClose()
     }

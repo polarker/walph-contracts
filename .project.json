@@ -1,5 +1,5 @@
 {
-  "fullNodeVersion": "v2.5.0",
+  "fullNodeVersion": "v2.3.5",
   "compilerOptionsUsed": {
     "ignoreUnusedConstantsWarnings": false,
     "ignoreUnusedVariablesWarnings": false,
@@ -37,13 +37,6 @@
       "codeHashDebug": "",
       "warnings": []
     },
-    "Distribute": {
-      "sourceFile": "distribute.ral",
-      "sourceCodeHash": "0107b5910b311d46cdefb9d6246f277c565300016425a81b17ba622e48407b23",
-      "bytecodeDebugPatch": "",
-      "codeHashDebug": "",
-      "warnings": []
-    },
     "Open": {
       "sourceFile": "poolState.ral",
       "sourceCodeHash": "1f8e42ee58c3bebd31a9e925996405ea963e99face163a69ccc0481cd15eeee8",
@@ -53,9 +46,9 @@
     },
     "Walph": {
       "sourceFile": "walph.ral",
-      "sourceCodeHash": "01cae3202416d5c422ce89f65c242b6b17c8021da42b6a8ce530e8918c184672",
+      "sourceCodeHash": "605d792bdc8c91e9a6c10fb82b6946edc4640145695fc03fb7fe97f12dbd8bcd",
       "bytecodeDebugPatch": "",
-      "codeHashDebug": "cd186769b9cedfdbee1d283c0158072bc93b7a01ad7f54325bc904f74142fece",
+      "codeHashDebug": "7a4c53561ad2ee757c8424060129c60e1e45c785af5f760fdd03a5d2b835903b",
       "warnings": []
     },
     "Walph50HodlAlf": {

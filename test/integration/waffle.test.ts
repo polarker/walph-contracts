@@ -1,6 +1,6 @@
 import { web3, Project, stringToHex, ONE_ALPH, DUST_AMOUNT, sleep, ZERO_ADDRESS } from '@alephium/web3'
 import { NodeWallet, PrivateKeyWallet } from '@alephium/web3-wallet'
-import { Walph, Distribute, Buy, Open,Close, WalphTypes, Destroy, BuyWithoutToken } from '../../artifacts/ts'
+import { Walph, Buy, Open,Close, WalphTypes, Destroy, BuyWithoutToken } from '../../artifacts/ts'
 import configuration, { Settings } from '../../alephium.config'
 import * as dotenv from 'dotenv'
 
@@ -112,12 +112,6 @@ describe('integration tests', () => {
 
       expect(ticketBoughtEvents.length).toEqual(10)
       
-      await Distribute.execute(signer, {
-        initialFields: { walphContract: walphleContractId, winner: "18vsJ3xDBnSt2aXRSQ7QRTPrVVkjZuTXtxvV1x8mvm3Nz"},
-        attoAlphAmount: ONE_ALPH + 5n * DUST_AMOUNT
-
-      })
-
       const afterPoolDistribution = await walphleDeployed.fetchState()
       const afterPoolDistributionOpenState = afterPoolDistribution.fields.open
       const afterPoolDistributionBalanceState = afterPoolDistribution.fields.balance

@@ -190,7 +190,7 @@ export const Walph = new Factory(
   Contract.fromJson(
     WalphContractJson,
     "",
-    "cd186769b9cedfdbee1d283c0158072bc93b7a01ad7f54325bc904f74142fece"
+    "7a4c53561ad2ee757c8424060129c60e1e45c785af5f760fdd03a5d2b835903b"
   )
 );
 
