@@ -28,10 +28,9 @@ export const BuyWithoutToken = new ExecutableScript<{
   walphContract: HexString;
   amount: bigint;
 }>(Script.fromJson(BuyWithoutTokenScriptJson));
-export const Distribute = new ExecutableScript<{
-  walphContract: HexString;
-  winner: Address;
-}>(Script.fromJson(DistributeScriptJson));
+export const Distribute = new ExecutableScript<{ walphContract: HexString }>(
+  Script.fromJson(DistributeScriptJson)
+);
 export const Open = new ExecutableScript<{ walphContract: HexString }>(
   Script.fromJson(OpenScriptJson)
 );

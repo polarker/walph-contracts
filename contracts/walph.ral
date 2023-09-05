@@ -18,6 +18,7 @@ Contract Walph(
     event PoolClose()
     event Destroy(from: Address)
     event NewMinTokenAmountToHold(newAmount: U256)
+    event Winner(address: Address)
 
     enum ErrorCodes {
         PoolFull = 0
@@ -30,6 +31,14 @@ Contract Walph(
         InvalidAmount = 7
     }
 
+
+    fn random() -> (U256){
+        assert!(numAttendees > 0, ErrorCodes.PoolNotFull)
+        let seed = u256From32Byte!(blockHash!())
+
+        return addModN!(0,seed, numAttendees)
+    }
+
     pub fn getPoolState() -> (Bool) {
         return open
     }
@@ -40,13 +49,6 @@ Contract Walph(
 
     pub fn getBalance() -> (U256){
         return balance
-    }
-
-
-    pub fn random() -> (U256){
-        let seed = u256From32Byte!(blockHash!())
-
-        return addModN!(0,seed, numAttendees)
     }
 
     @using(preapprovedAssets = true, assetsInContract = true, updateFields = true, checkExternalCaller = false)
@@ -74,23 +76,22 @@ Contract Walph(
         }
 
 
-        // last person to complete the pool close it
+        // last person to complete the pool close it and start the draw
         if(balance >= poolSize){
-            closePoolWhenFull()
+            //open = false
+            //distributePrize()
+            closePoolWhenFull() 
         }
-        
     }
 
-    @using(preapprovedAssets = false, assetsInContract = true, updateFields = true, checkExternalCaller = true)
+    @using(preapprovedAssets = false, assetsInContract = true, updateFields = true, checkExternalCaller = false)
     pub fn distributePrize() -> (){
-        let caller = callerAddress!()
         assert!(!open, ErrorCodes.PoolAlreadyClose)
-        checkCaller!(caller == poolOwner, ErrorCodes.InvalidCaller)
+        assert!(balance >= poolSize, ErrorCodes.PoolNotFull)
 
-        let winnerPosition = random()
-        lastWinner = attendees[winnerPosition]
+        lastWinner = attendees[random()]
         
-        transferTokenFromSelf!(caller, ALPH, balance * poolFees/100 )
+        transferTokenFromSelf!(poolOwner, ALPH, balance * poolFees/100 )
         transferTokenFromSelf!(lastWinner, ALPH, balance - (balance * poolFees/100))
 
         balance = 0
@@ -98,6 +99,7 @@ Contract Walph(
 
         open = true
         emit PoolOpen()
+        emit Winner(lastWinner)
 
     }
 
@@ -107,6 +109,7 @@ Contract Walph(
         assert!(balance >= poolSize, ErrorCodes.PoolNotFull)
 
         open = false
+        distributePrize()
 
         emit PoolClose()
     }

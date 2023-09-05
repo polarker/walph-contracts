@@ -66,6 +66,7 @@ export namespace WalphTypes {
   export type NewMinTokenAmountToHoldEvent = ContractEvent<{
     newAmount: bigint;
   }>;
+  export type WinnerEvent = ContractEvent<{ address: Address }>;
 
   export interface CallMethodTable {
     getPoolState: {
@@ -77,10 +78,6 @@ export namespace WalphTypes {
       result: CallContractResult<bigint>;
     };
     getBalance: {
-      params: Omit<CallContractParams<{}>, "args">;
-      result: CallContractResult<bigint>;
-    };
-    random: {
       params: Omit<CallContractParams<{}>, "args">;
       result: CallContractResult<bigint>;
     };
@@ -110,6 +107,7 @@ class Factory extends ContractFactory<WalphInstance, WalphTypes.Fields> {
     PoolClose: 2,
     Destroy: 3,
     NewMinTokenAmountToHold: 4,
+    Winner: 5,
   };
   consts = {
     ErrorCodes: {
@@ -129,6 +127,11 @@ class Factory extends ContractFactory<WalphInstance, WalphTypes.Fields> {
   }
 
   tests = {
+    random: async (
+      params: Omit<TestContractParams<WalphTypes.Fields, never>, "testArgs">
+    ): Promise<TestContractResult<bigint>> => {
+      return testMethod(this, "random", params);
+    },
     getPoolState: async (
       params: Omit<TestContractParams<WalphTypes.Fields, never>, "testArgs">
     ): Promise<TestContractResult<boolean>> => {
@@ -144,18 +147,13 @@ class Factory extends ContractFactory<WalphInstance, WalphTypes.Fields> {
     ): Promise<TestContractResult<bigint>> => {
       return testMethod(this, "getBalance", params);
     },
-    random: async (
-      params: Omit<TestContractParams<WalphTypes.Fields, never>, "testArgs">
-    ): Promise<TestContractResult<bigint>> => {
-      return testMethod(this, "random", params);
-    },
     buyTicket: async (
       params: TestContractParams<WalphTypes.Fields, { amount: bigint }>
     ): Promise<TestContractResult<null>> => {
       return testMethod(this, "buyTicket", params);
     },
     distributePrize: async (
-      params: TestContractParams<WalphTypes.Fields, { winner: Address }>
+      params: Omit<TestContractParams<WalphTypes.Fields, never>, "testArgs">
     ): Promise<TestContractResult<null>> => {
       return testMethod(this, "distributePrize", params);
     },
@@ -192,7 +190,7 @@ export const Walph = new Factory(
   Contract.fromJson(
     WalphContractJson,
     "",
-    "c7aea96adf5af497d44ac61e35f253ad4f02d8e67b34a57619599870744f15dd"
+    "cd186769b9cedfdbee1d283c0158072bc93b7a01ad7f54325bc904f74142fece"
   )
 );
 
@@ -275,6 +273,19 @@ export class WalphInstance extends ContractInstance {
     );
   }
 
+  subscribeWinnerEvent(
+    options: EventSubscribeOptions<WalphTypes.WinnerEvent>,
+    fromCount?: number
+  ): EventSubscription {
+    return subscribeContractEvent(
+      Walph.contract,
+      this,
+      options,
+      "Winner",
+      fromCount
+    );
+  }
+
   subscribeAllEvents(
     options: EventSubscribeOptions<
       | WalphTypes.TicketBoughtEvent
@@ -282,6 +293,7 @@ export class WalphInstance extends ContractInstance {
       | WalphTypes.PoolCloseEvent
       | WalphTypes.DestroyEvent
       | WalphTypes.NewMinTokenAmountToHoldEvent
+      | WalphTypes.WinnerEvent
     >,
     fromCount?: number
   ): EventSubscription {
@@ -318,17 +330,6 @@ export class WalphInstance extends ContractInstance {
         Walph,
         this,
         "getBalance",
-        params === undefined ? {} : params,
-        getContractByCodeHash
-      );
-    },
-    random: async (
-      params?: WalphTypes.CallMethodParams<"random">
-    ): Promise<WalphTypes.CallMethodResult<"random">> => {
-      return callMethod(
-        Walph,
-        this,
-        "random",
         params === undefined ? {} : params,
         getContractByCodeHash
       );

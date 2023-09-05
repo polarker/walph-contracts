@@ -25,7 +25,7 @@ describe("unit tests", () => {
   let testContractAddress: string;
   let testParamsFixture: TestContractParams<
     WalphTypes.Fields,
-    { amount: bigint; winner: string }
+    { amount: bigint }
   >;
 
   // We initialize the fixture variables before all tests
@@ -297,34 +297,23 @@ describe("unit tests", () => {
     );
   });
 
-  it("test buy a ticket and then close the pool", async () => {
+  it("test distribute prize pool", async () => {
     const testParams = JSON.parse(JSON.stringify(testParamsFixture));
     testParams.initialFields.open = true;
-    testParams.initialFields.balance =
-      testParams.initialFields.poolSize - 1 * 10 ** 18;
-      testParams.inputAssets[0].address = "1GBvuTs4TosNB9xTCGJL5wABn2xTYCzwa7MnXHphjcj1y"
-
+    testParams.initialFields.balance =  0;
+    testParams.initialAsset.alphAmount = 100 * 10 ** 18;
+    //testParams.initialFields.numAttendees = 10
+    testParams.inputAssets[0].address = "1GBvuTs4TosNB9xTCGJL5wABn2xTYCzwa7MnXHphjcj1y"
+    testParams.testArgs.amount = 10n * 10n ** 18n
 
     const testResult = await Walph.tests.buyTicket(testParams);
     const contractState = testResult.contracts[0] as WalphTypes.State;
-
-    expect(contractState.fields.balance).toEqual(10n * 10n ** 18n);
-    expect(contractState.fields.open).toEqual(false);
-  });
-
-  it("test distribute prize pool", async () => {
-    const testParams = JSON.parse(JSON.stringify(testParamsFixture));
-    testParams.initialFields.open = false;
-    testParams.initialFields.balance = testParams.initialFields.poolSize;
-    testParams.initialAsset.alphAmount = testParams.initialFields.poolSize + 1;
-
-    const testResult = await Walph.tests.distributePrize(testParams);
-    const contractState = testResult.contracts[0] as WalphTypes.State;
-
+    console.log(contractState)
     expect(contractState.fields.balance).toEqual(0n);
     expect(contractState.fields.open).toEqual(true);
     expect(contractState.fields.numAttendees).toEqual(0n);
     expect(contractState.fields.attendees.length).toEqual(10);
+    expect(contractState.fields.lastWinner).toEqual("1GBvuTs4TosNB9xTCGJL5wABn2xTYCzwa7MnXHphjcj1y");
   });
 
 
