@@ -1,0 +1,33 @@
+Contract Walph100(
+    poolSize: U256,
+    poolOwner: Address,
+    poolFees: U256,
+    tokenIdToHold: ByteVec,
+    ticketPrice: U256,
+    mut minTokenAmountToHold: U256,
+    mut open: Bool,
+    mut balance: U256,
+    mut numAttendees: U256,
+    mut attendees: [Address;21],
+    mut lastWinner: Address
+
+) extends Walph(
+    poolSize,
+    poolOwner,
+    poolFees,
+    tokenIdToHold,
+    ticketPrice,
+    minTokenAmountToHold,
+    open,
+    balance,
+    numAttendees,
+    attendees,
+    lastWinner
+    ){
+
+
+        pub fn getCopyBalance() -> (U256){
+            return getBalance()
+        }
+
+}

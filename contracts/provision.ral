@@ -1,0 +1,4 @@
+TxScript Provision(walphContract: Walph){
+    let caller = callerAddress!()
+    walphContract.addAlph{caller -> ALPH: 10 ** 18}()
+}
