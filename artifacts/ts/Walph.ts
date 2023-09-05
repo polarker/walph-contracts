@@ -49,6 +49,17 @@ export namespace WalphTypes {
       Address,
       Address,
       Address,
+      Address,
+      Address,
+      Address,
+      Address,
+      Address,
+      Address,
+      Address,
+      Address,
+      Address,
+      Address,
+      Address,
       Address
     ];
     lastWinner: Address;
@@ -69,6 +80,10 @@ export namespace WalphTypes {
   export type WinnerEvent = ContractEvent<{ address: Address }>;
 
   export interface CallMethodTable {
+    random: {
+      params: Omit<CallContractParams<{}>, "args">;
+      result: CallContractResult<bigint>;
+    };
     getPoolState: {
       params: Omit<CallContractParams<{}>, "args">;
       result: CallContractResult<boolean>;
@@ -147,6 +162,11 @@ class Factory extends ContractFactory<WalphInstance, WalphTypes.Fields> {
     ): Promise<TestContractResult<bigint>> => {
       return testMethod(this, "getBalance", params);
     },
+    addAlph: async (
+      params: Omit<TestContractParams<WalphTypes.Fields, never>, "testArgs">
+    ): Promise<TestContractResult<null>> => {
+      return testMethod(this, "addAlph", params);
+    },
     buyTicket: async (
       params: TestContractParams<WalphTypes.Fields, { amount: bigint }>
     ): Promise<TestContractResult<null>> => {
@@ -190,7 +210,7 @@ export const Walph = new Factory(
   Contract.fromJson(
     WalphContractJson,
     "",
-    "a84f679df7518d32fba2b3efba4fccbccddf4e3b217d4284a6d67cd545a40584"
+    "bf3235141c6a6961a49ab42995d5ea6c5bb802a724057c4855a71618fe235ba6"
   )
 );
 
@@ -301,6 +321,17 @@ export class WalphInstance extends ContractInstance {
   }
 
   methods = {
+    random: async (
+      params?: WalphTypes.CallMethodParams<"random">
+    ): Promise<WalphTypes.CallMethodResult<"random">> => {
+      return callMethod(
+        Walph,
+        this,
+        "random",
+        params === undefined ? {} : params,
+        getContractByCodeHash
+      );
+    },
     getPoolState: async (
       params?: WalphTypes.CallMethodParams<"getPoolState">
     ): Promise<WalphTypes.CallMethodResult<"getPoolState">> => {

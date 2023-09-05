@@ -6,10 +6,11 @@ import {
   NodeProvider,
   SignerProvider,
   Contract,
+  ONE_ALPH,
 } from "@alephium/web3";
 import { PrivateKeyWallet } from "@alephium/web3-wallet";
 import configuration from "../alephium.config";
-import { Walph, WalphTypes } from "../artifacts/ts";
+import { Provision, Walph, WalphTypes } from "../artifacts/ts";
 
 // The `TokenFaucetTypes.WithdrawEvent` is generated in the getting-started guide
 const events: WalphTypes.PoolCloseEvent[] = [];
@@ -32,7 +33,43 @@ const subscribeOptions = {
   },
 };
 
+
+async function provision(privKey: string, group: number, contractName: string) {
+
+  Project.build();
+  const wallet = new PrivateKeyWallet({
+    privateKey: privKey,
+    keyType: undefined,
+    nodeProvider: web3.getCurrentNodeProvider(),
+  });
+
+  //.deployments contains the info of our `TokenFaucet` deployement, as we need to now the contractId and address
+  //This was auto-generated with the `cli deploy` of our `scripts/0_deploy_faucet.ts`
+  const deployments = await Deployments.from(
+    "./artifacts/.deployments." + networkToUse + ".json"
+  );
+  //Make sure it match your address group
+  const accountGroup = group;
+  const deployed = deployments.getDeployedContractResult(
+    accountGroup,
+    contractName
+  );
+  const walpheContractId = deployed.contractInstance.contractId;
+  const walpheContractAddress = deployed.contractInstance.address;
+
+  const walphe = Walph.at(walpheContractAddress);
+  
+  console.log("provision")
+  await Provision.execute(wallet, {
+    initialFields: { walphContract: walpheContractId},
+    attoAlphAmount:  100n*ONE_ALPH + 3n * DUST_AMOUNT,
+  });
+
+}
+
+/*
 async function distribute(privKey: string, group: number, contractName: string) {
+  
   //Connect our wallet, typically in a real application you would connect your web-extension or desktop wallet
 
   // Compile the contracts of the project if they are not compiled
@@ -130,9 +167,9 @@ async function distribute(privKey: string, group: number, contractName: string) 
   } else {
     console.log("`deployed` is undefined");
   }
-}
+}*/
 
-const networkToUse = "testnet";
+const networkToUse = "devnet";
 //Select our network defined in alephium.config.ts
 const network = configuration.networks[networkToUse];
 
@@ -145,6 +182,8 @@ web3.setCurrentNodeProvider(nodeProvider);
 const numberOfKeys = configuration.networks[networkToUse].privateKeys.length
 
 Array.from(Array(numberOfKeys).keys()).forEach((group) => {
-  distribute(configuration.networks[networkToUse].privateKeys[group], group, "Walph");
-  distribute(configuration.networks[networkToUse].privateKeys[group], group, "Walph50HodlAlf");
+  //distribute(configuration.networks[networkToUse].privateKeys[group], group, "Walph");
+  //distribute(configuration.networks[networkToUse].privateKeys[group], group, "Walph50HodlAlf");
+  provision(configuration.networks[networkToUse].privateKeys[group], group, "Walph");
+
 });

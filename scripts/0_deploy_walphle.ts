@@ -1,7 +1,7 @@
 import { Deployer, DeployFunction, Network } from '@alephium/cli'
 import { Settings } from '../alephium.config'
-import { Walph, Walph50HodlAlf, WalphTypes, Walph50HodlAlfTypes } from '../artifacts/ts'
-import { ZERO_ADDRESS } from '@alephium/web3'
+import { Walph, Walph50HodlAlf, WalphTypes, Walph50HodlAlfTypes, Provision } from '../artifacts/ts'
+import { DUST_AMOUNT, ZERO_ADDRESS } from '@alephium/web3'
 
 
 
@@ -31,6 +31,7 @@ const deployWalph: DeployFunction<Settings> = async (
   console.log('Walph contract id: ' + result.contractInstance.contractId)
   console.log('Walph contract address: ' + result.contractInstance.address)
 
+
   poolSize = 50
   const resultSecond = await deployer.deployContract(Walph50HodlAlf, {
 
@@ -54,6 +55,7 @@ const deployWalph: DeployFunction<Settings> = async (
 
   console.log('Walph 50 Hodl Alf contract id: ' + resultSecond.contractInstance.contractId)
   console.log('Walph 50 Hodl Alf contract address: ' + resultSecond.contractInstance.address)
+
 
 
 }
