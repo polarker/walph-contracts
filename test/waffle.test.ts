@@ -95,7 +95,6 @@ describe("unit tests", () => {
     testResult = await Walph.tests.random(testParams);
 
     runs[1] = testResult.returns 
-    console.log(runs)
     expect(runs[0]).not.toEqual(runs[1])
 
   })

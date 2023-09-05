@@ -1,5 +1,5 @@
 {
-  "fullNodeVersion": "v2.3.5",
+  "fullNodeVersion": "v2.5.0",
   "compilerOptionsUsed": {
     "ignoreUnusedConstantsWarnings": false,
     "ignoreUnusedVariablesWarnings": false,
@@ -46,9 +46,9 @@
     },
     "Walph": {
       "sourceFile": "walph.ral",
-      "sourceCodeHash": "605d792bdc8c91e9a6c10fb82b6946edc4640145695fc03fb7fe97f12dbd8bcd",
+      "sourceCodeHash": "b747646bb6e6efd549a7955c7549f631778a0fe4ca7ce04f1d2cc50c3a931eb0",
       "bytecodeDebugPatch": "",
-      "codeHashDebug": "7a4c53561ad2ee757c8424060129c60e1e45c785af5f760fdd03a5d2b835903b",
+      "codeHashDebug": "a84f679df7518d32fba2b3efba4fccbccddf4e3b217d4284a6d67cd545a40584",
       "warnings": []
     },
     "Walph50HodlAlf": {

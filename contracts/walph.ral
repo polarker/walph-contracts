@@ -79,11 +79,11 @@ Contract Walph(
         // last person to complete the pool close it and start the draw
         if(balance >= poolSize){
             open = false
-            distributePrize{selfAddress!() -> ALPH: balance}()
+            distributePrize{caller -> ALPH: amount}()
         }
     }
 
-    @using(preapprovedAssets = true, updateFields = true, checkExternalCaller = false)
+    @using(preapprovedAssets = true, assetsInContract = false, updateFields = true, checkExternalCaller = false)
     fn distributePrize() -> (){
         checkCaller!(callerAddress!() == selfAddress!(), ErrorCodes.InvalidCaller)
         assert!(!open, ErrorCodes.PoolAlreadyClose)

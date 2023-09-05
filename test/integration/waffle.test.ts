@@ -84,14 +84,12 @@ describe('integration tests', () => {
       }
     })
 
-      // simulate someone buying tickets until pool full
-      for (let i = 0; i < 10; i++) {
+      // simulate someone buying tickets
+      for (let i = 0; i < 9; i++) {
         await BuyWithoutToken.execute(rndSignerBuy, {
           initialFields: {walphContract: walphleContractId , amount: ONE_ALPH},
           attoAlphAmount: ONE_ALPH + 3n * DUST_AMOUNT,
-          tokens: [
-           { id: tokenIdToHold, amount: 1n }
-          ]
+          
         })
         
       }
@@ -103,22 +101,32 @@ describe('integration tests', () => {
       const afterPoolFullAttendeesState = afterPoolFull.fields.attendees
 
 
-      console.log("Pool state: "+afterPoolFullOpenState + " Balance: "+afterPoolFullBalanceState/10n**18n)
-      expect(afterPoolFullOpenState).toEqual(false)
-      expect(afterPoolFullBalanceState).toEqual(10n * 10n ** 18n)
-      expect(afterPoolFullNumAttendeesState).toEqual(10n)
-      expect(afterPoolFullAttendeesState).toEqual(Array(10).fill(rndSignerBuy.address) as WalphTypes.Fields["attendees"])
+      console.log("Pool state: "+afterPoolFullOpenState + " Balance: "+afterPoolFullBalanceState/10n**18n+ " Attendees: " + afterPoolFullAttendeesState)
+      let expectedArray = Array(9).fill(rndSignerBuy.address) as WalphTypes.Fields["attendees"]
+      expectedArray[9] = ZERO_ADDRESS
+
+      expect(afterPoolFullOpenState).toEqual(true)
+      expect(afterPoolFullBalanceState).toEqual(9n * 10n ** 18n)
+      expect(afterPoolFullNumAttendeesState).toEqual(9n)
+      expect(afterPoolFullAttendeesState).toEqual(expectedArray)
 
 
-      expect(ticketBoughtEvents.length).toEqual(10)
+      expect(ticketBoughtEvents.length).toEqual(9)
       
+      //buy last ticket to draw the pool
+      await BuyWithoutToken.execute(rndSignerBuy, {
+        initialFields: {walphContract: walphleContractId , amount: ONE_ALPH},
+        attoAlphAmount: 21n * 10n ** 18n + 3n * DUST_AMOUNT,
+        
+      })
+
       const afterPoolDistribution = await walphleDeployed.fetchState()
       const afterPoolDistributionOpenState = afterPoolDistribution.fields.open
       const afterPoolDistributionBalanceState = afterPoolDistribution.fields.balance
       const afterPoolDistributionNumAttendeesState = afterPoolDistribution.fields.numAttendees
       const afterPoolDistributionWinner = afterPoolDistribution.fields.lastWinner
 
-      console.log("Pool state: "+afterPoolDistributionOpenState + " Balance: "+afterPoolDistributionBalanceState/10n**18n)
+      console.log("Pool state: "+afterPoolDistributionOpenState + " Balance: "+afterPoolDistributionBalanceState/10n**18n + " Fields: "+ afterPoolDistribution.fields)
       expect(afterPoolDistributionOpenState).toEqual(true)
       expect(afterPoolDistributionBalanceState).toEqual(0n)
       expect(afterPoolDistributionNumAttendeesState).toEqual(0n)
