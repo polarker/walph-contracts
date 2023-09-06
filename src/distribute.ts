@@ -62,7 +62,7 @@ async function provision(privKey: string, group: number, contractName: string) {
   console.log("provision")
   await Provision.execute(wallet, {
     initialFields: { walphContract: walpheContractId},
-    attoAlphAmount:  100n*ONE_ALPH + 3n * DUST_AMOUNT,
+    attoAlphAmount:  ONE_ALPH + 3n * DUST_AMOUNT,
   });
 
 }
@@ -169,7 +169,7 @@ async function distribute(privKey: string, group: number, contractName: string) 
   }
 }*/
 
-const networkToUse = "devnet";
+const networkToUse = "testnet";
 //Select our network defined in alephium.config.ts
 const network = configuration.networks[networkToUse];
 

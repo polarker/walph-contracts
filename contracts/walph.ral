@@ -106,6 +106,8 @@ Contract Walph(
            open = true
            emit PoolOpen()
            emit Winner(lastWinner)
+           emit Debug(`The current balance is ${balance/10**18}`)
+           emit Debug(`The current token remaining is ${tokenRemaining!(selfAddress!(), ALPH)/10**18}`)
         }
     }
 

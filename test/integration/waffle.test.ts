@@ -126,9 +126,12 @@ describe('integration tests', () => {
       //buy last ticket to draw the pool
       await BuyWithoutToken.execute(rndSignerBuy, {
         initialFields: {walphContract: walphleContractId , amount: ONE_ALPH},
-        attoAlphAmount: 21n * 10n ** 18n + 3n * DUST_AMOUNT,
+        attoAlphAmount: ONE_ALPH + 3n * DUST_AMOUNT,
         
       })
+
+      const contractAfterPoolDistributionBalance = await web3.getCurrentNodeProvider().addresses.getAddressesAddressBalance(walphContractAddress)
+      expect(contractAfterPoolDistributionBalance.balanceHint).toEqual("2 ALPH")
 
       const afterPoolDistribution = await walphleDeployed.fetchState()
       const afterPoolDistributionOpenState = afterPoolDistribution.fields.open
@@ -137,18 +140,18 @@ describe('integration tests', () => {
       const afterPoolDistributionWinner = afterPoolDistribution.fields.lastWinner
 
       console.log("Pool state: "+afterPoolDistributionOpenState + " Balance: "+afterPoolDistributionBalanceState/10n**18n + " Fields: "+ JSON.stringify(afterPoolDistribution.fields))
-      /* expect(afterPoolDistributionOpenState).toEqual(true)
+      expect(afterPoolDistributionOpenState).toEqual(true)
       expect(afterPoolDistributionBalanceState).toEqual(0n)
       expect(afterPoolDistributionNumAttendeesState).toEqual(0n)
-      expect(afterPoolDistributionWinner).toEqual('18vsJ3xDBnSt2aXRSQ7QRTPrVVkjZuTXtxvV1x8mvm3Nz') */
+      expect(afterPoolDistributionWinner).toEqual('18vsJ3xDBnSt2aXRSQ7QRTPrVVkjZuTXtxvV1x8mvm3Nz')
 
       subscription.unsubscribe()
 
-      await Destroy.execute(signer, {
+     /* await Destroy.execute(signer, {
         initialFields: { walphContract: walphleContractId},
         attoAlphAmount: DUST_AMOUNT
 
-      })
+      }) */
 
       /*
       const contractBalance = await web3.getCurrentNodeProvider().addresses.getAddressesAddressBalance(walphContractAddress)
