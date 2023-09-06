@@ -95,10 +95,10 @@ describe('integration tests', () => {
       expect(contractBalance.balanceHint).toEqual("2 ALPH")
 
       // simulate someone buying tickets
-      for (let i = 0; i < 10; i++) {
+      for (let i = 0; i < 9; i++) {
         await BuyWithoutToken.execute(rndSignerBuy, {
           initialFields: {walphContract: walphleContractId , amount: ONE_ALPH},
-          attoAlphAmount: ONE_ALPH + 3n * DUST_AMOUNT,
+          attoAlphAmount:  ONE_ALPH + 3n * DUST_AMOUNT,
           
         })
         
@@ -126,7 +126,7 @@ describe('integration tests', () => {
       //buy last ticket to draw the pool
       await BuyWithoutToken.execute(rndSignerBuy, {
         initialFields: {walphContract: walphleContractId , amount: ONE_ALPH},
-        attoAlphAmount: 1n * 10n ** 18n + 3n * DUST_AMOUNT,
+        attoAlphAmount: 21n * 10n ** 18n + 3n * DUST_AMOUNT,
         
       })
 

@@ -8,7 +8,7 @@ Contract Walph(
     mut open: Bool,
     mut balance: U256,
     mut numAttendees: U256,
-    mut attendees: [Address;21],
+    mut attendees: [Address;10],
     mut lastWinner: Address
 ){
     
@@ -65,8 +65,8 @@ Contract Walph(
         let caller = callerAddress!()
         assert!(balance + amount <= poolSize, ErrorCodes.PoolFull)
         assert!(open, ErrorCodes.PoolClosed)
-        assert!(addModN!(amount,0,10**18) == 0, ErrorCodes.InvalidAmount) //dirty
-        if(minTokenAmountToHold > 0){
+        assert!(addModN!(amount,0,10 ** 18) == 0, ErrorCodes.InvalidAmount) // dirty
+        if (minTokenAmountToHold > 0){
             assert!(tokenRemaining!(caller, tokenIdToHold) >= minTokenAmountToHold, ErrorCodes.NotEnoughToken)
         }
         
@@ -77,7 +77,7 @@ Contract Walph(
 
         let numberTicketsBought = amount / ticketPrice
         let mut numberPlaceCounter = 0
-        while(numberPlaceCounter < numberTicketsBought){
+        while (numberPlaceCounter < numberTicketsBought){
             attendees[numAttendees] = caller
             numAttendees = numAttendees + 1
             numberPlaceCounter = numberPlaceCounter + 1
@@ -86,22 +86,24 @@ Contract Walph(
 
 
         // last person to complete the pool close it and start the draw
-        if(balance >= poolSize){
+        if (balance >= poolSize){
             open = false
-            distributePrize{selfAddress!() -> ALPH: balance}()
+            let winnerAmount = balance * poolFees/100
+            let poolOwnerAmount = balance - winnerAmount
+            distributePrize{caller -> ALPH: winnerAmount, ALPH: poolOwnerAmount}(poolOwnerAmount, winnerAmount)
         }
     }
 
     @using(preapprovedAssets = true, assetsInContract = false, updateFields = true, checkExternalCaller = false)
-    fn distributePrize() -> (){
+    pub fn distributePrize(poolAmount: U256, winnerAmount: U256) -> (){
         checkCaller!(callerAddress!() == selfAddress!(), ErrorCodes.InvalidCaller)
         assert!(!open, ErrorCodes.PoolAlreadyClose)
         assert!(balance >= poolSize, ErrorCodes.PoolNotFull)
 
         lastWinner = attendees[random()]
         
-        transferTokenFromSelf!(poolOwner, ALPH, balance * poolFees/100 )
-        transferTokenFromSelf!(lastWinner, ALPH, balance - (balance * poolFees/100))
+        transferTokenFromSelf!(poolOwner, ALPH, poolAmount)
+        transferTokenFromSelf!(lastWinner, ALPH, winnerAmount)
 
         balance = 0
         numAttendees = 0

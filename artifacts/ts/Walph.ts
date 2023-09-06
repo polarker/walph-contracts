@@ -49,17 +49,6 @@ export namespace WalphTypes {
       Address,
       Address,
       Address,
-      Address,
-      Address,
-      Address,
-      Address,
-      Address,
-      Address,
-      Address,
-      Address,
-      Address,
-      Address,
-      Address,
       Address
     ];
     lastWinner: Address;
@@ -173,7 +162,10 @@ class Factory extends ContractFactory<WalphInstance, WalphTypes.Fields> {
       return testMethod(this, "buyTicket", params);
     },
     distributePrize: async (
-      params: Omit<TestContractParams<WalphTypes.Fields, never>, "testArgs">
+      params: TestContractParams<
+        WalphTypes.Fields,
+        { poolAmount: bigint; winnerAmount: bigint }
+      >
     ): Promise<TestContractResult<null>> => {
       return testMethod(this, "distributePrize", params);
     },
@@ -210,7 +202,7 @@ export const Walph = new Factory(
   Contract.fromJson(
     WalphContractJson,
     "",
-    "bf3235141c6a6961a49ab42995d5ea6c5bb802a724057c4855a71618fe235ba6"
+    "b0673e3aba270e19a53e115fe77d25b8e0760dfc0228263949adc94153e75500"
   )
 );
 
