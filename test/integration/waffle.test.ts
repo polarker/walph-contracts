@@ -3,6 +3,7 @@ import { NodeWallet, PrivateKeyWallet } from '@alephium/web3-wallet'
 import { Walph, Buy, Open,Close, WalphTypes, Destroy, BuyWithoutToken, Provision } from '../../artifacts/ts'
 import configuration, { Settings } from '../../alephium.config'
 import * as dotenv from 'dotenv'
+import { waitTxConfirmed } from '@alephium/cli'
 
 dotenv.config()
 
@@ -124,11 +125,13 @@ describe('integration tests', () => {
       expect(ticketBoughtEvents.length).toEqual(9)
       
       //buy last ticket to draw the pool
-      await BuyWithoutToken.execute(rndSignerBuy, {
+      const tx = await BuyWithoutToken.execute(rndSignerBuy, {
         initialFields: {walphContract: walphleContractId , amount: ONE_ALPH},
         attoAlphAmount: ONE_ALPH + 3n * DUST_AMOUNT,
         
       })
+      console.log("Stuck transactions: "+tx.txId)
+      await waitTxConfirmed(web3.getCurrentNodeProvider(),tx.txId,1,10)
 
       const contractAfterPoolDistributionBalance = await web3.getCurrentNodeProvider().addresses.getAddressesAddressBalance(walphContractAddress)
       expect(contractAfterPoolDistributionBalance.balanceHint).toEqual("2 ALPH")
