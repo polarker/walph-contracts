@@ -87,10 +87,25 @@ Contract Walph(
 
         // last person to complete the pool close it and start the draw
         if (balance >= poolSize){
+            assert!(balance >= poolSize, ErrorCodes.PoolNotFull)
             open = false
+            emit Debug(`The current balance is ${balance/10**18}`)
+            emit Debug(`The current token remaining is ${tokenRemaining!(selfAddress!(), ALPH)/10**18}`)
+
             let winnerAmount = balance * poolFees/100
             let poolOwnerAmount = balance - winnerAmount
-            distributePrize{caller -> ALPH: winnerAmount, ALPH: poolOwnerAmount}(poolOwnerAmount, winnerAmount)
+           // distributePrize{caller -> ALPH: winnerAmount; selfAddress!() -> ALPH: poolOwnerAmount}(poolOwnerAmount, winnerAmount)
+           lastWinner = attendees[random()]
+
+           transferTokenFromSelf!(poolOwner, ALPH, poolOwnerAmount)
+           transferTokenFromSelf!(lastWinner, ALPH, winnerAmount)
+
+           balance = 0
+           numAttendees = 0
+   
+           open = true
+           emit PoolOpen()
+           emit Winner(lastWinner)
         }
     }
 

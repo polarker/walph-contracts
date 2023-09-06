@@ -53,9 +53,9 @@
     },
     "Walph": {
       "sourceFile": "walph.ral",
-      "sourceCodeHash": "30c1b07215bc6f4cee1fd3db9114a088807c615eaf2c08a31fdb11f6c6cd0e0e",
-      "bytecodeDebugPatch": "",
-      "codeHashDebug": "b0673e3aba270e19a53e115fe77d25b8e0760dfc0228263949adc94153e75500",
+      "sourceCodeHash": "ed45ff207eafe01dec9d4c07a63de6da891b9561f002247c7e68dfbd22cd8405",
+      "bytecodeDebugPatch": "=24-2+5a=2+98=1+1=1+f=2-2+c=1-3=2-2+da=2-2+ed=1+20=1-2=170-2+84=230-2+38=22+a002130a1312832d7e02175468652063757272656e742062616c616e63652069732000b2a4130a1312832d7e021f5468652063757272656e7420746f6b656e2072656d61696e696e672069732000=444",
+      "codeHashDebug": "633846ab5f5f8f325acdc06e31d8a0b469749d0d4e4558feb5628a6f3ad57d85",
       "warnings": []
     },
     "Walph50HodlAlf": {

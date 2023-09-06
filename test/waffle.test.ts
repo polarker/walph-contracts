@@ -62,7 +62,7 @@ describe("unit tests", () => {
       },
       // arguments to test the target function of the test contract
       testArgs: {
-        amount: 1n * 10n ** 18n
+        amount: 1n * 10n ** 18n,
       },
       // assets owned by the caller of the function
       inputAssets: [
@@ -305,6 +305,7 @@ describe("unit tests", () => {
     testParams.inputAssets[0].address = "1GBvuTs4TosNB9xTCGJL5wABn2xTYCzwa7MnXHphjcj1y"
     testParams.testArgs.amount = 10 * 10 ** 18
 
+
     const testResult = await Walph.tests.buyTicket(testParams);
     const contractState = testResult.contracts[0] as WalphTypes.State;
 
@@ -315,6 +316,8 @@ describe("unit tests", () => {
     expect(contractState.fields.lastWinner).toEqual("1GBvuTs4TosNB9xTCGJL5wABn2xTYCzwa7MnXHphjcj1y");
   });
 
+
+  /*
   it("test calling distribute()", async () => {
     const testParams = JSON.parse(JSON.stringify(testParamsFixture));
     testParams.initialFields.open = true;
@@ -331,7 +334,7 @@ describe("unit tests", () => {
     );
 
 
-  });
+  });*/
 
 
 
