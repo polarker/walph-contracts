@@ -4,6 +4,7 @@ import { Walph, Buy, Open,Close, WalphTypes, Destroy, BuyWithoutToken, Provision
 import configuration, { Settings } from '../../alephium.config'
 import * as dotenv from 'dotenv'
 import { waitTxConfirmed } from '@alephium/cli'
+import { testPrivateKey } from '@alephium/web3-test'
 
 dotenv.config()
 
@@ -20,10 +21,10 @@ describe('integration tests', () => {
   beforeAll(async () => {
     web3.setCurrentNodeProvider(configuration.networks[networkToUse].nodeUrl, undefined, fetch)
     await Project.build()
-
-  signer = new PrivateKeyWallet({privateKey: configuration.networks[networkToUse].privateKeys[0] , keyType: undefined, nodeProvider: web3.getCurrentNodeProvider()})
   
-  rndSignerBuy = new PrivateKeyWallet({privateKey: configuration.networks[networkToUse].privateKeys[1] , keyType: undefined, nodeProvider: web3.getCurrentNodeProvider()})
+ // rndSignerBuy = new PrivateKeyWallet({privateKey: configuration.networks[networkToUse].privateKeys[1] , keyType: undefined, nodeProvider: web3.getCurrentNodeProvider()})
+
+  signer = new PrivateKeyWallet({ privateKey: testPrivateKey })
 
   signerAddress = await signer.account.address
   testGroup = signer.account.group
@@ -97,7 +98,7 @@ describe('integration tests', () => {
 
       // simulate someone buying tickets
       for (let i = 0; i < 9; i++) {
-        await BuyWithoutToken.execute(rndSignerBuy, {
+        await BuyWithoutToken.execute(signer, {
           initialFields: {walphContract: walphleContractId , amount: ONE_ALPH},
           attoAlphAmount:  ONE_ALPH + 3n * DUST_AMOUNT,
           
@@ -113,7 +114,7 @@ describe('integration tests', () => {
 
 
       console.log("Pool state: "+afterPoolFullOpenState + " Balance: "+afterPoolFullBalanceState/10n**18n+ " Attendees: " + afterPoolFullAttendeesState)
-      let expectedArray = Array(9).fill(rndSignerBuy.address) as WalphTypes.Fields["attendees"]
+      let expectedArray = Array(9).fill(signer.address) as WalphTypes.Fields["attendees"]
       expectedArray[9] = ZERO_ADDRESS
 
       expect(afterPoolFullOpenState).toEqual(true)
@@ -125,7 +126,7 @@ describe('integration tests', () => {
       expect(ticketBoughtEvents.length).toEqual(9)
       
       //buy last ticket to draw the pool
-      const tx = await BuyWithoutToken.execute(rndSignerBuy, {
+      const tx = await BuyWithoutToken.execute(signer, {
         initialFields: {walphContract: walphleContractId , amount: ONE_ALPH},
         attoAlphAmount: ONE_ALPH + 3n * DUST_AMOUNT,
         
