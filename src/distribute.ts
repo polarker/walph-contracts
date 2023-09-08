@@ -66,8 +66,8 @@ async function provision(privKey: string, group: number, contractName: string) {
     console.log("Actual contract balance: "+balanceContract.balanceHint)
 
     await Provision.execute(wallet, {
-      initialFields: { walphContract: walpheContractId, amount: 21n * ONE_ALPH},
-      attoAlphAmount:  21n*ONE_ALPH + 21n * DUST_AMOUNT,
+      initialFields: { walphContract: walpheContractId, amount: 210n * ONE_ALPH},
+      attoAlphAmount:  210n*ONE_ALPH + 21n * DUST_AMOUNT,
     });
   } else {
     console.log("enough ALPH provisionned for "+ walpheContractAddress+ " with "+ wallet.address)
@@ -77,7 +77,7 @@ async function provision(privKey: string, group: number, contractName: string) {
 }
 
 
-const networkToUse = "testnet";
+const networkToUse = "devnet";
 //Select our network defined in alephium.config.ts
 const network = configuration.networks[networkToUse];
 

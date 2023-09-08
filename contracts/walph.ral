@@ -39,6 +39,30 @@ Contract Walph(
         return addModN!(0,seed, numAttendees)
     }
 
+    @using(preapprovedAssets = true, assetsInContract = false, updateFields = true, checkExternalCaller = false)
+    fn distributePrize() -> (){
+         checkCaller!(callerAddress!() == selfAddress!(), ErrorCodes.InvalidCaller)
+         assert!(!open, ErrorCodes.PoolAlreadyClose)
+         assert!(balance >= poolSize, ErrorCodes.PoolNotFull)
+
+         lastWinner = attendees[random()]
+
+         let poolOwnerAmount = balance * poolFees/100
+         let winnerAmount = balance - poolOwnerAmount
+         balance = 0
+
+         transferTokenFromSelf!(poolOwner, ALPH, poolOwnerAmount)
+         transferTokenFromSelf!(lastWinner, ALPH, winnerAmount)
+
+         numAttendees = 0
+
+         open = true
+         emit PoolOpen()
+         emit Winner(lastWinner)
+
+     }
+
+
     pub fn getPoolState() -> (Bool) {
         return open
     }
@@ -96,28 +120,6 @@ Contract Walph(
        }
     }
 
-     @using(preapprovedAssets = true, assetsInContract = false, updateFields = true, checkExternalCaller = false)
-    fn distributePrize() -> (){
-         checkCaller!(callerAddress!() == selfAddress!(), ErrorCodes.InvalidCaller)
-         assert!(!open, ErrorCodes.PoolAlreadyClose)
-         assert!(balance >= poolSize, ErrorCodes.PoolNotFull)
-
-         lastWinner = attendees[random()]
-
-         let poolOwnerAmount = balance * poolFees/100
-         let winnerAmount = balance - poolOwnerAmount
-         balance = 0
-
-         transferTokenFromSelf!(poolOwner, ALPH, poolOwnerAmount)
-         transferTokenFromSelf!(lastWinner, ALPH, winnerAmount)
-
-         numAttendees = 0
-
-         open = true
-         emit PoolOpen()
-         emit Winner(lastWinner)
-
-     }
 
     @using(updateFields = true, checkExternalCaller = true)
     pub fn closePool() -> (){
