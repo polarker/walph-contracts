@@ -104,11 +104,11 @@ Contract Walph(
 
          lastWinner = attendees[random()]
 
-         let winnerAmount = balance * poolFees/100
-         let poolAmount = balance - winnerAmount
+         let poolOwnerAmount = balance * poolFees/100
+         let winnerAmount = balance - poolOwnerAmount
          balance = 0
 
-         transferTokenFromSelf!(poolOwner, ALPH, poolAmount)
+         transferTokenFromSelf!(poolOwner, ALPH, poolOwnerAmount)
          transferTokenFromSelf!(lastWinner, ALPH, winnerAmount)
 
          numAttendees = 0
