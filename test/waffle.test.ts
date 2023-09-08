@@ -25,7 +25,7 @@ describe("unit tests", () => {
   let testContractAddress: string;
   let testParamsFixture: TestContractParams<
     WalphTypes.Fields,
-    { amount: bigint; winner: string }
+    { amount: bigint }
   >;
 
   // We initialize the fixture variables before all tests
@@ -63,8 +63,6 @@ describe("unit tests", () => {
       // arguments to test the target function of the test contract
       testArgs: {
         amount: 1n * 10n ** 18n,
-        winner: PrivateKeyWallet.Random(0, web3.getCurrentNodeProvider())
-          .account.address,
       },
       // assets owned by the caller of the function
       inputAssets: [
@@ -83,6 +81,24 @@ describe("unit tests", () => {
       ],
     };
   });
+
+  it("test try random", async () => {
+    const testParams = JSON.parse(JSON.stringify(testParamsFixture));
+    testParams.initialFields.numAttendees = 10
+    let runs = [0n,0n]
+
+    // open the pool
+    let testResult = await Walph.tests.random(testParams);
+    runs[0] = testResult.returns
+    
+    testResult = await Walph.tests.random(testParams);
+
+    runs[1] = testResult.returns
+    console.log(runs)
+
+    expect(runs[0]).not.toEqual(runs[1])
+
+  })
 
   it("test opening and closing pool", async () => {
     const testParams = JSON.parse(JSON.stringify(testParamsFixture));
@@ -121,22 +137,6 @@ describe("unit tests", () => {
       Walph.tests.closePool(testParams),
       testContractAddress,
       1
-    );
-  });
-
-  it("test try to close a not full pool", async () => {
-    const testParams = JSON.parse(JSON.stringify(testParamsFixture));
-    testParams.initialFields.open = true;
-    const randomAddress = PrivateKeyWallet.Random(
-      0,
-      web3.getCurrentNodeProvider()
-    ).account.address;
-    testParams.inputAssets[0].address = randomAddress;
-
-    await expectAssertionError(
-      Walph.tests.closePoolWhenFull(testParams),
-      testContractAddress,
-      6
     );
   });
 
@@ -281,35 +281,46 @@ describe("unit tests", () => {
     );
   });
 
-  it("test buy a ticket and then close the pool", async () => {
+  it("test distribute prize pool", async () => {
     const testParams = JSON.parse(JSON.stringify(testParamsFixture));
     testParams.initialFields.open = true;
-    testParams.initialFields.balance =
-      testParams.initialFields.poolSize - 1 * 10 ** 18;
-      testParams.inputAssets[0].address = "1GBvuTs4TosNB9xTCGJL5wABn2xTYCzwa7MnXHphjcj1y"
+    testParams.initialFields.balance =  0;
+    testParams.initialAsset.alphAmount = 100 * 10 ** 18;
+    //testParams.initialFields.numAttendees = 10
+    testParams.inputAssets[0].address = "1GBvuTs4TosNB9xTCGJL5wABn2xTYCzwa7MnXHphjcj1y"
+    testParams.testArgs.amount = 10 * 10 ** 18
 
 
     const testResult = await Walph.tests.buyTicket(testParams);
-    const contractState = testResult.contracts[0] as WalphTypes.State;
-
-    expect(contractState.fields.balance).toEqual(10n * 10n ** 18n);
-    expect(contractState.fields.open).toEqual(false);
-  });
-
-  it("test distribute prize pool", async () => {
-    const testParams = JSON.parse(JSON.stringify(testParamsFixture));
-    testParams.initialFields.open = false;
-    testParams.initialFields.balance = testParams.initialFields.poolSize;
-    testParams.initialAsset.alphAmount = testParams.initialFields.poolSize + 1;
-
-    const testResult = await Walph.tests.distributePrize(testParams);
     const contractState = testResult.contracts[0] as WalphTypes.State;
 
     expect(contractState.fields.balance).toEqual(0n);
     expect(contractState.fields.open).toEqual(true);
     expect(contractState.fields.numAttendees).toEqual(0n);
     expect(contractState.fields.attendees.length).toEqual(10);
+    expect(contractState.fields.lastWinner).toEqual("1GBvuTs4TosNB9xTCGJL5wABn2xTYCzwa7MnXHphjcj1y");
   });
+
+
+  /*
+  it("test calling distribute()", async () => {
+    const testParams = JSON.parse(JSON.stringify(testParamsFixture));
+    testParams.initialFields.open = true;
+    testParams.initialFields.balance =  0;
+    testParams.initialAsset.alphAmount = 100 * 10 ** 18;
+    //testParams.initialFields.numAttendees = 10
+    testParams.inputAssets[0].address = "1GBvuTs4TosNB9xTCGJL5wABn2xTYCzwa7MnXHphjcj1y"
+    testParams.testArgs.amount = 10 * 10 ** 18
+
+    await expectAssertionError(
+      Walph.tests.distributePrize(testParams),
+      testContractAddress,
+      4
+    );
+
+
+  });*/
+
 
 
   it("test change token amount to hodl", async () => {

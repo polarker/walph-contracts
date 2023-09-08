@@ -6,10 +6,11 @@ import {
   NodeProvider,
   SignerProvider,
   Contract,
+  ONE_ALPH,
 } from "@alephium/web3";
 import { PrivateKeyWallet } from "@alephium/web3-wallet";
 import configuration from "../alephium.config";
-import { Walph, Distribute, WalphTypes } from "../artifacts/ts";
+import { Provision, Walph, WalphTypes } from "../artifacts/ts";
 
 // The `TokenFaucetTypes.WithdrawEvent` is generated in the getting-started guide
 const events: WalphTypes.PoolCloseEvent[] = [];
@@ -32,10 +33,9 @@ const subscribeOptions = {
   },
 };
 
-async function distribute(privKey: string, group: number, contractName: string) {
-  //Connect our wallet, typically in a real application you would connect your web-extension or desktop wallet
 
-  // Compile the contracts of the project if they are not compiled
+async function provision(privKey: string, group: number, contractName: string) {
+
   Project.build();
   const wallet = new PrivateKeyWallet({
     privateKey: privKey,
@@ -54,83 +54,28 @@ async function distribute(privKey: string, group: number, contractName: string) 
     accountGroup,
     contractName
   );
+  const walpheContractId = deployed.contractInstance.contractId;
+  const walpheContractAddress = deployed.contractInstance.address;
 
-  if (deployed !== undefined) {
-    const walpheContractId = deployed.contractInstance.contractId;
-    const walpheContractAddress = deployed.contractInstance.address;
+  const walphe = Walph.at(walpheContractAddress);
+  
+  const balanceContract = await nodeProvider.addresses.getAddressesAddressBalance(walpheContractAddress)
+  
+  if ( Number(balanceContract.balance) < 21 *10 ** 18){
+    console.log("provision "+ walpheContractAddress+ " with "+ wallet.address)
+    console.log("Actual contract balance: "+balanceContract.balanceHint)
 
-    const walphe = Walph.at(walpheContractAddress);
-
-    // Subscribe the contract events from index 0
-    const subscription = walphe.subscribePoolCloseEvent(
-      subscribeOptions,
-      group
-    );
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    let awaitForTx = false;
-    // Submit a transaction to use the transaction script
-    // It uses our `wallet` to sing the transaction.
-    const waitDistribution = setInterval(async function () {
-      console.log(contractName + " Group " + group + " - Wait for close event");
-      let state = await walphe.fetchState();
-      let numEventsClosePool = events.length;
-
-      if (
-        (events.length > numEventsClosePool ||
-          (state.fields.balance >= state.fields.poolSize &&
-            !state.fields.open)) &&
-        !awaitForTx
-      ) {
-        //clearInterval(timeout)
-        state = await walphe.fetchState();
-        numEventsClosePool = events.length;
-        const attendees = state.fields.attendees;
-        const winner = attendees[Math.floor(Math.random() * attendees.length)];
-
-        console.log(
-          contractName + " Group" + group + " - Distribution started with " + wallet.address
-        );
-
-        const distributionTX = await Distribute.execute(wallet, {
-          initialFields: { walphContract: walpheContractId, winner: winner },
-          attoAlphAmount: DUST_AMOUNT,
-        });
-
-        console.log(contractName + " Group" + group + " - Winner: " + winner);
-        console.log(
-          contractName + " Group" +
-            group +
-            " - Waiting for tx distribution " +
-            distributionTX.txId
-        );
-
-        awaitForTx = true;
-        await waitTxConfirmed(nodeProvider, distributionTX.txId, 1, 1000);
-        console.log(contractName + " Group" + group + " - distribution done");
-        awaitForTx = false;
-      }
-    }, 40000);
-
-    if (waitDistribution === undefined) {
-      // Unsubscribe
-      subscription.unsubscribe();
-      console.log("unsubscribe");
-    }
-
-    let state = await walphe.fetchState();
-    console.log(state.fields);
-
-    // Fetch wallet balance see if token is there
-    const balance =
-      await wallet.nodeProvider.addresses.getAddressesAddressBalance(
-        walpheContractAddress
-      );
-    console.log(balance);
+    await Provision.execute(wallet, {
+      initialFields: { walphContract: walpheContractId, amount: 21n * ONE_ALPH},
+      attoAlphAmount:  21n*ONE_ALPH + 21n * DUST_AMOUNT,
+    });
   } else {
-    console.log("`deployed` is undefined");
+    console.log("enough ALPH provisionned for "+ walpheContractAddress+ " with "+ wallet.address)
+    console.log("Actual contract balance: "+balanceContract.balanceHint)
   }
+  console.log("\n")
 }
+
 
 const networkToUse = "testnet";
 //Select our network defined in alephium.config.ts
@@ -145,6 +90,8 @@ web3.setCurrentNodeProvider(nodeProvider);
 const numberOfKeys = configuration.networks[networkToUse].privateKeys.length
 
 Array.from(Array(numberOfKeys).keys()).forEach((group) => {
-  distribute(configuration.networks[networkToUse].privateKeys[group], group, "Walph");
-  distribute(configuration.networks[networkToUse].privateKeys[group], group, "Walph50HodlAlf");
+  //distribute(configuration.networks[networkToUse].privateKeys[group], group, "Walph");
+  //distribute(configuration.networks[networkToUse].privateKeys[group], group, "Walph50HodlAlf");
+  provision(configuration.networks[networkToUse].privateKeys[group], group, "Walph");
+
 });
