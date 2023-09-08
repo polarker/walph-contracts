@@ -62,15 +62,18 @@ async function provision(privKey: string, group: number, contractName: string) {
   const balanceContract = await nodeProvider.addresses.getAddressesAddressBalance(walpheContractAddress)
   
   if ( Number(balanceContract.balance) < 21 *10 ** 18){
-    console.log("provision "+ walpheContractAddress+ " with "+ wallet.address+" .Actual contract balance: "+Number(balanceContract.balance)/10**18)
+    console.log("provision "+ walpheContractAddress+ " with "+ wallet.address)
+    console.log("Actual contract balance: "+balanceContract.balanceHint)
 
     await Provision.execute(wallet, {
       initialFields: { walphContract: walpheContractId, amount: 21n * ONE_ALPH},
       attoAlphAmount:  21n*ONE_ALPH + 21n * DUST_AMOUNT,
     });
   } else {
-    console.log("enough ALPH provisionned for "+ walpheContractAddress+ " with "+ wallet.address+" .Actual contract balance: "+Number(balanceContract.balance)/10**18)
+    console.log("enough ALPH provisionned for "+ walpheContractAddress+ " with "+ wallet.address)
+    console.log("Actual contract balance: "+balanceContract.balanceHint)
   }
+  console.log("\n")
 }
 
 

@@ -89,12 +89,12 @@ describe('integration tests', () => {
 
       await Provision.execute(signer, {
         initialFields: {walphContract: walphleContractId, amount: 10n * ONE_ALPH},
-        attoAlphAmount: ONE_ALPH + 3n * DUST_AMOUNT,
+        attoAlphAmount: 10n*ONE_ALPH + 3n * DUST_AMOUNT,
         
       })
 
       const contractBalance = await web3.getCurrentNodeProvider().addresses.getAddressesAddressBalance(walphContractAddress)
-      expect(contractBalance.balanceHint).toEqual("2 ALPH")
+      expect(contractBalance.balanceHint).toEqual("11 ALPH")
 
       // simulate someone buying tickets
       for (let i = 0; i < 9; i++) {
@@ -126,16 +126,14 @@ describe('integration tests', () => {
       expect(ticketBoughtEvents.length).toEqual(9)
       
       //buy last ticket to draw the pool
-      const tx = await BuyWithoutToken.execute(signer, {
+      await BuyWithoutToken.execute(signer, {
         initialFields: {walphContract: walphleContractId , amount: ONE_ALPH},
-        attoAlphAmount: ONE_ALPH + 21n * DUST_AMOUNT,
+        attoAlphAmount: 10n*ONE_ALPH + 10n * DUST_AMOUNT,
         
       })
-      console.log("Stuck transactions: "+tx.txId)
-      await waitTxConfirmed(web3.getCurrentNodeProvider(),tx.txId,1,10)
 
       const contractAfterPoolDistributionBalance = await web3.getCurrentNodeProvider().addresses.getAddressesAddressBalance(walphContractAddress)
-      expect(contractAfterPoolDistributionBalance.balanceHint).toEqual("2 ALPH")
+      expect(contractAfterPoolDistributionBalance.balanceHint).toEqual("11 ALPH")
 
       const afterPoolDistribution = await walphleDeployed.fetchState()
       const afterPoolDistributionOpenState = afterPoolDistribution.fields.open

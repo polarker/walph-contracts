@@ -70,9 +70,8 @@ Contract Walph(
             assert!(tokenRemaining!(caller, tokenIdToHold) >= minTokenAmountToHold, ErrorCodes.NotEnoughToken)
         }
         
-
-        transferTokenToSelf!(caller, ALPH, amount)
         balance = balance + amount
+        transferTokenToSelf!(caller, ALPH, amount)
         emit TicketBought(caller, amount)
 
         let numberTicketsBought = amount / ticketPrice
@@ -86,48 +85,39 @@ Contract Walph(
 
 
         // last person to complete the pool close it and start the draw
-        // TODO improve this by using function
         if (balance >= poolSize){
             assert!(balance >= poolSize, ErrorCodes.PoolNotFull)
             
-            //check if the number of attendees is full
+            // check if the number of attendees is full
             assert!(numAttendees == poolSize / ticketPrice, ErrorCodes.PoolNotFull)
-            distributePrize{caller -> ALPH: winnerAmount; selfAddress!() -> ALPH: poolOwnerAmount}(poolOwnerAmount, winnerAmount)
-            // open = false
+            open = false
 
-            // let winnerAmount = balance * poolFees/100
-            // let poolOwnerAmount = balance - winnerAmount
-            // balance = 0
-            
-            // lastWinner = attendees[random()]
-
-            // transferTokenFromSelf!(poolOwner, ALPH, poolOwnerAmount)
-            // transferTokenFromSelf!(lastWinner, ALPH, winnerAmount)
-
-            // numAttendees = 0
-            // open = true
+            distributePrize{selfAddress!() -> ALPH: balance}()
        }
     }
 
-    // @using(preapprovedAssets = true, assetsInContract = false, updateFields = true, checkExternalCaller = false)
-    // pub fn distributePrize(poolAmount: U256, winnerAmount: U256) -> (){
-    //     checkCaller!(callerAddress!() == selfAddress!(), ErrorCodes.InvalidCaller)
-    //     assert!(!open, ErrorCodes.PoolAlreadyClose)
-    //     assert!(balance >= poolSize, ErrorCodes.PoolNotFull)
+     @using(preapprovedAssets = true, assetsInContract = false, updateFields = true, checkExternalCaller = false)
+    fn distributePrize() -> (){
+         checkCaller!(callerAddress!() == selfAddress!(), ErrorCodes.InvalidCaller)
+         assert!(!open, ErrorCodes.PoolAlreadyClose)
+         assert!(balance >= poolSize, ErrorCodes.PoolNotFull)
 
-    //     lastWinner = attendees[random()]
-        
-    //     transferTokenFromSelf!(poolOwner, ALPH, poolAmount)
-    //     transferTokenFromSelf!(lastWinner, ALPH, winnerAmount)
+         lastWinner = attendees[random()]
 
-    //     balance = 0
-    //     numAttendees = 0
+         let winnerAmount = balance * poolFees/100
+         let poolAmount = balance - winnerAmount
+         balance = 0
 
-    //     open = true
-    //     emit PoolOpen()
-    //     emit Winner(lastWinner)
+         transferTokenFromSelf!(poolOwner, ALPH, poolAmount)
+         transferTokenFromSelf!(lastWinner, ALPH, winnerAmount)
 
-    // }
+         numAttendees = 0
+
+         open = true
+         emit PoolOpen()
+         emit Winner(lastWinner)
+
+     }
 
     @using(updateFields = true, checkExternalCaller = true)
     pub fn closePool() -> (){
