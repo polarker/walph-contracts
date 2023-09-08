@@ -37,6 +37,7 @@ export const Close = new ExecutableScript<{ walphContract: HexString }>(
 export const Destroy = new ExecutableScript<{ walphContract: HexString }>(
   Script.fromJson(DestroyScriptJson)
 );
-export const Provision = new ExecutableScript<{ walphContract: HexString }>(
-  Script.fromJson(ProvisionScriptJson)
-);
+export const Provision = new ExecutableScript<{
+  walphContract: HexString;
+  amount: bigint;
+}>(Script.fromJson(ProvisionScriptJson));

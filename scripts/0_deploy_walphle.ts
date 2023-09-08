@@ -16,10 +16,10 @@ const deployWalph: DeployFunction<Settings> = async (
     initialFields: {
         poolSize: BigInt(poolSize) * 10n ** 18n,
         poolOwner: deployer.account.address,
-        poolFees: 10n,
+        poolFees: 1n,
         minTokenAmountToHold: 0n,
         ticketPrice: 10n ** 18n,
-        tokenIdToHold: "47504df5a7b18dcecdbf1ea00b7e644d0a7c93919f2d2061ba153f241f03b801",
+        tokenIdToHold: "",
         open: true,
         balance: 0n,
         numAttendees: 0n,

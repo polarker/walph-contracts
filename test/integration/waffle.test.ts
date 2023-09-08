@@ -88,7 +88,7 @@ describe('integration tests', () => {
 
 
       await Provision.execute(signer, {
-        initialFields: {walphContract: walphleContractId},
+        initialFields: {walphContract: walphleContractId, amount: 10n * ONE_ALPH},
         attoAlphAmount: ONE_ALPH + 3n * DUST_AMOUNT,
         
       })
@@ -128,7 +128,7 @@ describe('integration tests', () => {
       //buy last ticket to draw the pool
       const tx = await BuyWithoutToken.execute(signer, {
         initialFields: {walphContract: walphleContractId , amount: ONE_ALPH},
-        attoAlphAmount: ONE_ALPH + 3n * DUST_AMOUNT,
+        attoAlphAmount: ONE_ALPH + 21n * DUST_AMOUNT,
         
       })
       console.log("Stuck transactions: "+tx.txId)
@@ -147,16 +147,15 @@ describe('integration tests', () => {
       expect(afterPoolDistributionOpenState).toEqual(true)
       expect(afterPoolDistributionBalanceState).toEqual(0n)
       expect(afterPoolDistributionNumAttendeesState).toEqual(0n)
-      expect(afterPoolDistributionWinner).toEqual('18vsJ3xDBnSt2aXRSQ7QRTPrVVkjZuTXtxvV1x8mvm3Nz')
+      expect(afterPoolDistributionWinner).toEqual(signer.account.address)
 
       subscription.unsubscribe()
 
-     /* await Destroy.execute(signer, {
+     await Destroy.execute(signer, {
         initialFields: { walphContract: walphleContractId},
         attoAlphAmount: DUST_AMOUNT
 
-      }) */
-
+      })
       /*
       const contractBalance = await web3.getCurrentNodeProvider().addresses.getAddressesAddressBalance(walphContractAddress)
       expect(web3.getCurrentNodeProvider().addresses.getAddressesAddressBalance(walphContractAddress)).toEqual(0n)*/

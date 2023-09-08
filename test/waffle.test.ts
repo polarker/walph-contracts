@@ -89,12 +89,13 @@ describe("unit tests", () => {
 
     // open the pool
     let testResult = await Walph.tests.random(testParams);
-    console.log(testResult.returns)
     runs[0] = testResult.returns
     
     testResult = await Walph.tests.random(testParams);
 
-    runs[1] = testResult.returns 
+    runs[1] = testResult.returns
+    console.log(runs)
+
     expect(runs[0]).not.toEqual(runs[1])
 
   })
@@ -136,22 +137,6 @@ describe("unit tests", () => {
       Walph.tests.closePool(testParams),
       testContractAddress,
       1
-    );
-  });
-
-  it("test try to close a not full pool", async () => {
-    const testParams = JSON.parse(JSON.stringify(testParamsFixture));
-    testParams.initialFields.open = true;
-    const randomAddress = PrivateKeyWallet.Random(
-      0,
-      web3.getCurrentNodeProvider()
-    ).account.address;
-    testParams.inputAssets[0].address = randomAddress;
-
-    await expectAssertionError(
-      Walph.tests.closePoolWhenFull(testParams),
-      testContractAddress,
-      6
     );
   });
 

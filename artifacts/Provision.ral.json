@@ -1,15 +1,18 @@
 {
-  "version": "v2.5.0",
+  "version": "v2.5.5",
   "name": "Provision",
-  "bytecodeTemplate": "0101030001000bb417001600130a131283a20c0c{0}0104",
+  "bytecodeTemplate": "01010300010009b417001600{1}a20c0c{0}0104",
   "fieldsSig": {
     "names": [
-      "walphContract"
+      "walphContract",
+      "amount"
     ],
     "types": [
-      "ByteVec"
+      "ByteVec",
+      "U256"
     ],
     "isMutable": [
+      false,
       false
     ]
   },
