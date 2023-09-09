@@ -46,7 +46,7 @@ async function destroy(privKey: string, group: number, contractName: string) {
   //.deployments contains the info of our `TokenFaucet` deployement, as we need to now the contractId and address
   //This was auto-generated with the `cli deploy` of our `scripts/0_deploy_faucet.ts`
   const deployments = await Deployments.from(
-    "./artifacts/.deployments." + networkToUse + ".json"
+    "./to-destroy/.deployments." + networkToUse + ".json"
   );
   //Make sure it match your address group
   const accountGroup = group;
@@ -57,17 +57,19 @@ async function destroy(privKey: string, group: number, contractName: string) {
   const walpheContractId = deployed.contractInstance.contractId;
   const walpheContractAddress = deployed.contractInstance.address;
 
-    console.log(walpheContractAddress + "destroyed")
+
+    const balanceContract = await nodeProvider.addresses.getAddressesAddressBalance(walpheContractAddress)
+    console.log(walpheContractAddress+" - Balance contract is " + balanceContract.balanceHint )
     await Destroy.execute(wallet, {
       initialFields: { walphContract: walpheContractId},
-      attoAlphAmount:  21n*ONE_ALPH + 21n * DUST_AMOUNT,
+      attoAlphAmount:  21n * DUST_AMOUNT,
     });
-  
+    console.log(walpheContractAddress + " destroyed")
   console.log("\n")
 }
 
 
-const networkToUse = "devnet,";
+const networkToUse = "testnet";
 //Select our network defined in alephium.config.ts
 const network = configuration.networks[networkToUse];
 
