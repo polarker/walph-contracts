@@ -60,10 +60,12 @@ async function destroy(privKey: string, group: number, contractName: string) {
 
     const balanceContract = await nodeProvider.addresses.getAddressesAddressBalance(walpheContractAddress)
     console.log(walpheContractAddress+" - Balance contract is " + balanceContract.balanceHint )
+
     await Destroy.execute(wallet, {
       initialFields: { walphContract: walpheContractId},
-      attoAlphAmount:  21n * DUST_AMOUNT,
+      attoAlphAmount:  balanceContract.balance + 210n * DUST_AMOUNT,
     });
+
     console.log(walpheContractAddress + " destroyed")
   console.log("\n")
 }

@@ -99,6 +99,8 @@ Contract Walph(
 
         }
 
+        emit TicketBought(caller, amount)
+
         // used to check if the amount added will close the pool
         let balanceCheck = balance + amount
         // last person to complete the pool close it and start the draw
@@ -107,12 +109,14 @@ Contract Walph(
             
             // check if the number of attendees is full
             assert!(numAttendees == poolSize / ticketPrice, ErrorCodes.PoolNotFull)
+            
             open = false
+            emit PoolClose()
+
             distributePrize{selfAddress!() -> ALPH: balance; caller -> ALPH: amount}(caller, amount)
        } else {
             balance = balance + amount
             transferTokenToSelf!(caller, ALPH, amount)
-            emit TicketBought(caller, amount)
        }
     }
 
