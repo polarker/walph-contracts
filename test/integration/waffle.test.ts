@@ -87,14 +87,14 @@ describe('integration tests', () => {
     })
 
 
-      await Provision.execute(signer, {
+      /*await Provision.execute(signer, {
         initialFields: {walphContract: walphleContractId, amount: 10n * ONE_ALPH},
         attoAlphAmount: 10n*ONE_ALPH + 3n * DUST_AMOUNT,
         
-      })
+      })*/
 
       const contractBalance = await web3.getCurrentNodeProvider().addresses.getAddressesAddressBalance(walphContractAddress)
-      expect(contractBalance.balanceHint).toEqual("11 ALPH")
+      expect(contractBalance.balanceHint).toEqual("1 ALPH")
 
       // simulate someone buying tickets
       for (let i = 0; i < 9; i++) {
@@ -128,12 +128,12 @@ describe('integration tests', () => {
       //buy last ticket to draw the pool
       await BuyWithoutToken.execute(signer, {
         initialFields: {walphContract: walphleContractId , amount: ONE_ALPH},
-        attoAlphAmount: 10n*ONE_ALPH + 10n * DUST_AMOUNT,
+        attoAlphAmount: ONE_ALPH + 5n * DUST_AMOUNT,
         
       })
 
       const contractAfterPoolDistributionBalance = await web3.getCurrentNodeProvider().addresses.getAddressesAddressBalance(walphContractAddress)
-      expect(contractAfterPoolDistributionBalance.balanceHint).toEqual("11 ALPH")
+      expect(contractAfterPoolDistributionBalance.balanceHint).toEqual("1 ALPH")
 
       const afterPoolDistribution = await walphleDeployed.fetchState()
       const afterPoolDistributionOpenState = afterPoolDistribution.fields.open

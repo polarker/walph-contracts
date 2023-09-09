@@ -144,7 +144,10 @@ class Factory extends ContractFactory<WalphInstance, WalphTypes.Fields> {
       return testMethod(this, "random", params);
     },
     distributePrize: async (
-      params: Omit<TestContractParams<WalphTypes.Fields, never>, "testArgs">
+      params: TestContractParams<
+        WalphTypes.Fields,
+        { caller: Address; amount: bigint }
+      >
     ): Promise<TestContractResult<null>> => {
       return testMethod(this, "distributePrize", params);
     },
@@ -200,8 +203,8 @@ class Factory extends ContractFactory<WalphInstance, WalphTypes.Fields> {
 export const Walph = new Factory(
   Contract.fromJson(
     WalphContractJson,
-    "=4-2=2-2+2a=3-1+a=2-2+83=3-1+c4095=2+a=1-1=3-1+f=2+5=1-1=2-2+6a=3-1+d=2-2+91=11-1+4=30+0016007e0207726e6420697320=734",
-    "c86321959dbf78c5cd334b6d03bdfdf32b2f5c9a4ba9756db59b6589a41f8a03"
+    "=4-2=2-2+2a=3-1+8=2-2+91=3-1+a=3-1+340b7=3-1+f=2-1=1+4=2-2+8a=3-1+d=2-2+b1=11-1+4=30+0016007e0207726e6420697320=798",
+    "757ee2b8dad4d11355312552680ce782a856e350d1cbb57bebd4d9d8804bb16a"
   )
 );
 

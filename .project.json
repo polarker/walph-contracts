@@ -53,16 +53,16 @@
     },
     "Walph": {
       "sourceFile": "walph.ral",
-      "sourceCodeHash": "c6a397dd6b8dabf771660ae0824ccc48abc4544ede20cdcb7e060327a0782a8d",
-      "bytecodeDebugPatch": "=4-2=2-2+2a=3-1+a=2-2+83=3-1+c4095=2+a=1-1=3-1+f=2+5=1-1=2-2+6a=3-1+d=2-2+91=11-1+4=30+0016007e0207726e6420697320=734",
-      "codeHashDebug": "c86321959dbf78c5cd334b6d03bdfdf32b2f5c9a4ba9756db59b6589a41f8a03",
+      "sourceCodeHash": "6647ef4f33050cd28bd773adc306d9545f87f0fcd4f3e30a71f4362dcefaedb4",
+      "bytecodeDebugPatch": "=4-2=2-2+2a=3-1+8=2-2+91=3-1+a=3-1+340b7=3-1+f=2-1=1+4=2-2+8a=3-1+d=2-2+b1=11-1+4=30+0016007e0207726e6420697320=798",
+      "codeHashDebug": "757ee2b8dad4d11355312552680ce782a856e350d1cbb57bebd4d9d8804bb16a",
       "warnings": []
     },
     "Walph50HodlAlf": {
       "sourceFile": "walph50HodlAlf.ral",
-      "sourceCodeHash": "53864b70cd08eccd00512d0d436152234c8a0f93a4231fc9be7cd07b73aba182",
-      "bytecodeDebugPatch": "=6-2=2-2+2a=3-1+a=2-2+83=3-1+c4095=2+a=1-1=3-1+f=2+5=1-1=2-2+6a=3-1+d=2-2+91=11-1+4=30+0016007e0207726e6420697320=734",
-      "codeHashDebug": "c0bcc87cba708307a4298516adc750753d66fae486323566c983789495a0d6e6",
+      "sourceCodeHash": "f82f1e7ab18346e917548a96cbebe3eb68be6d5f3011102790eca5bda4df5286",
+      "bytecodeDebugPatch": "=6-2=2-2+2a=3-1+a=2-2+83=3-1+c=3-1+5=1-3+0a9=2-1=1+b=3-1+0=3-1+64179=3-1+d=11-1+4=30+0016007e0207726e6420697320=726",
+      "codeHashDebug": "3f348f497f62805ebd88e666c09f74fd90b11beb337f676702af942289d1b6f2",
       "warnings": []
     }
   }
