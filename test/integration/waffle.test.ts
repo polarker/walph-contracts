@@ -86,13 +86,6 @@ describe('integration tests', () => {
       }
     })
 
-
-      /*await Provision.execute(signer, {
-        initialFields: {walphContract: walphleContractId, amount: 10n * ONE_ALPH},
-        attoAlphAmount: 10n*ONE_ALPH + 3n * DUST_AMOUNT,
-        
-      })*/
-
       const contractBalance = await web3.getCurrentNodeProvider().addresses.getAddressesAddressBalance(walphContractAddress)
       expect(contractBalance.balanceHint).toEqual("1 ALPH")
 
@@ -136,7 +129,7 @@ describe('integration tests', () => {
       expect(contractAfterPoolDistributionBalance.balanceHint).toEqual("1 ALPH")
       const winnerBalance = await web3.getCurrentNodeProvider().addresses.getAddressesAddressBalance(signer.address)
       console.log(winnerBalance)
-      expect(contractAfterPoolDistributionBalance.balanceHint).toEqual("210 ALPH")
+      expect(winnerBalance.balance).toBeGreaterThanOrEqual(210 * 10 ** 18)
 
 
       const afterPoolDistribution = await walphleDeployed.fetchState()

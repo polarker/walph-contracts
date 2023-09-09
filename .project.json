@@ -11,14 +11,21 @@
   "infos": {
     "Buy": {
       "sourceFile": "buyTicket.ral",
-      "sourceCodeHash": "65c92e3ec6e467f0ccb0af0fb5e748d4875a711172c3c6b6a4a1b4e90c1a6210",
+      "sourceCodeHash": "cef63072f96758be5756cf1e8228c3e2be798270f06645032eb5e284e081f042",
+      "bytecodeDebugPatch": "",
+      "codeHashDebug": "",
+      "warnings": []
+    },
+    "BuyTicketToken": {
+      "sourceFile": "buyTicket.ral",
+      "sourceCodeHash": "cef63072f96758be5756cf1e8228c3e2be798270f06645032eb5e284e081f042",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "",
       "warnings": []
     },
     "BuyWithoutToken": {
       "sourceFile": "buyTicket.ral",
-      "sourceCodeHash": "65c92e3ec6e467f0ccb0af0fb5e748d4875a711172c3c6b6a4a1b4e90c1a6210",
+      "sourceCodeHash": "cef63072f96758be5756cf1e8228c3e2be798270f06645032eb5e284e081f042",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "",
       "warnings": []
@@ -44,11 +51,18 @@
       "codeHashDebug": "",
       "warnings": []
     },
+    "Walf": {
+      "sourceFile": "walf.ral",
+      "sourceCodeHash": "099bd1de63c6f029f42e7264cefe9d29bca58b9d8bee0a9bfc75fd326804d2fd",
+      "bytecodeDebugPatch": "=4-2=2-2+29=3-1+8=2-2+91=3-1+a=1-3+0a3=2-2+5b=2-2+70=2+8=1-1+4199=11-1+4=28+0016007e0207726e6420697320=273-1+4=76+16027e020b6e756d207469636b65742000=189-1+a=14+a0017e020862616c616e63652000=136",
+      "codeHashDebug": "ad5695ca7712cdd21b8b4b96a5d34c732651c4773adbec7c1754f14ea412c955",
+      "warnings": []
+    },
     "Walph": {
       "sourceFile": "walph.ral",
-      "sourceCodeHash": "7719558147dae9b4af1401c69396e50d43f8f5fb5909ab795133179aae09abfe",
+      "sourceCodeHash": "d1eab28b4f0462912f7c31542ef4622b837e9fb761601cea8744297917328b1e",
       "bytecodeDebugPatch": "=4-2=2-2+2a=3-1+4=3+d40=1+6=3-1+f=2-2+49=3-1+e=2-1=2+4=1+8=1-1=2-2+9b=11-1+4=30+0016007e0207726e6420697320=754",
-      "codeHashDebug": "4b6f88cbfc08c2fe50c54185ce1b65065d6d8f62a37b5da7dce0ffac707b2538",
+      "codeHashDebug": "9048d38d15c18c22e991f89aabfa9ab8e60ed425bdf3efbf2ad35e829c717a61",
       "warnings": []
     },
     "Walph50HodlAlf": {
