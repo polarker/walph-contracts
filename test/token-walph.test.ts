@@ -55,7 +55,7 @@ import {
           tokens: [
             {
               id: "47504df5a7b18dcecdbf1ea00b7e644d0a7c93919f2d2061ba153f241f03b801",
-              amount: 200n
+              amount: 0n
             },
           ],
         },

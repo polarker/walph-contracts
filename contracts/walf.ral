@@ -112,7 +112,7 @@ Contract Walf(
        } else {
             balance = balance + amount
             emit Debug(`balance ${balance}`)
-            transferTokenToSelf!(caller, tokenId, 1)
+            transferTokenToSelf!(caller, tokenId, amount)
        }
     }
 
