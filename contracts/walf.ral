@@ -1,0 +1,148 @@
+Contract Walf(
+    poolSize: U256,
+    poolOwner: Address,
+    poolFees: U256,
+    tokenId: ByteVec,
+    ticketPrice: U256,
+    mut open: Bool,
+    mut balance: U256,
+    mut numAttendees: U256,
+    mut attendees: [Address;10],
+    mut lastWinner: Address
+){
+    
+
+    event TicketBought(from: Address, amount: U256)
+    event PoolOpen()
+    event PoolClose()
+    event Destroy(from: Address)
+    event Winner(address: Address)
+
+    enum ErrorCodes {
+        PoolFull = 0
+        PoolAlreadyClose = 1
+        PoolAlreadyOpen = 2
+        PoolClosed = 3
+        InvalidCaller = 4
+        PoolNotFull = 5
+        InvalidAmount = 6
+    }
+
+
+    fn random() -> (U256){
+        assert!(numAttendees > 0, ErrorCodes.PoolNotFull)
+        let seed = u256From32Byte!(blake2b!(toByteVec!(blockTarget!()) ++ toByteVec!(blockTimeStamp!())))
+        emit Debug(`rnd is ${seed}`)
+        return addModN!(0,seed, numAttendees)
+    }
+
+    @using(preapprovedAssets = true, assetsInContract = false, updateFields = true, checkExternalCaller = false)
+    fn distributePrize(lastAttendee: Address, amount: U256) -> (){
+         checkCaller!(callerAddress!() == selfAddress!(), ErrorCodes.InvalidCaller)
+         assert!(!open, ErrorCodes.PoolAlreadyClose)
+         assert!(balance + amount >= poolSize, ErrorCodes.PoolNotFull)
+
+        lastWinner = attendees[random()]
+        
+
+        let poolOwnerAmount = balance * poolFees/100
+        let winnerAmount = balance - poolOwnerAmount
+        balance = 0
+        numAttendees = 0
+
+        transferTokenFromSelf!(poolOwner, tokenId, poolOwnerAmount)
+        transferTokenFromSelf!(lastWinner, tokenId, winnerAmount)
+
+        // the last attendee will be the one with the rest of ALPH to sent to the winner, it will be the one who send it in addition of the rest of the pool
+        transferToken!(lastAttendee, lastWinner, tokenId, amount)
+
+        open = true
+        emit PoolOpen()
+        emit Winner(lastWinner)
+
+     }
+
+
+    pub fn getPoolState() -> (Bool) {
+        return open
+    }
+
+    pub fn getPoolSize() -> (U256) {
+        return poolSize
+    }
+
+    pub fn getBalance() -> (U256){
+        return balance
+    }
+    
+    @using(preapprovedAssets = true, assetsInContract = true, updateFields = true, checkExternalCaller = false)
+    pub fn buyTicket(amount: U256) -> (){
+        let caller = callerAddress!()
+        assert!(balance + amount <= poolSize, ErrorCodes.PoolFull)
+        assert!(open, ErrorCodes.PoolClosed)
+        assert!(addModN!(amount, 0 , 10 ** 9) == 0, ErrorCodes.InvalidAmount) // dirty
+
+        let numberTicketsBought = amount / ticketPrice
+        emit Debug(`num ticket ${numberTicketsBought}`)
+        let mut numberPlaceCounter = 0
+
+        // fill the array with the buyer address
+        while (numberPlaceCounter < numberTicketsBought){
+            attendees[numAttendees] = caller
+            numAttendees = numAttendees + 1
+            numberPlaceCounter = numberPlaceCounter + 1
+
+        }
+
+        emit TicketBought(caller, amount)
+
+        // used to check if the amount added will close the pool
+        let balanceCheck = balance + amount
+        // last person to complete the pool close it and start the draw
+        if (balanceCheck >= poolSize){
+            assert!(balanceCheck >= poolSize, ErrorCodes.PoolNotFull)
+            
+            // check if the number of attendees is full
+            assert!(numAttendees == poolSize / ticketPrice, ErrorCodes.PoolNotFull)
+            
+            open = false
+            emit PoolClose()
+
+            distributePrize{selfAddress!() -> ALPH: balance; caller -> ALPH: amount}(caller, amount)
+       } else {
+            balance = balance + amount
+            emit Debug(`balance ${balance}`)
+            transferTokenToSelf!(caller, tokenId, 1)
+       }
+    }
+
+    @using(updateFields = true, checkExternalCaller = true)
+    pub fn closePool() -> (){
+        assert!(open, ErrorCodes.PoolAlreadyClose)
+        checkCaller!(callerAddress!() == poolOwner, ErrorCodes.InvalidCaller)
+
+        open = false
+
+        emit PoolClose()
+    }
+
+    @using(updateFields = true, checkExternalCaller = true)
+    pub fn openPool() -> (){
+        assert!(!open, ErrorCodes.PoolAlreadyOpen)
+        checkCaller!(callerAddress!() == poolOwner, ErrorCodes.InvalidCaller)
+
+        open = true
+
+        emit PoolOpen()
+    }
+
+    @using(assetsInContract = true, updateFields = false, checkExternalCaller = true)
+    pub fn destroyPool() -> () {
+        checkCaller!(callerAddress!() == poolOwner, ErrorCodes.InvalidCaller)
+
+        destroySelf!(poolOwner)
+
+        emit Destroy(poolOwner)
+    }
+
+}
