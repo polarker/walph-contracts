@@ -61,7 +61,7 @@ async function provision(privKey: string, group: number, contractName: string) {
   
   const balanceContract = await nodeProvider.addresses.getAddressesAddressBalance(walpheContractAddress)
   
-  if ( Number(balanceContract.balance) < 21 *10 ** 18){
+  if ( Number(balanceContract.balance) < 210 *10 ** 18){
     console.log("provision "+ walpheContractAddress+ " with "+ wallet.address)
     console.log("Actual contract balance: "+balanceContract.balanceHint)
 

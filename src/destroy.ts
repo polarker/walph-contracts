@@ -67,7 +67,7 @@ async function destroy(privKey: string, group: number, contractName: string) {
 }
 
 
-const networkToUse = "devnet";
+const networkToUse = "devnet,";
 //Select our network defined in alephium.config.ts
 const network = configuration.networks[networkToUse];
 
