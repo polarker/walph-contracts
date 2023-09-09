@@ -1,6 +1,6 @@
-import { web3, Project, stringToHex, ONE_ALPH, DUST_AMOUNT, sleep, ZERO_ADDRESS } from '@alephium/web3'
+import { web3, Project, stringToHex, ONE_ALPH, DUST_AMOUNT, sleep, ZERO_ADDRESS, sign } from '@alephium/web3'
 import { NodeWallet, PrivateKeyWallet } from '@alephium/web3-wallet'
-import { Walph, Buy, Open,Close, WalphTypes, Destroy, BuyWithoutToken, Provision } from '../../artifacts/ts'
+import { Walph, Buy, Open,Close, WalphTypes, Destroy, BuyWithoutToken } from '../../artifacts/ts'
 import configuration, { Settings } from '../../alephium.config'
 import * as dotenv from 'dotenv'
 import { waitTxConfirmed } from '@alephium/cli'
@@ -87,14 +87,14 @@ describe('integration tests', () => {
     })
 
 
-      await Provision.execute(signer, {
+      /*await Provision.execute(signer, {
         initialFields: {walphContract: walphleContractId, amount: 10n * ONE_ALPH},
         attoAlphAmount: 10n*ONE_ALPH + 3n * DUST_AMOUNT,
         
-      })
+      })*/
 
       const contractBalance = await web3.getCurrentNodeProvider().addresses.getAddressesAddressBalance(walphContractAddress)
-      expect(contractBalance.balanceHint).toEqual("11 ALPH")
+      expect(contractBalance.balanceHint).toEqual("1 ALPH")
 
       // simulate someone buying tickets
       for (let i = 0; i < 9; i++) {
@@ -128,12 +128,16 @@ describe('integration tests', () => {
       //buy last ticket to draw the pool
       await BuyWithoutToken.execute(signer, {
         initialFields: {walphContract: walphleContractId , amount: ONE_ALPH},
-        attoAlphAmount: 10n*ONE_ALPH + 10n * DUST_AMOUNT,
+        attoAlphAmount: ONE_ALPH + 5n * DUST_AMOUNT,
         
       })
 
       const contractAfterPoolDistributionBalance = await web3.getCurrentNodeProvider().addresses.getAddressesAddressBalance(walphContractAddress)
-      expect(contractAfterPoolDistributionBalance.balanceHint).toEqual("11 ALPH")
+      expect(contractAfterPoolDistributionBalance.balanceHint).toEqual("1 ALPH")
+      const winnerBalance = await web3.getCurrentNodeProvider().addresses.getAddressesAddressBalance(signer.address)
+      console.log(winnerBalance)
+      expect(contractAfterPoolDistributionBalance.balanceHint).toEqual("210 ALPH")
+
 
       const afterPoolDistribution = await walphleDeployed.fetchState()
       const afterPoolDistributionOpenState = afterPoolDistribution.fields.open

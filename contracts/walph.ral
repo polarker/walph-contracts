@@ -40,25 +40,28 @@ Contract Walph(
     }
 
     @using(preapprovedAssets = true, assetsInContract = false, updateFields = true, checkExternalCaller = false)
-    fn distributePrize() -> (){
+    fn distributePrize(lastAttendee: Address, amount: U256) -> (){
          checkCaller!(callerAddress!() == selfAddress!(), ErrorCodes.InvalidCaller)
          assert!(!open, ErrorCodes.PoolAlreadyClose)
-         assert!(balance >= poolSize, ErrorCodes.PoolNotFull)
+         assert!(balance + amount >= poolSize, ErrorCodes.PoolNotFull)
 
-         lastWinner = attendees[random()]
+        lastWinner = attendees[random()]
+        
 
-         let poolOwnerAmount = balance * poolFees/100
-         let winnerAmount = balance - poolOwnerAmount
-         balance = 0
+        let poolOwnerAmount = balance * poolFees/100
+        let winnerAmount = balance - poolOwnerAmount
+        balance = 0
+        numAttendees = 0
 
-         transferTokenFromSelf!(poolOwner, ALPH, poolOwnerAmount)
-         transferTokenFromSelf!(lastWinner, ALPH, winnerAmount)
+        transferTokenFromSelf!(poolOwner, ALPH, poolOwnerAmount)
+        transferTokenFromSelf!(lastWinner, ALPH, winnerAmount)
 
-         numAttendees = 0
+        // the last attendee will be the one with the rest of ALPH to sent to the winner, it will be the one who send it in addition of the rest of the pool
+        transferToken!(lastAttendee, lastWinner, ALPH, amount)
 
-         open = true
-         emit PoolOpen()
-         emit Winner(lastWinner)
+        open = true
+        emit PoolOpen()
+        emit Winner(lastWinner)
 
      }
 
@@ -75,31 +78,20 @@ Contract Walph(
         return balance
     }
     
-    @using(preapprovedAssets = true, assetsInContract = true, updateFields = false, checkExternalCaller = true)
-    pub fn addAlph() -> (){
-        let caller = callerAddress!()
-        checkCaller!(callerAddress!() == poolOwner, ErrorCodes.InvalidCaller)
-
-        transferTokenToSelf!(caller, ALPH, poolSize)
-
-    }
-
     @using(preapprovedAssets = true, assetsInContract = true, updateFields = true, checkExternalCaller = false)
     pub fn buyTicket(amount: U256) -> (){
         let caller = callerAddress!()
         assert!(balance + amount <= poolSize, ErrorCodes.PoolFull)
         assert!(open, ErrorCodes.PoolClosed)
-        assert!(addModN!(amount,0,10 ** 18) == 0, ErrorCodes.InvalidAmount) // dirty
+        assert!(addModN!(amount,0 ,10 ** 18) == 0, ErrorCodes.InvalidAmount) // dirty
         if (minTokenAmountToHold > 0){
             assert!(tokenRemaining!(caller, tokenIdToHold) >= minTokenAmountToHold, ErrorCodes.NotEnoughToken)
         }
-        
-        balance = balance + amount
-        transferTokenToSelf!(caller, ALPH, amount)
-        emit TicketBought(caller, amount)
-
+                
         let numberTicketsBought = amount / ticketPrice
         let mut numberPlaceCounter = 0
+
+        // fill the array with the buyer address
         while (numberPlaceCounter < numberTicketsBought){
             attendees[numAttendees] = caller
             numAttendees = numAttendees + 1
@@ -107,19 +99,26 @@ Contract Walph(
 
         }
 
+        emit TicketBought(caller, amount)
 
+        // used to check if the amount added will close the pool
+        let balanceCheck = balance + amount
         // last person to complete the pool close it and start the draw
-        if (balance >= poolSize){
-            assert!(balance >= poolSize, ErrorCodes.PoolNotFull)
+        if (balanceCheck >= poolSize){
+            assert!(balanceCheck >= poolSize, ErrorCodes.PoolNotFull)
             
             // check if the number of attendees is full
             assert!(numAttendees == poolSize / ticketPrice, ErrorCodes.PoolNotFull)
+            
             open = false
+            emit PoolClose()
 
-            distributePrize{selfAddress!() -> ALPH: balance}()
+            distributePrize{selfAddress!() -> ALPH: balance; caller -> ALPH: amount}(caller, amount)
+       } else {
+            balance = balance + amount
+            transferTokenToSelf!(caller, ALPH, amount)
        }
     }
-
 
     @using(updateFields = true, checkExternalCaller = true)
     pub fn closePool() -> (){

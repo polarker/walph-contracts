@@ -10,7 +10,7 @@ import {
 } from "@alephium/web3";
 import { PrivateKeyWallet } from "@alephium/web3-wallet";
 import configuration from "../alephium.config";
-import { Destroy, Provision, Walph, WalphTypes } from "../artifacts/ts";
+import { Destroy, Walph, WalphTypes } from "../artifacts/ts";
 
 // The `TokenFaucetTypes.WithdrawEvent` is generated in the getting-started guide
 const events: WalphTypes.PoolCloseEvent[] = [];
@@ -60,10 +60,12 @@ async function destroy(privKey: string, group: number, contractName: string) {
 
     const balanceContract = await nodeProvider.addresses.getAddressesAddressBalance(walpheContractAddress)
     console.log(walpheContractAddress+" - Balance contract is " + balanceContract.balanceHint )
+
     await Destroy.execute(wallet, {
       initialFields: { walphContract: walpheContractId},
-      attoAlphAmount:  21n * DUST_AMOUNT,
+      attoAlphAmount: 5n * DUST_AMOUNT,
     });
+
     console.log(walpheContractAddress + " destroyed")
   console.log("\n")
 }

@@ -179,9 +179,9 @@ class Factory extends ContractFactory<
       return testMethod(this, "random", params);
     },
     distributePrize: async (
-      params: Omit<
-        TestContractParams<Walph50HodlAlfTypes.Fields, never>,
-        "testArgs"
+      params: TestContractParams<
+        Walph50HodlAlfTypes.Fields,
+        { lastAttendee: Address; amount: bigint }
       >
     ): Promise<TestContractResult<null>> => {
       return testMethod(this, "distributePrize", params);
@@ -209,14 +209,6 @@ class Factory extends ContractFactory<
       >
     ): Promise<TestContractResult<bigint>> => {
       return testMethod(this, "getBalance", params);
-    },
-    addAlph: async (
-      params: Omit<
-        TestContractParams<Walph50HodlAlfTypes.Fields, never>,
-        "testArgs"
-      >
-    ): Promise<TestContractResult<null>> => {
-      return testMethod(this, "addAlph", params);
     },
     buyTicket: async (
       params: TestContractParams<Walph50HodlAlfTypes.Fields, { amount: bigint }>
@@ -262,8 +254,8 @@ class Factory extends ContractFactory<
 export const Walph50HodlAlf = new Factory(
   Contract.fromJson(
     Walph50HodlAlfContractJson,
-    "=6-2=2-2+2a=3-1+a=2-2+83=3-1+c4095=2+a=1-1=3-1+f=2+5=1-1=2-2+6a=3-1+d=2-2+91=11-1+4=30+0016007e0207726e6420697320=734",
-    "c0bcc87cba708307a4298516adc750753d66fae486323566c983789495a0d6e6"
+    "=6-2=2-2+2a=3+44=1+8d=2-1=1+6=3-1+f=2-2=1-3+7=2-1=1+c=3+241=1+5=2-2+99=11-1+4=30+0016007e0207726e6420697320=750",
+    "57419208b37782b4506881bc9cb1efecbbcb3796c4b53da39635eab337e3b714"
   )
 );
 
