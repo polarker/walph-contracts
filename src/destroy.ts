@@ -10,7 +10,7 @@ import {
 } from "@alephium/web3";
 import { PrivateKeyWallet } from "@alephium/web3-wallet";
 import configuration from "../alephium.config";
-import { Provision, Walph, WalphTypes } from "../artifacts/ts";
+import { Destroy, Provision, Walph, WalphTypes } from "../artifacts/ts";
 
 // The `TokenFaucetTypes.WithdrawEvent` is generated in the getting-started guide
 const events: WalphTypes.PoolCloseEvent[] = [];
@@ -34,7 +34,7 @@ const subscribeOptions = {
 };
 
 
-async function provision(privKey: string, group: number, contractName: string) {
+async function destroy(privKey: string, group: number, contractName: string) {
 
   Project.build();
   const wallet = new PrivateKeyWallet({
@@ -46,7 +46,7 @@ async function provision(privKey: string, group: number, contractName: string) {
   //.deployments contains the info of our `TokenFaucet` deployement, as we need to now the contractId and address
   //This was auto-generated with the `cli deploy` of our `scripts/0_deploy_faucet.ts`
   const deployments = await Deployments.from(
-    "./artifacts/.deployments." + networkToUse + ".json"
+    "./to-destroy/.deployments." + networkToUse + ".json"
   );
   //Make sure it match your address group
   const accountGroup = group;
@@ -57,27 +57,19 @@ async function provision(privKey: string, group: number, contractName: string) {
   const walpheContractId = deployed.contractInstance.contractId;
   const walpheContractAddress = deployed.contractInstance.address;
 
-  const walphe = Walph.at(walpheContractAddress);
-  
-  const balanceContract = await nodeProvider.addresses.getAddressesAddressBalance(walpheContractAddress)
-  
-  if ( Number(balanceContract.balance) < 210 *10 ** 18){
-    console.log("provision "+ walpheContractAddress+ " with "+ wallet.address)
-    console.log("Actual contract balance: "+balanceContract.balanceHint)
 
-    await Provision.execute(wallet, {
-      initialFields: { walphContract: walpheContractId, amount: 210n * ONE_ALPH},
-      attoAlphAmount:  210n*ONE_ALPH + 21n * DUST_AMOUNT,
+    const balanceContract = await nodeProvider.addresses.getAddressesAddressBalance(walpheContractAddress)
+    console.log(walpheContractAddress+" - Balance contract is " + balanceContract.balanceHint )
+    await Destroy.execute(wallet, {
+      initialFields: { walphContract: walpheContractId},
+      attoAlphAmount:  21n * DUST_AMOUNT,
     });
-  } else {
-    console.log("enough ALPH provisionned for "+ walpheContractAddress+ " with "+ wallet.address)
-    console.log("Actual contract balance: "+balanceContract.balanceHint)
-  }
+    console.log(walpheContractAddress + " destroyed")
   console.log("\n")
 }
 
 
-const networkToUse = "devnet";
+const networkToUse = "testnet";
 //Select our network defined in alephium.config.ts
 const network = configuration.networks[networkToUse];
 
@@ -92,6 +84,6 @@ const numberOfKeys = configuration.networks[networkToUse].privateKeys.length
 Array.from(Array(numberOfKeys).keys()).forEach((group) => {
   //distribute(configuration.networks[networkToUse].privateKeys[group], group, "Walph");
   //distribute(configuration.networks[networkToUse].privateKeys[group], group, "Walph50HodlAlf");
-  provision(configuration.networks[networkToUse].privateKeys[group], group, "Walph");
+  destroy(configuration.networks[networkToUse].privateKeys[group], group, "Walph");
 
 });

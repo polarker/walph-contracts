@@ -10,15 +10,16 @@ const deployWalph: DeployFunction<Settings> = async (
 ): Promise<void> => {
  
   let poolSize = 21
+  let ticketPrice = 10
   const result = await deployer.deployContract(Walph, {
 
     // The initial states of the faucet contract
     initialFields: {
-        poolSize: BigInt(poolSize) * 10n ** 18n,
+        poolSize: BigInt(poolSize * ticketPrice) * 10n ** 18n ,
         poolOwner: deployer.account.address,
         poolFees: 1n,
         minTokenAmountToHold: 0n,
-        ticketPrice: 10n ** 18n,
+        ticketPrice: BigInt(ticketPrice) * 10n ** 18n,
         tokenIdToHold: "",
         open: true,
         balance: 0n,
@@ -33,15 +34,16 @@ const deployWalph: DeployFunction<Settings> = async (
 
 
   poolSize = 50
+  ticketPrice = 10
   const resultSecond = await deployer.deployContract(Walph50HodlAlf, {
 
     // The initial states of the faucet contract
     initialFields: {
-        poolSize: BigInt(poolSize) * 10n ** 18n,
+        poolSize: BigInt(poolSize * ticketPrice) * 10n ** 18n,
         poolOwner: deployer.account.address,
         poolFees: 10n,
         minTokenAmountToHold: 1n,
-        ticketPrice: 10n ** 18n,
+        ticketPrice: BigInt(ticketPrice) * 10n ** 18n,
         tokenIdToHold: "47504df5a7b18dcecdbf1ea00b7e644d0a7c93919f2d2061ba153f241f03b801",
         open: true,
         balance: 0n,

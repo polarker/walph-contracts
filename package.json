@@ -13,8 +13,8 @@
     "devdeploy": "cli deploy --network devnet",
     "testnetdeploy": "cli deploy --network testnet",
     "build": "tsc --build .",
-    "execute4ever": "tsc --build . && node dist/src/distribute.js",
-    "execute": "tsc --build . && node dist/src/distribute.js"
+    "provision": "tsc --build . && node dist/src/distribute.js",
+    "destroy": "tsc --build . && node dist/src/destroy.js"
   },
   "author": "",
   "license": "ISC",
