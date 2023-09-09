@@ -10,7 +10,7 @@ import {
 } from "@alephium/web3";
 import { PrivateKeyWallet } from "@alephium/web3-wallet";
 import configuration from "../alephium.config";
-import { Destroy, Provision, Walph, WalphTypes } from "../artifacts/ts";
+import { Destroy, Walph, WalphTypes } from "../artifacts/ts";
 
 // The `TokenFaucetTypes.WithdrawEvent` is generated in the getting-started guide
 const events: WalphTypes.PoolCloseEvent[] = [];

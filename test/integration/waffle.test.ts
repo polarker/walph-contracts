@@ -1,6 +1,6 @@
-import { web3, Project, stringToHex, ONE_ALPH, DUST_AMOUNT, sleep, ZERO_ADDRESS } from '@alephium/web3'
+import { web3, Project, stringToHex, ONE_ALPH, DUST_AMOUNT, sleep, ZERO_ADDRESS, sign } from '@alephium/web3'
 import { NodeWallet, PrivateKeyWallet } from '@alephium/web3-wallet'
-import { Walph, Buy, Open,Close, WalphTypes, Destroy, BuyWithoutToken, Provision } from '../../artifacts/ts'
+import { Walph, Buy, Open,Close, WalphTypes, Destroy, BuyWithoutToken } from '../../artifacts/ts'
 import configuration, { Settings } from '../../alephium.config'
 import * as dotenv from 'dotenv'
 import { waitTxConfirmed } from '@alephium/cli'
@@ -134,6 +134,10 @@ describe('integration tests', () => {
 
       const contractAfterPoolDistributionBalance = await web3.getCurrentNodeProvider().addresses.getAddressesAddressBalance(walphContractAddress)
       expect(contractAfterPoolDistributionBalance.balanceHint).toEqual("1 ALPH")
+      const winnerBalance = await web3.getCurrentNodeProvider().addresses.getAddressesAddressBalance(signer.address)
+      console.log(winnerBalance)
+      expect(contractAfterPoolDistributionBalance.balanceHint).toEqual("210 ALPH")
+
 
       const afterPoolDistribution = await walphleDeployed.fetchState()
       const afterPoolDistributionOpenState = afterPoolDistribution.fields.open

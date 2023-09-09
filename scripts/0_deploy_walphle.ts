@@ -1,6 +1,6 @@
 import { Deployer, DeployFunction, Network } from '@alephium/cli'
 import { Settings } from '../alephium.config'
-import { Walph, Walph50HodlAlf, WalphTypes, Walph50HodlAlfTypes, Provision } from '../artifacts/ts'
+import { Walph, Walph50HodlAlf, WalphTypes, Walph50HodlAlfTypes } from '../artifacts/ts'
 import { DUST_AMOUNT, ZERO_ADDRESS } from '@alephium/web3'
 
 

@@ -1,4 +1,0 @@
-TxScript Provision(walphContract: Walph, amount: U256){
-    let caller = callerAddress!()
-    walphContract.addAlph{caller -> ALPH: amount}()
-}
