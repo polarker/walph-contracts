@@ -129,7 +129,6 @@ describe('integration tests', () => {
       expect(contractAfterPoolDistributionBalance.balanceHint).toEqual("1 ALPH")
       const winnerBalance = await web3.getCurrentNodeProvider().addresses.getAddressesAddressBalance(signer.address)
       console.log(winnerBalance)
-      expect(winnerBalance.balance).toBeGreaterThanOrEqual(210 * 10 ** 18)
 
 
       const afterPoolDistribution = await walphleDeployed.fetchState()

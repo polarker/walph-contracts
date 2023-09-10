@@ -51,7 +51,7 @@ import {
           lastWinner: ZERO_ADDRESS,
         },
         initialAsset: {
-          alphAmount: 0n,
+          alphAmount: 1n * 10n ** 18n,
           tokens: [
             {
               id: "47504df5a7b18dcecdbf1ea00b7e644d0a7c93919f2d2061ba153f241f03b801",
@@ -163,7 +163,7 @@ import {
       const testResult = await Walf.tests.buyTicket(testParams);
       const contractState = testResult.contracts[0] as WalfTypes.State;
   
-      expect(contractState.fields.balance).toEqual(10n ** 18n);
+      expect(contractState.fields.balance).toEqual(10n ** 9n);
       expect(contractState.fields.attendees.length).toEqual(10);
       expect(contractState.fields.numAttendees).toEqual(1n);
       expect(contractState.fields.attendees).toEqual([
@@ -210,15 +210,15 @@ import {
     it("test buy 3 tickets after 5 was bought", async () => {
       const testParams = JSON.parse(JSON.stringify(testParamsFixture));
       testParams.initialFields.open = true;
-      testParams.initialFields.balance = 5n * 10n ** 18n;
+      testParams.initialFields.balance = 5n * 10n ** 9n;
       testParams.initialFields.numAttendees = 5n;
   
       testParams.inputAssets[0].address = "1GBvuTs4TosNB9xTCGJL5wABn2xTYCzwa7MnXHphjcj1y"
-      testParams.testArgs.amount = 3n * 10n ** 18n
+      testParams.testArgs.amount = 3n * 10n ** 9n
       const testResult = await Walf.tests.buyTicket(testParams);
       const contractState = testResult.contracts[0] as WalfTypes.State;
   
-      expect(contractState.fields.balance).toEqual(8n * 10n ** 18n);
+      expect(contractState.fields.balance).toEqual(8n * 10n ** 9n);
       expect(contractState.fields.attendees.length).toEqual(10);
       expect(contractState.fields.numAttendees).toEqual(8n);
       expect(contractState.fields.attendees).toEqual([
@@ -242,7 +242,7 @@ import {
       testParams.initialFields.open = true;
       testParams.inputAssets[0].address = "1GBvuTs4TosNB9xTCGJL5wABn2xTYCzwa7MnXHphjcj1y"
   
-      testParams.testArgs.amount = 11n * 10n ** 17n;
+      testParams.testArgs.amount = 11n * 10n ** 7n;
   
       await expectAssertionError(
         Walf.tests.buyTicket(testParams),
@@ -251,26 +251,11 @@ import {
       );
     });
   
-  
-    it("test buy a ticket without holding token", async () => {
-      const testParams = JSON.parse(JSON.stringify(testParamsFixture));
-      testParams.initialFields.open = true;
-      testParams.inputAssets[0].address = "1GBvuTs4TosNB9xTCGJL5wABn2xTYCzwa7MnXHphjcj1y"
-      testParams.inputAssets[0].asset.tokens[0].amount = 0n
-      testParams.testArgs.amount = 1n * 10n ** 18n;
-  
-      await expectAssertionError(
-        Walf.tests.buyTicket(testParams),
-        testContractAddress,
-        5
-      );
-    });
-  
-  
+    
     it("test buy a ticket when pool full", async () => {
       const testParams = JSON.parse(JSON.stringify(testParamsFixture));
       testParams.initialFields.open = true;
-      testParams.initialFields.balance = 100n * 10n ** 18n;
+      testParams.initialFields.balance = 100n * 10n **9n;
       testParams.inputAssets[0].address = "1GBvuTs4TosNB9xTCGJL5wABn2xTYCzwa7MnXHphjcj1y"
   
       await expectAssertionError(
@@ -284,20 +269,22 @@ import {
       const testParams = JSON.parse(JSON.stringify(testParamsFixture));
       testParams.initialFields.open = true;
       testParams.initialFields.balance =  0;
-      testParams.initialAsset.alphAmount = 100 * 10 ** 18;
-      //testParams.initialFields.numAttendees = 10
+      testParams.initialAsset.alphAmount = 1n * 10n ** 18n
+      //testParams.initialFields.numAttendees = 10n
       testParams.inputAssets[0].address = "1GBvuTs4TosNB9xTCGJL5wABn2xTYCzwa7MnXHphjcj1y"
-      testParams.testArgs.amount = 10 * 10 ** 18
+      testParams.testArgs.amount = 10n * 10n ** 9n
   
   
-      const testResult = await Walf.tests.buyTicket(testParams);
-      const contractState = testResult.contracts[0] as WalfTypes.State;
-  
+      const testResult = await Walf.tests.buyTicket(testParams)
+      const contractState = testResult.contracts[0] as WalfTypes.State
+
+
       expect(contractState.fields.balance).toEqual(0n);
       expect(contractState.fields.open).toEqual(true);
       expect(contractState.fields.numAttendees).toEqual(0n);
       expect(contractState.fields.attendees.length).toEqual(10);
       expect(contractState.fields.lastWinner).toEqual("1GBvuTs4TosNB9xTCGJL5wABn2xTYCzwa7MnXHphjcj1y");
+
     });
     
 

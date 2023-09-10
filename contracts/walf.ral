@@ -24,8 +24,8 @@ Contract Walf(
         PoolAlreadyOpen = 2
         PoolClosed = 3
         InvalidCaller = 4
-        PoolNotFull = 5
-        InvalidAmount = 6
+        PoolNotFull = 6
+        InvalidAmount = 7
     }
 
 
@@ -83,7 +83,6 @@ Contract Walf(
         assert!(addModN!(amount, 0 , 10 ** 9) == 0, ErrorCodes.InvalidAmount) // dirty
 
         let numberTicketsBought = amount / ticketPrice
-        emit Debug(`num ticket ${numberTicketsBought}`)
         let mut numberPlaceCounter = 0
 
         // fill the array with the buyer address
@@ -108,10 +107,9 @@ Contract Walf(
             open = false
             emit PoolClose()
 
-            distributePrize{selfAddress!() -> ALPH: balance; caller -> ALPH: amount}(caller, amount)
+            distributePrize{selfAddress!() -> tokenId: balance; caller -> tokenId: amount}(caller, amount)
        } else {
             balance = balance + amount
-            emit Debug(`balance ${balance}`)
             transferTokenToSelf!(caller, tokenId, amount)
        }
     }

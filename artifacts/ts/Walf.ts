@@ -111,8 +111,8 @@ class Factory extends ContractFactory<WalfInstance, WalfTypes.Fields> {
       PoolAlreadyOpen: BigInt(2),
       PoolClosed: BigInt(3),
       InvalidCaller: BigInt(4),
-      PoolNotFull: BigInt(5),
-      InvalidAmount: BigInt(6),
+      PoolNotFull: BigInt(6),
+      InvalidAmount: BigInt(7),
     },
   };
 
@@ -176,8 +176,8 @@ class Factory extends ContractFactory<WalfInstance, WalfTypes.Fields> {
 export const Walf = new Factory(
   Contract.fromJson(
     WalfContractJson,
-    "=4-2=2-2+29=3-1+8=2-2+91=3-1+a=1-2=1+a3=2+5c=1-1+171=2-2+87=2-2+9a=11-1+4=28+0016007e0207726e6420697320=273-1+4=76+16027e020b6e756d207469636b65742000=189-1+a=14+a0017e020862616c616e63652000=138",
-    "b31fc3601a5ba804b70e25be19ad6fcffb5dbdbc0af9a5ea236e2fa08c1ab6c5"
+    "=4-2=2-2+2a=3-1+a=2-2+93=3-1+c=1-3+0a5=3-1+5=2-2+5a=3-1+04183=11-1+4=30+0016007e0207726e6420697320=706",
+    "097aabfc23ffed2738482ff9c06e6421f3ed215eb7d08ba7511164d8c6e97aa6"
   )
 );
 
