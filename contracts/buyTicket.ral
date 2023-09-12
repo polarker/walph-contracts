@@ -15,5 +15,5 @@ TxScript BuyWithoutToken(walphContract: Walph, amount: U256){
 
 TxScript BuyTicketToken(walfContract: Walf, amount: U256, tokenId: ByteVec){
     let caller = callerAddress!()
-    walfContract.buyTicket{caller -> tokenId: amount}(amount)
+    walfContract.buyTicket{caller -> tokenId: amount, ALPH: dustAmount!()}(amount)
 }

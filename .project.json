@@ -11,21 +11,21 @@
   "infos": {
     "Buy": {
       "sourceFile": "buyTicket.ral",
-      "sourceCodeHash": "dd1ae4ad8f1657d15db290db9ff690fb19eed79b20cef76e437bb5695b9f6e28",
+      "sourceCodeHash": "10ea4abd4971577edea1a685540e26fd0f839d0efad64e0848d1db9846133964",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "",
       "warnings": []
     },
     "BuyTicketToken": {
       "sourceFile": "buyTicket.ral",
-      "sourceCodeHash": "dd1ae4ad8f1657d15db290db9ff690fb19eed79b20cef76e437bb5695b9f6e28",
+      "sourceCodeHash": "10ea4abd4971577edea1a685540e26fd0f839d0efad64e0848d1db9846133964",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "",
       "warnings": []
     },
     "BuyWithoutToken": {
       "sourceFile": "buyTicket.ral",
-      "sourceCodeHash": "dd1ae4ad8f1657d15db290db9ff690fb19eed79b20cef76e437bb5695b9f6e28",
+      "sourceCodeHash": "10ea4abd4971577edea1a685540e26fd0f839d0efad64e0848d1db9846133964",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "",
       "warnings": []
@@ -53,9 +53,9 @@
     },
     "Walf": {
       "sourceFile": "walf.ral",
-      "sourceCodeHash": "888606bcc9907fb68d1d8a57d95b45889c3e5dd87f4e4ca38596cc65c1075ee5",
-      "bytecodeDebugPatch": "=4-2=2-2+2a=3-1+a=2-2+93=3-1+c=1-3+0a5=3-1+5=2-2+5a=3-1+04183=11-1+4=30+0016007e0207726e6420697320=706",
-      "codeHashDebug": "b9f69be048861481ab605c984ab64e7b10757c6cbfe44bd5722fc71867be09e1",
+      "sourceCodeHash": "775f49f78a2b2c1ab5ce9681ead9b4cc5b51393361797c4fe25f7539cf20d56a",
+      "bytecodeDebugPatch": "=4-2=2-2+2a=3-1+8=2-2+a1=3-1+a=1-3+0b3=2-2+5e=3-1+3=3-1+9419c=11-1+4=30+0016007e0207726e6420697320=756",
+      "codeHashDebug": "f8e27609dfe342bfae0d62571b9133bedc8341d73db5152209497eac38feb29e",
       "warnings": []
     },
     "Walph": {

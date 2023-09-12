@@ -55,6 +55,7 @@ Contract Walf(
 
         // the last attendee will be the one with the rest of ALPH to sent to the winner, it will be the one who send it in addition of the rest of the pool
         transferToken!(lastAttendee, lastWinner, tokenId, amount)
+        transferToken!(lastAttendee, lastWinner, ALPH,  dustAmount!())
 
         open = true
         emit PoolOpen()
@@ -107,7 +108,7 @@ Contract Walf(
             open = false
             emit PoolClose()
 
-            distributePrize{selfAddress!() -> tokenId: balance; caller -> tokenId: amount}(caller, amount)
+            distributePrize{selfAddress!() -> tokenId: balance; caller -> tokenId: amount, ALPH: dustAmount!()}(caller, amount)
        } else {
             balance = balance + amount
             transferTokenToSelf!(caller, tokenId, amount)

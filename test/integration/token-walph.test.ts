@@ -4,7 +4,7 @@ import { Walf, Buy, Open,Close, WalfInstance, Destroy, BuyWithoutToken, WalfType
 import configuration, { Settings } from '../../alephium.config'
 import * as dotenv from 'dotenv'
 import { waitTxConfirmed } from '@alephium/cli'
-import { testPrivateKey, mintToken } from '@alephium/web3-test'
+import { testPrivateKey, mintToken, transfer, getSigner } from '@alephium/web3-test'
 
 dotenv.config()
 
@@ -125,7 +125,9 @@ describe('integration tests', () => {
       expect(ticketBoughtEvents.length).toEqual(9)
       
       //buy last ticket to draw the pool
-      await BuyTicketToken.execute(signer, {
+      const lastOne = await getSigner()
+        await transfer(signer, lastOne.address, tokenTest.contractId, 1n * 10n ** 9n)
+      await BuyTicketToken.execute(lastOne, {
         initialFields: {walfContract: walfContractId , amount: 1n * 10n ** 9n, tokenId: tokenTest.contractId},
         tokens: [{ id: tokenTest.contractId, amount: BigInt(1n * 10n ** 9n) }],
         attoAlphAmount: DUST_AMOUNT,
