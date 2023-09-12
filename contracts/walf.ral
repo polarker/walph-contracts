@@ -7,7 +7,7 @@ Contract Walf(
     mut open: Bool,
     mut balance: U256,
     mut numAttendees: U256,
-    mut attendees: [Address;21],
+    mut attendees: [Address;10],
     mut lastWinner: Address
 ){
     
@@ -48,8 +48,10 @@ Contract Walf(
         let winnerAmount = balance - poolOwnerAmount
         balance = 0
         numAttendees = 0
+        
+        transferTokenFromSelf!(poolOwner, ALPH, dustAmount!())
+        transferTokenFromSelf!(poolOwner, tokenId, poolOwnerAmount)
 
-        //transferTokenFromSelf!(poolOwner, tokenId, poolOwnerAmount)
         transferTokenFromSelf!(lastWinner, tokenId, winnerAmount)
 
         // the last attendee will be the one with the rest of ALPH to sent to the winner, it will be the one who send it in addition of the rest of the pool
@@ -102,7 +104,7 @@ Contract Walf(
             // check if the number of attendees is full
             assert!(numAttendees == poolSize / ticketPrice, ErrorCodes.PoolNotFull)
 
-            distributePrize{selfAddress!() -> tokenId: balance; caller -> tokenId: amount, ALPH: dustAmount!()}(caller, amount)
+            distributePrize{selfAddress!() -> tokenId: balance, ALPH: dustAmount!(); caller -> tokenId: amount, ALPH: dustAmount!();  }(caller, amount)
        } else {
             balance = balance + amount
             transferTokenToSelf!(caller, ALPH,  dustAmount!())

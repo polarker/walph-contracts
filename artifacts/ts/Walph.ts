@@ -49,17 +49,6 @@ export namespace WalphTypes {
       Address,
       Address,
       Address,
-      Address,
-      Address,
-      Address,
-      Address,
-      Address,
-      Address,
-      Address,
-      Address,
-      Address,
-      Address,
-      Address,
       Address
     ];
     lastWinner: Address;
@@ -199,7 +188,7 @@ export const Walph = new Factory(
   Contract.fromJson(
     WalphContractJson,
     "=4-2=2-2+2a=3-1+a=2-2+83=3-1+c4095=2-2+3a=3-1+f=2+6=1-1=2-2+78=2-2+8c=11-1+4=30+0016007e0207726e6420697320=724",
-    "65921bdefb5599c6f8dc43dc27f4eb5826a18651fd6a2e7ef7e144b15755f84c"
+    "668edcd41c30611d48a673c697e47d7e002d024f0e4dc228d3d858fe9225ea2b"
   )
 );
 

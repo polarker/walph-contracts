@@ -269,7 +269,7 @@ import {
       const testParams = JSON.parse(JSON.stringify(testParamsFixture));
       testParams.initialFields.open = true;
       testParams.initialFields.balance =  0;
-      testParams.initialAsset.alphAmount = 1n * 10n ** 18n
+      testParams.initialAsset.alphAmount = 10n * 10n ** 18n
       //testParams.initialFields.numAttendees = 10n
       testParams.inputAssets[0].address = "1GBvuTs4TosNB9xTCGJL5wABn2xTYCzwa7MnXHphjcj1y"
       testParams.testArgs.amount = 10n * 10n ** 9n

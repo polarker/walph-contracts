@@ -11,21 +11,21 @@
   "infos": {
     "Buy": {
       "sourceFile": "buyTicket.ral",
-      "sourceCodeHash": "2aa24f6f824df0fa4396c3098dc4f1996a33605148a3c189f729b047a0ec582f",
+      "sourceCodeHash": "10ea4abd4971577edea1a685540e26fd0f839d0efad64e0848d1db9846133964",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "",
       "warnings": []
     },
     "BuyTicketToken": {
       "sourceFile": "buyTicket.ral",
-      "sourceCodeHash": "2aa24f6f824df0fa4396c3098dc4f1996a33605148a3c189f729b047a0ec582f",
+      "sourceCodeHash": "10ea4abd4971577edea1a685540e26fd0f839d0efad64e0848d1db9846133964",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "",
       "warnings": []
     },
     "BuyWithoutToken": {
       "sourceFile": "buyTicket.ral",
-      "sourceCodeHash": "2aa24f6f824df0fa4396c3098dc4f1996a33605148a3c189f729b047a0ec582f",
+      "sourceCodeHash": "10ea4abd4971577edea1a685540e26fd0f839d0efad64e0848d1db9846133964",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "",
       "warnings": []
@@ -53,16 +53,16 @@
     },
     "Walf": {
       "sourceFile": "walf.ral",
-      "sourceCodeHash": "8a391e129c1eef38540783ebde50e36e56076394278d9bd311045c24f71f1687",
-      "bytecodeDebugPatch": "=4-2=2-1+2=4-1+7=2-2+90=3-1+940a2=2+5=1-1=2-2+69=3-1+f=2-2+92=11-1+4=30+0016007e0207726e6420697320=736",
-      "codeHashDebug": "c715d76c50b8a1d5197b9c63f4d6fbb7bf20eeee95261637c2cfedaff625cf44",
+      "sourceCodeHash": "a0a7d44f0b269c26be9e5179e2125a5598821b4b88fcb1717d013203e3c925c1",
+      "bytecodeDebugPatch": "=4-2=2-2+2a=3-1+a=2-2+a3=3-1+c40b5=2-2+72=2+8=1-1=3-1+d=2-2+b=7+0=4-1+4=30+0016007e0207726e6420697320=796",
+      "codeHashDebug": "caebb3bc90def2e4fc906d7db646035749302c500be218e910867fd7c0708d36",
       "warnings": []
     },
     "Walph": {
       "sourceFile": "walph.ral",
-      "sourceCodeHash": "8767fa0ac7b097e4a384b4c69d8b79f396d18f1a0bc1babded852518186a3d57",
+      "sourceCodeHash": "b5c4197df4cb5ebd07db6a313a98c1da1722dd7f1cda5a2ef19582367dda80a4",
       "bytecodeDebugPatch": "=4-2=2-2+2a=3-1+a=2-2+83=3-1+c4095=2-2+3a=3-1+f=2+6=1-1=2-2+78=2-2+8c=11-1+4=30+0016007e0207726e6420697320=724",
-      "codeHashDebug": "65921bdefb5599c6f8dc43dc27f4eb5826a18651fd6a2e7ef7e144b15755f84c",
+      "codeHashDebug": "668edcd41c30611d48a673c697e47d7e002d024f0e4dc228d3d858fe9225ea2b",
       "warnings": []
     },
     "Walph50HodlAlf": {
