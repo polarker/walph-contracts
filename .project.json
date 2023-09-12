@@ -1,5 +1,5 @@
 {
-  "fullNodeVersion": "v2.5.5",
+  "fullNodeVersion": "v2.5.6",
   "compilerOptionsUsed": {
     "ignoreUnusedConstantsWarnings": false,
     "ignoreUnusedVariablesWarnings": false,
@@ -11,21 +11,21 @@
   "infos": {
     "Buy": {
       "sourceFile": "buyTicket.ral",
-      "sourceCodeHash": "10ea4abd4971577edea1a685540e26fd0f839d0efad64e0848d1db9846133964",
+      "sourceCodeHash": "2aa24f6f824df0fa4396c3098dc4f1996a33605148a3c189f729b047a0ec582f",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "",
       "warnings": []
     },
     "BuyTicketToken": {
       "sourceFile": "buyTicket.ral",
-      "sourceCodeHash": "10ea4abd4971577edea1a685540e26fd0f839d0efad64e0848d1db9846133964",
+      "sourceCodeHash": "2aa24f6f824df0fa4396c3098dc4f1996a33605148a3c189f729b047a0ec582f",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "",
       "warnings": []
     },
     "BuyWithoutToken": {
       "sourceFile": "buyTicket.ral",
-      "sourceCodeHash": "10ea4abd4971577edea1a685540e26fd0f839d0efad64e0848d1db9846133964",
+      "sourceCodeHash": "2aa24f6f824df0fa4396c3098dc4f1996a33605148a3c189f729b047a0ec582f",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "",
       "warnings": []
@@ -53,16 +53,16 @@
     },
     "Walf": {
       "sourceFile": "walf.ral",
-      "sourceCodeHash": "775f49f78a2b2c1ab5ce9681ead9b4cc5b51393361797c4fe25f7539cf20d56a",
-      "bytecodeDebugPatch": "=4-2=2-2+2a=3-1+8=2-2+a1=3-1+a=1-3+0b3=2-2+5e=3-1+3=3-1+9419c=11-1+4=30+0016007e0207726e6420697320=756",
-      "codeHashDebug": "f8e27609dfe342bfae0d62571b9133bedc8341d73db5152209497eac38feb29e",
+      "sourceCodeHash": "8a391e129c1eef38540783ebde50e36e56076394278d9bd311045c24f71f1687",
+      "bytecodeDebugPatch": "=4-2=2-1+2=4-1+7=2-2+90=3-1+940a2=2+5=1-1=2-2+69=3-1+f=2-2+92=11-1+4=30+0016007e0207726e6420697320=736",
+      "codeHashDebug": "c715d76c50b8a1d5197b9c63f4d6fbb7bf20eeee95261637c2cfedaff625cf44",
       "warnings": []
     },
     "Walph": {
       "sourceFile": "walph.ral",
-      "sourceCodeHash": "7719558147dae9b4af1401c69396e50d43f8f5fb5909ab795133179aae09abfe",
-      "bytecodeDebugPatch": "=4-2=2-2+2a=3-1+4=3+d40=1+6=3-1+f=2-2+49=3-1+e=2-1=2+4=1+8=1-1=2-2+9b=11-1+4=30+0016007e0207726e6420697320=754",
-      "codeHashDebug": "4b6f88cbfc08c2fe50c54185ce1b65065d6d8f62a37b5da7dce0ffac707b2538",
+      "sourceCodeHash": "8767fa0ac7b097e4a384b4c69d8b79f396d18f1a0bc1babded852518186a3d57",
+      "bytecodeDebugPatch": "=4-2=2-2+2a=3-1+a=2-2+83=3-1+c4095=2-2+3a=3-1+f=2+6=1-1=2-2+78=2-2+8c=11-1+4=30+0016007e0207726e6420697320=724",
+      "codeHashDebug": "65921bdefb5599c6f8dc43dc27f4eb5826a18651fd6a2e7ef7e144b15755f84c",
       "warnings": []
     },
     "Walph50HodlAlf": {

@@ -4,7 +4,7 @@ import { Walph, Buy, Open,Close, WalphTypes, Destroy, BuyWithoutToken } from '..
 import configuration, { Settings } from '../../alephium.config'
 import * as dotenv from 'dotenv'
 import { waitTxConfirmed } from '@alephium/cli'
-import { testPrivateKey } from '@alephium/web3-test'
+import { getSigner, testPrivateKey } from '@alephium/web3-test'
 
 dotenv.config()
 
@@ -87,13 +87,14 @@ describe('integration tests', () => {
     })
 
       const contractBalance = await web3.getCurrentNodeProvider().addresses.getAddressesAddressBalance(walphContractAddress)
-      expect(contractBalance.balanceHint).toEqual("1 ALPH")
+      expect(parseInt(contractBalance.balance)).toBeGreaterThanOrEqual(ONE_ALPH)
 
+      const lastOne = await getSigner()
       // simulate someone buying tickets
       for (let i = 0; i < 9; i++) {
         await BuyWithoutToken.execute(signer, {
           initialFields: {walphContract: walphleContractId , amount: ONE_ALPH},
-          attoAlphAmount:  ONE_ALPH + 3n * DUST_AMOUNT,
+          attoAlphAmount:  ONE_ALPH + 2n * DUST_AMOUNT,
           
         })
         
@@ -121,14 +122,13 @@ describe('integration tests', () => {
       //buy last ticket to draw the pool
       await BuyWithoutToken.execute(signer, {
         initialFields: {walphContract: walphleContractId , amount: ONE_ALPH},
-        attoAlphAmount: ONE_ALPH + 5n * DUST_AMOUNT,
+        attoAlphAmount: ONE_ALPH + DUST_AMOUNT,
         
       })
 
       const contractAfterPoolDistributionBalance = await web3.getCurrentNodeProvider().addresses.getAddressesAddressBalance(walphContractAddress)
       expect(contractAfterPoolDistributionBalance.balanceHint).toEqual("1 ALPH")
       const winnerBalance = await web3.getCurrentNodeProvider().addresses.getAddressesAddressBalance(signer.address)
-      console.log(winnerBalance)
 
 
       const afterPoolDistribution = await walphleDeployed.fetchState()

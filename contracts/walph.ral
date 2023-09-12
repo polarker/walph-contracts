@@ -42,7 +42,6 @@ Contract Walph(
     @using(preapprovedAssets = true, assetsInContract = false, updateFields = true, checkExternalCaller = false)
     fn distributePrize(lastAttendee: Address, amount: U256) -> (){
          checkCaller!(callerAddress!() == selfAddress!(), ErrorCodes.InvalidCaller)
-         assert!(!open, ErrorCodes.PoolAlreadyClose)
          assert!(balance + amount >= poolSize, ErrorCodes.PoolNotFull)
 
         lastWinner = attendees[random()]
@@ -59,8 +58,6 @@ Contract Walph(
         // the last attendee will be the one with the rest of ALPH to sent to the winner, it will be the one who send it in addition of the rest of the pool
         transferToken!(lastAttendee, lastWinner, ALPH, amount)
 
-        open = true
-        emit PoolOpen()
         emit Winner(lastWinner)
 
      }
@@ -78,6 +75,10 @@ Contract Walph(
         return balance
     }
     
+
+    //TODO add function to withdraw the fees instead of transfering them each time 
+
+
     @using(preapprovedAssets = true, assetsInContract = true, updateFields = true, checkExternalCaller = false)
     pub fn buyTicket(amount: U256) -> (){
         let caller = callerAddress!()
@@ -110,8 +111,6 @@ Contract Walph(
             // check if the number of attendees is full
             assert!(numAttendees == poolSize / ticketPrice, ErrorCodes.PoolNotFull)
             
-            open = false
-            emit PoolClose()
 
             distributePrize{selfAddress!() -> ALPH: balance; caller -> ALPH: amount}(caller, amount)
        } else {

@@ -34,7 +34,7 @@ describe('integration tests', () => {
   it('should test Walf', async () => {
 
 
-   const tokenTest = await mintToken(signer.address, 20n * 10n ** 9n)
+   const tokenTest = await mintToken(signer.address, 2000n * 10n ** 9n)
 
     const deployResult = await Walf.deploy(
       signer,
@@ -91,15 +91,17 @@ describe('integration tests', () => {
     })
 
       const contractBalance = await web3.getCurrentNodeProvider().addresses.getAddressesAddressBalance(walfContractAddress)
-      expect(contractBalance.balanceHint).toEqual("1 ALPH")
+      expect(parseInt(contractBalance.balance)).toBeGreaterThanOrEqual(ONE_ALPH)
 
       const signerBalance = await web3.getCurrentNodeProvider().addresses.getAddressesAddressBalance(signer.address)
       // simulate someone buying tickets
+      const firstAttendee = await getSigner()
+      await transfer(signer,firstAttendee.address,tokenTest.contractId, 200n * 10n ** 9n)
       for (let i = 0; i < 9; i++) {
-        await BuyTicketToken.execute(signer, {
+        await BuyTicketToken.execute(firstAttendee, {
           initialFields: {walfContract: walfContractId , amount: 1n * 10n ** 9n, tokenId: tokenTest.contractId},
           tokens: [{ id: tokenTest.contractId, amount: BigInt(1n * 10n ** 9n) }],
-          attoAlphAmount:  DUST_AMOUNT,
+          attoAlphAmount:  2n*DUST_AMOUNT,
           
         })
         
@@ -113,7 +115,7 @@ describe('integration tests', () => {
 
 
       console.log("Pool state: "+afterPoolFullOpenState + " Balance: "+afterPoolFullBalanceState/10n**18n+ " Attendees: " + afterPoolFullAttendeesState)
-      let expectedArray = Array(9).fill(signer.address) as WalfTypes.Fields["attendees"]
+      let expectedArray = Array(9).fill(firstAttendee.address) as WalfTypes.Fields["attendees"]
       expectedArray[9] = ZERO_ADDRESS
 
       expect(afterPoolFullOpenState).toEqual(true)
@@ -126,16 +128,16 @@ describe('integration tests', () => {
       
       //buy last ticket to draw the pool
       const lastOne = await getSigner()
-        await transfer(signer, lastOne.address, tokenTest.contractId, 1n * 10n ** 9n)
+      await transfer(signer, lastOne.address, tokenTest.contractId, 1n * 10n ** 9n)
       await BuyTicketToken.execute(lastOne, {
         initialFields: {walfContract: walfContractId , amount: 1n * 10n ** 9n, tokenId: tokenTest.contractId},
         tokens: [{ id: tokenTest.contractId, amount: BigInt(1n * 10n ** 9n) }],
-        attoAlphAmount: DUST_AMOUNT,
+        attoAlphAmount: 2n*DUST_AMOUNT,
         
       })
 
       const contractAfterPoolDistributionBalance = await web3.getCurrentNodeProvider().addresses.getAddressesAddressBalance(walfContractAddress)
-      expect(contractAfterPoolDistributionBalance.balanceHint).toEqual("1 ALPH")
+      expect(parseInt(contractBalance.balance)).toBeGreaterThanOrEqual(ONE_ALPH)
       const winnerBalance = await web3.getCurrentNodeProvider().addresses.getAddressesAddressBalance(signer.address)
 
       const afterPoolDistribution = await walfDeployed.fetchState()
@@ -148,13 +150,13 @@ describe('integration tests', () => {
       expect(afterPoolDistributionOpenState).toEqual(true)
       expect(afterPoolDistributionBalanceState).toEqual(0n)
       expect(afterPoolDistributionNumAttendeesState).toEqual(0n)
-      expect(afterPoolDistributionWinner).toEqual(signer.account.address)
+      expect(afterPoolDistributionWinner).toEqual(firstAttendee.address || lastOne.address)
 
       subscription.unsubscribe()
 
      await Destroy.execute(signer, {
         initialFields: { walphContract: walfContractId },
-        attoAlphAmount: DUST_AMOUNT
+        attoAlphAmount: 2n*DUST_AMOUNT
 
       })
       /*

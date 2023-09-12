@@ -1,7 +1,7 @@
 {
-  "version": "v2.5.5",
+  "version": "v2.5.6",
   "name": "BuyTicketToken",
-  "bytecodeTemplate": "0101030001000eb4170016007a{2}{1}a313c3038d7ea4c68000a2{1}0d0c{0}0105",
+  "bytecodeTemplate": "01010300010010b4170016007a{2}{1}a30e13c3038d7ea4c680002ca2{1}0d0c{0}0105",
   "fieldsSig": {
     "names": [
       "walfContract",

@@ -39,7 +39,6 @@ Contract Walf(
     @using(preapprovedAssets = true, assetsInContract = false, updateFields = true, checkExternalCaller = false)
     fn distributePrize(lastAttendee: Address, amount: U256) -> (){
          checkCaller!(callerAddress!() == selfAddress!(), ErrorCodes.InvalidCaller)
-         assert!(!open, ErrorCodes.PoolAlreadyClose)
          assert!(balance + amount >= poolSize, ErrorCodes.PoolNotFull)
 
         lastWinner = attendees[random()]
@@ -50,15 +49,13 @@ Contract Walf(
         balance = 0
         numAttendees = 0
 
-        transferTokenFromSelf!(poolOwner, tokenId, poolOwnerAmount)
+        //transferTokenFromSelf!(poolOwner, tokenId, poolOwnerAmount)
         transferTokenFromSelf!(lastWinner, tokenId, winnerAmount)
 
         // the last attendee will be the one with the rest of ALPH to sent to the winner, it will be the one who send it in addition of the rest of the pool
-        transferToken!(lastAttendee, lastWinner, tokenId, amount)
         transferToken!(lastAttendee, lastWinner, ALPH,  dustAmount!())
+        transferToken!(lastAttendee, lastWinner, tokenId, amount)
 
-        open = true
-        emit PoolOpen()
         emit Winner(lastWinner)
 
      }
@@ -104,13 +101,11 @@ Contract Walf(
             
             // check if the number of attendees is full
             assert!(numAttendees == poolSize / ticketPrice, ErrorCodes.PoolNotFull)
-            
-            open = false
-            emit PoolClose()
 
             distributePrize{selfAddress!() -> tokenId: balance; caller -> tokenId: amount, ALPH: dustAmount!()}(caller, amount)
        } else {
             balance = balance + amount
+            transferTokenToSelf!(caller, ALPH,  dustAmount!())
             transferTokenToSelf!(caller, tokenId, amount)
        }
     }
