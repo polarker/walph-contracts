@@ -1,10 +1,9 @@
-Contract Walph(
+Contract Walf(
     poolSize: U256,
     poolOwner: Address,
     poolFees: U256,
-    tokenIdToHold: ByteVec,
+    tokenId: ByteVec,
     ticketPrice: U256,
-    mut minTokenAmountToHold: U256,
     mut open: Bool,
     mut balance: U256,
     mut numAttendees: U256,
@@ -17,7 +16,6 @@ Contract Walph(
     event PoolOpen()
     event PoolClose()
     event Destroy(from: Address)
-    event NewMinTokenAmountToHold(newAmount: U256)
     event Winner(address: Address)
 
     enum ErrorCodes {
@@ -26,7 +24,6 @@ Contract Walph(
         PoolAlreadyOpen = 2
         PoolClosed = 3
         InvalidCaller = 4
-        NotEnoughToken = 5
         PoolNotFull = 6
         InvalidAmount = 7
     }
@@ -51,12 +48,15 @@ Contract Walph(
         let winnerAmount = balance - poolOwnerAmount
         balance = 0
         numAttendees = 0
+        
+        transferTokenFromSelf!(poolOwner, ALPH, dustAmount!())
+        transferTokenFromSelf!(poolOwner, tokenId, poolOwnerAmount)
 
-        transferTokenFromSelf!(poolOwner, ALPH, poolOwnerAmount)
-        transferTokenFromSelf!(lastWinner, ALPH, winnerAmount)
+        transferTokenFromSelf!(lastWinner, tokenId, winnerAmount)
 
         // the last attendee will be the one with the rest of ALPH to sent to the winner, it will be the one who send it in addition of the rest of the pool
-        transferToken!(lastAttendee, lastWinner, ALPH, amount)
+        transferToken!(lastAttendee, lastWinner, ALPH,  dustAmount!())
+        transferToken!(lastAttendee, lastWinner, tokenId, amount)
 
         emit Winner(lastWinner)
 
@@ -75,20 +75,13 @@ Contract Walph(
         return balance
     }
     
-
-    //TODO add function to withdraw the fees instead of transfering them each time 
-
-
     @using(preapprovedAssets = true, assetsInContract = true, updateFields = true, checkExternalCaller = false)
     pub fn buyTicket(amount: U256) -> (){
         let caller = callerAddress!()
         assert!(balance + amount <= poolSize, ErrorCodes.PoolFull)
         assert!(open, ErrorCodes.PoolClosed)
-        assert!(addModN!(amount,0 ,10 ** 18) == 0, ErrorCodes.InvalidAmount) // dirty
-        if (minTokenAmountToHold > 0){
-            assert!(tokenRemaining!(caller, tokenIdToHold) >= minTokenAmountToHold, ErrorCodes.NotEnoughToken)
-        }
-                
+        assert!(addModN!(amount, 0 , 10 ** 9) == 0, ErrorCodes.InvalidAmount) // dirty
+
         let numberTicketsBought = amount / ticketPrice
         let mut numberPlaceCounter = 0
 
@@ -110,12 +103,12 @@ Contract Walph(
             
             // check if the number of attendees is full
             assert!(numAttendees == poolSize / ticketPrice, ErrorCodes.PoolNotFull)
-            
 
-            distributePrize{selfAddress!() -> ALPH: balance; caller -> ALPH: amount}(caller, amount)
+            distributePrize{selfAddress!() -> tokenId: balance, ALPH: dustAmount!(); caller -> tokenId: amount, ALPH: dustAmount!();  }(caller, amount)
        } else {
             balance = balance + amount
-            transferTokenToSelf!(caller, ALPH, amount)
+            transferTokenToSelf!(caller, ALPH,  dustAmount!())
+            transferTokenToSelf!(caller, tokenId, amount)
        }
     }
 
@@ -147,15 +140,5 @@ Contract Walph(
 
         emit Destroy(poolOwner)
     }
-
-    @using(assetsInContract = false, updateFields = true, checkExternalCaller = true)
-    pub fn changeMinAmountToHold(newAmount: U256) -> () {
-        checkCaller!(callerAddress!() == poolOwner, ErrorCodes.InvalidCaller)
-
-        minTokenAmountToHold = newAmount
-
-        emit NewMinTokenAmountToHold(newAmount)
-    }
-
 
 }

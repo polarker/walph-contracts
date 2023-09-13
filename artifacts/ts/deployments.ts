@@ -9,6 +9,8 @@ import {
   WalphInstance,
   Walph50HodlAlf,
   Walph50HodlAlfInstance,
+  Walf,
+  WalfInstance,
 } from ".";
 import { default as testnetDeployments } from "../.deployments.testnet.json";
 import { default as devnetDeployments } from "../.deployments.devnet.json";
@@ -18,6 +20,7 @@ export type Deployments = {
   contracts: {
     Walph: DeployContractExecutionResult<WalphInstance>;
     Walph50HodlAlf: DeployContractExecutionResult<Walph50HodlAlfInstance>;
+    Walf: DeployContractExecutionResult<WalfInstance>;
   };
 };
 
@@ -33,6 +36,12 @@ function toDeployments(json: any): Deployments {
       ...json.contracts["Walph50HodlAlf"],
       contractInstance: Walph50HodlAlf.at(
         json.contracts["Walph50HodlAlf"].contractInstance.address
+      ),
+    },
+    Walf: {
+      ...json.contracts["Walf"],
+      contractInstance: Walf.at(
+        json.contracts["Walf"].contractInstance.address
       ),
     },
   };

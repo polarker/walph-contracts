@@ -24,18 +24,17 @@ import {
   ContractInstance,
   getContractEventsCurrentCount,
 } from "@alephium/web3";
-import { default as WalphContractJson } from "../Walph.ral.json";
+import { default as WalfContractJson } from "../Walf.ral.json";
 import { getContractByCodeHash } from "./contracts";
 
 // Custom types for the contract
-export namespace WalphTypes {
+export namespace WalfTypes {
   export type Fields = {
     poolSize: bigint;
     poolOwner: Address;
     poolFees: bigint;
-    tokenIdToHold: HexString;
+    tokenId: HexString;
     ticketPrice: bigint;
-    minTokenAmountToHold: bigint;
     open: boolean;
     balance: bigint;
     numAttendees: bigint;
@@ -74,9 +73,6 @@ export namespace WalphTypes {
   export type PoolOpenEvent = Omit<ContractEvent, "fields">;
   export type PoolCloseEvent = Omit<ContractEvent, "fields">;
   export type DestroyEvent = ContractEvent<{ from: Address }>;
-  export type NewMinTokenAmountToHoldEvent = ContractEvent<{
-    newAmount: bigint;
-  }>;
   export type WinnerEvent = ContractEvent<{ address: Address }>;
 
   export interface CallMethodTable {
@@ -107,9 +103,9 @@ export namespace WalphTypes {
   };
 }
 
-class Factory extends ContractFactory<WalphInstance, WalphTypes.Fields> {
+class Factory extends ContractFactory<WalfInstance, WalfTypes.Fields> {
   getInitialFieldsWithDefaultValues() {
-    return this.contract.getInitialFieldsWithDefaultValues() as WalphTypes.Fields;
+    return this.contract.getInitialFieldsWithDefaultValues() as WalfTypes.Fields;
   }
 
   eventIndex = {
@@ -117,8 +113,7 @@ class Factory extends ContractFactory<WalphInstance, WalphTypes.Fields> {
     PoolOpen: 1,
     PoolClose: 2,
     Destroy: 3,
-    NewMinTokenAmountToHold: 4,
-    Winner: 5,
+    Winner: 4,
   };
   consts = {
     ErrorCodes: {
@@ -127,90 +122,84 @@ class Factory extends ContractFactory<WalphInstance, WalphTypes.Fields> {
       PoolAlreadyOpen: BigInt(2),
       PoolClosed: BigInt(3),
       InvalidCaller: BigInt(4),
-      NotEnoughToken: BigInt(5),
       PoolNotFull: BigInt(6),
       InvalidAmount: BigInt(7),
     },
   };
 
-  at(address: string): WalphInstance {
-    return new WalphInstance(address);
+  at(address: string): WalfInstance {
+    return new WalfInstance(address);
   }
 
   tests = {
     random: async (
-      params: Omit<TestContractParams<WalphTypes.Fields, never>, "testArgs">
+      params: Omit<TestContractParams<WalfTypes.Fields, never>, "testArgs">
     ): Promise<TestContractResult<bigint>> => {
       return testMethod(this, "random", params);
     },
     distributePrize: async (
       params: TestContractParams<
-        WalphTypes.Fields,
+        WalfTypes.Fields,
         { lastAttendee: Address; amount: bigint }
       >
     ): Promise<TestContractResult<null>> => {
       return testMethod(this, "distributePrize", params);
     },
     getPoolState: async (
-      params: Omit<TestContractParams<WalphTypes.Fields, never>, "testArgs">
+      params: Omit<TestContractParams<WalfTypes.Fields, never>, "testArgs">
     ): Promise<TestContractResult<boolean>> => {
       return testMethod(this, "getPoolState", params);
     },
     getPoolSize: async (
-      params: Omit<TestContractParams<WalphTypes.Fields, never>, "testArgs">
+      params: Omit<TestContractParams<WalfTypes.Fields, never>, "testArgs">
     ): Promise<TestContractResult<bigint>> => {
       return testMethod(this, "getPoolSize", params);
     },
     getBalance: async (
-      params: Omit<TestContractParams<WalphTypes.Fields, never>, "testArgs">
+      params: Omit<TestContractParams<WalfTypes.Fields, never>, "testArgs">
     ): Promise<TestContractResult<bigint>> => {
       return testMethod(this, "getBalance", params);
     },
     buyTicket: async (
-      params: TestContractParams<WalphTypes.Fields, { amount: bigint }>
+      params: TestContractParams<WalfTypes.Fields, { amount: bigint }>
     ): Promise<TestContractResult<null>> => {
       return testMethod(this, "buyTicket", params);
     },
     closePool: async (
-      params: Omit<TestContractParams<WalphTypes.Fields, never>, "testArgs">
+      params: Omit<TestContractParams<WalfTypes.Fields, never>, "testArgs">
     ): Promise<TestContractResult<null>> => {
       return testMethod(this, "closePool", params);
     },
     openPool: async (
-      params: Omit<TestContractParams<WalphTypes.Fields, never>, "testArgs">
+      params: Omit<TestContractParams<WalfTypes.Fields, never>, "testArgs">
     ): Promise<TestContractResult<null>> => {
       return testMethod(this, "openPool", params);
     },
     destroyPool: async (
-      params: Omit<TestContractParams<WalphTypes.Fields, never>, "testArgs">
+      params: Omit<TestContractParams<WalfTypes.Fields, never>, "testArgs">
     ): Promise<TestContractResult<null>> => {
       return testMethod(this, "destroyPool", params);
-    },
-    changeMinAmountToHold: async (
-      params: TestContractParams<WalphTypes.Fields, { newAmount: bigint }>
-    ): Promise<TestContractResult<null>> => {
-      return testMethod(this, "changeMinAmountToHold", params);
     },
   };
 }
 
 // Use this object to test and deploy the contract
-export const Walph = new Factory(
+export const Walf = new Factory(
   Contract.fromJson(
-    WalphContractJson,
-    "=4-2=2-2+2a=3-1+a=2-2+83=3-1+c4095=2-2+3a=3-1+f=2+6=1-1=2-2+78=2-2+8c=11-1+4=30+0016007e0207726e6420697320=724",
-    "65921bdefb5599c6f8dc43dc27f4eb5826a18651fd6a2e7ef7e144b15755f84c"
+    WalfContractJson,
+    "=4-2=2-2+2a=3-1+a=2-2+a3=3-1+c40b5=2-2+72=2+8=1-1=3-1+d=2-2+b=7+0=4-1+4=30+0016007e0207726e6420697320=796",
+    "9e4f29e676903f58a1433ae448c18359bb45184927e6be99df55a72dc69474fd"
   )
 );
 
 // Use this class to interact with the blockchain
-export class WalphInstance extends ContractInstance {
+export class WalfInstance extends ContractInstance {
   constructor(address: Address) {
     super(address);
   }
 
-  async fetchState(): Promise<WalphTypes.State> {
-    return fetchContractState(Walph, this);
+  async fetchState(): Promise<WalfTypes.State> {
+    return fetchContractState(Walf, this);
   }
 
   async getContractEventsCurrentCount(): Promise<number> {
@@ -218,11 +207,11 @@ export class WalphInstance extends ContractInstance {
   }
 
   subscribeTicketBoughtEvent(
-    options: EventSubscribeOptions<WalphTypes.TicketBoughtEvent>,
+    options: EventSubscribeOptions<WalfTypes.TicketBoughtEvent>,
     fromCount?: number
   ): EventSubscription {
     return subscribeContractEvent(
-      Walph.contract,
+      Walf.contract,
       this,
       options,
       "TicketBought",
@@ -231,11 +220,11 @@ export class WalphInstance extends ContractInstance {
   }
 
   subscribePoolOpenEvent(
-    options: EventSubscribeOptions<WalphTypes.PoolOpenEvent>,
+    options: EventSubscribeOptions<WalfTypes.PoolOpenEvent>,
     fromCount?: number
   ): EventSubscription {
     return subscribeContractEvent(
-      Walph.contract,
+      Walf.contract,
       this,
       options,
       "PoolOpen",
@@ -244,11 +233,11 @@ export class WalphInstance extends ContractInstance {
   }
 
   subscribePoolCloseEvent(
-    options: EventSubscribeOptions<WalphTypes.PoolCloseEvent>,
+    options: EventSubscribeOptions<WalfTypes.PoolCloseEvent>,
     fromCount?: number
   ): EventSubscription {
     return subscribeContractEvent(
-      Walph.contract,
+      Walf.contract,
       this,
       options,
       "PoolClose",
@@ -257,11 +246,11 @@ export class WalphInstance extends ContractInstance {
   }
 
   subscribeDestroyEvent(
-    options: EventSubscribeOptions<WalphTypes.DestroyEvent>,
+    options: EventSubscribeOptions<WalfTypes.DestroyEvent>,
     fromCount?: number
   ): EventSubscription {
     return subscribeContractEvent(
-      Walph.contract,
+      Walf.contract,
       this,
       options,
       "Destroy",
@@ -269,25 +258,12 @@ export class WalphInstance extends ContractInstance {
     );
   }
 
-  subscribeNewMinTokenAmountToHoldEvent(
-    options: EventSubscribeOptions<WalphTypes.NewMinTokenAmountToHoldEvent>,
-    fromCount?: number
-  ): EventSubscription {
-    return subscribeContractEvent(
-      Walph.contract,
-      this,
-      options,
-      "NewMinTokenAmountToHold",
-      fromCount
-    );
-  }
-
   subscribeWinnerEvent(
-    options: EventSubscribeOptions<WalphTypes.WinnerEvent>,
+    options: EventSubscribeOptions<WalfTypes.WinnerEvent>,
     fromCount?: number
   ): EventSubscription {
     return subscribeContractEvent(
-      Walph.contract,
+      Walf.contract,
       this,
       options,
       "Winner",
@@ -297,24 +273,23 @@ export class WalphInstance extends ContractInstance {
 
   subscribeAllEvents(
     options: EventSubscribeOptions<
-      | WalphTypes.TicketBoughtEvent
-      | WalphTypes.PoolOpenEvent
-      | WalphTypes.PoolCloseEvent
-      | WalphTypes.DestroyEvent
-      | WalphTypes.NewMinTokenAmountToHoldEvent
-      | WalphTypes.WinnerEvent
+      | WalfTypes.TicketBoughtEvent
+      | WalfTypes.PoolOpenEvent
+      | WalfTypes.PoolCloseEvent
+      | WalfTypes.DestroyEvent
+      | WalfTypes.WinnerEvent
     >,
     fromCount?: number
   ): EventSubscription {
-    return subscribeContractEvents(Walph.contract, this, options, fromCount);
+    return subscribeContractEvents(Walf.contract, this, options, fromCount);
   }
 
   methods = {
     getPoolState: async (
-      params?: WalphTypes.CallMethodParams<"getPoolState">
-    ): Promise<WalphTypes.CallMethodResult<"getPoolState">> => {
+      params?: WalfTypes.CallMethodParams<"getPoolState">
+    ): Promise<WalfTypes.CallMethodResult<"getPoolState">> => {
       return callMethod(
-        Walph,
+        Walf,
         this,
         "getPoolState",
         params === undefined ? {} : params,
@@ -322,10 +297,10 @@ export class WalphInstance extends ContractInstance {
       );
     },
     getPoolSize: async (
-      params?: WalphTypes.CallMethodParams<"getPoolSize">
-    ): Promise<WalphTypes.CallMethodResult<"getPoolSize">> => {
+      params?: WalfTypes.CallMethodParams<"getPoolSize">
+    ): Promise<WalfTypes.CallMethodResult<"getPoolSize">> => {
       return callMethod(
-        Walph,
+        Walf,
         this,
         "getPoolSize",
         params === undefined ? {} : params,
@@ -333,10 +308,10 @@ export class WalphInstance extends ContractInstance {
       );
     },
     getBalance: async (
-      params?: WalphTypes.CallMethodParams<"getBalance">
-    ): Promise<WalphTypes.CallMethodResult<"getBalance">> => {
+      params?: WalfTypes.CallMethodParams<"getBalance">
+    ): Promise<WalfTypes.CallMethodResult<"getBalance">> => {
       return callMethod(
-        Walph,
+        Walf,
         this,
         "getBalance",
         params === undefined ? {} : params,
@@ -345,14 +320,14 @@ export class WalphInstance extends ContractInstance {
     },
   };
 
-  async multicall<Calls extends WalphTypes.MultiCallParams>(
+  async multicall<Calls extends WalfTypes.MultiCallParams>(
     calls: Calls
-  ): Promise<WalphTypes.MultiCallResults<Calls>> {
+  ): Promise<WalfTypes.MultiCallResults<Calls>> {
     return (await multicallMethods(
-      Walph,
+      Walf,
       this,
       calls,
       getContractByCodeHash
-    )) as WalphTypes.MultiCallResults<Calls>;
+    )) as WalfTypes.MultiCallResults<Calls>;
   }
 }
