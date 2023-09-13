@@ -8,7 +8,7 @@ Contract Walph(
     mut open: Bool,
     mut balance: U256,
     mut numAttendees: U256,
-    mut attendees: [Address;10],
+    mut attendees: [Address;21],
     mut lastWinner: Address
 ){
     
