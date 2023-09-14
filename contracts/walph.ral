@@ -126,7 +126,7 @@ Contract Walph(
             assert!(numAttendees == poolSize / ticketPrice, ErrorCodes.PoolNotFull)
             
 
-            distributePrize{selfAddress!() -> ALPH: balance; caller -> ALPH: amount}(caller, amount)
+            distributePrize{selfAddress!() -> ALPH: balance + dustAmount!(); caller -> ALPH: amount}(caller, amount)
        } else {
             balance = balance + amount
             transferTokenToSelf!(caller, ALPH, amount)
