@@ -38,8 +38,20 @@ export namespace WalfTypes {
     open: boolean;
     balance: bigint;
     feesBalance: bigint;
+    dustBalance: bigint;
     numAttendees: bigint;
     attendees: [
+      Address,
+      Address,
+      Address,
+      Address,
+      Address,
+      Address,
+      Address,
+      Address,
+      Address,
+      Address,
+      Address,
       Address,
       Address,
       Address,
@@ -191,8 +203,8 @@ class Factory extends ContractFactory<WalfInstance, WalfTypes.Fields> {
 export const Walf = new Factory(
   Contract.fromJson(
     WalfContractJson,
-    "=4-2=2-2+2a=2-2+93=3-1+c=3-1+5=3-1+e=2-2+b7=1-2+0=1+0=2+a=1-1=3-1+0=3-1+641e9=11-1+4=30+0016007e0207726e6420697320=910",
-    "9be62baccef9c36fc1eadad9c03d831330ad48701bf941553b3a5792776317ec"
+    "=6-2=2-2+2a=2-2+93=3-1+c=3-1+5=3-1+e40b7=2-2+fb=2-2+d4=2-2+e9=3-1+f=2-2+12=11-1+4=30+0016007e0207726e6420697320=992",
+    "c05a629fc8b4946ad5d68b06bd47f8d485ada48a664628a1110902b952d2c809"
   )
 );
 

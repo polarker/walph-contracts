@@ -13,7 +13,7 @@
     "devdeploy": "cli deploy --network devnet",
     "testnetdeploy": "cli deploy --network testnet",
     "build": "tsc --build .",
-    "provision": "tsc --build . && node dist/src/distribute.js",
+    "withdraw": "tsc --build . && node dist/src/withdraw.js",
     "destroy": "tsc --build . && node dist/src/destroy.js"
   },
   "author": "",

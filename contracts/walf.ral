@@ -7,8 +7,9 @@ Contract Walf(
     mut open: Bool,
     mut balance: U256,
     mut feesBalance: U256,
+    mut dustBalance: U256,
     mut numAttendees: U256,
-    mut attendees: [Address;10],
+    mut attendees: [Address;21],
     mut lastWinner: Address
 ){
     
@@ -86,7 +87,8 @@ Contract Walf(
         assert!(feesBalance > 0, ErrorCodes.PoolNotFull)
 
         transferTokenFromSelf!(poolOwner, ALPH, dustAmount!())
-        transferTokenFromSelf!(poolOwner, tokenId, feesBalance)
+        transferTokenFromSelf!(poolOwner, ALPH, dustBalance - 3*dustAmount!())
+        transferTokenFromSelf!(poolOwner, tokenId, feesBalance - poolFees * 10 ** 7)
         feesBalance = 0
 
     }
@@ -114,6 +116,7 @@ Contract Walf(
         // used to check if the amount added will close the pool
         let balanceCheck = balance + amount
         feesBalance = feesBalance + amount * poolFees/100
+        dustBalance = dustBalance + dustAmount!()
         // last person to complete the pool close it and start the draw
         if (balanceCheck >= poolSize){
             assert!(balanceCheck >= poolSize, ErrorCodes.PoolNotFull)

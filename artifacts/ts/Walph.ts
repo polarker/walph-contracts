@@ -50,6 +50,17 @@ export namespace WalphTypes {
       Address,
       Address,
       Address,
+      Address,
+      Address,
+      Address,
+      Address,
+      Address,
+      Address,
+      Address,
+      Address,
+      Address,
+      Address,
+      Address,
       Address
     ];
     lastWinner: Address;
@@ -202,8 +213,8 @@ class Factory extends ContractFactory<WalphInstance, WalphTypes.Fields> {
 export const Walph = new Factory(
   Contract.fromJson(
     WalphContractJson,
-    "=4-2=2-2+2a=3-1+5=3-1+e=3-1+7=2-2+90=2-2+99=1-2+0=1+d=2+7=1-1=2-2+8d=3-1+3=3-1+641ca=11-1+4=30+0016007e0207726e6420697320=848",
-    "b20803e48e80d02cc957fcefeb59b6db861f6f9b99f255f9b70db2617a38616c"
+    "=6-2=2-2+2a=3-1+5=3-1+e=3-1+7=2-2+90=2-2+99=1-3+0c0=2-2+7b=3-1+0=3-1+641b9=3-1+d=11-1+4=30+0016007e0207726e6420697320=854",
+    "941c0a924f8db3fcea745b478b225da306d071380f10ee185f694a9f361e28bc"
   )
 );
 

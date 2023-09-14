@@ -2,7 +2,7 @@ import { Deployer, DeployFunction, getNetwork, Network } from '@alephium/cli'
 import { Settings } from '../alephium.config'
 import { Walph, Walph50HodlAlf, WalphTypes, Walph50HodlAlfTypes, Walf, WalfTypes } from '../artifacts/ts'
 import { DUST_AMOUNT, ZERO_ADDRESS } from '@alephium/web3'
-import { mintToken } from '@alephium/web3-test'
+import { mintToken, transfer } from '@alephium/web3-test'
 
 
 
@@ -77,6 +77,7 @@ const deployWalph: DeployFunction<Settings> = async (
         open: true,
         balance: 0n,
         feesBalance: 0n,
+        dustBalance: 0n,
         numAttendees: 0n,
         attendees: Array(poolSize).fill(ZERO_ADDRESS) as WalfTypes.Fields["attendees"],
         lastWinner: ZERO_ADDRESS
