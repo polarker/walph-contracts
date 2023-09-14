@@ -32,44 +32,51 @@
     },
     "Close": {
       "sourceFile": "poolState.ral",
-      "sourceCodeHash": "1f8e42ee58c3bebd31a9e925996405ea963e99face163a69ccc0481cd15eeee8",
+      "sourceCodeHash": "4a9e5fec316398309dd4cee0d2b39148e96a427523a1826db23e125a75b1b13b",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "",
       "warnings": []
     },
     "Destroy": {
       "sourceFile": "poolState.ral",
-      "sourceCodeHash": "1f8e42ee58c3bebd31a9e925996405ea963e99face163a69ccc0481cd15eeee8",
+      "sourceCodeHash": "4a9e5fec316398309dd4cee0d2b39148e96a427523a1826db23e125a75b1b13b",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "",
       "warnings": []
     },
     "Open": {
       "sourceFile": "poolState.ral",
-      "sourceCodeHash": "1f8e42ee58c3bebd31a9e925996405ea963e99face163a69ccc0481cd15eeee8",
+      "sourceCodeHash": "4a9e5fec316398309dd4cee0d2b39148e96a427523a1826db23e125a75b1b13b",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "",
       "warnings": []
     },
     "Walf": {
       "sourceFile": "walf.ral",
-      "sourceCodeHash": "41d85fd986b1834d71e9569900b6a1afac6ca386972d89c95678bb669e29816c",
-      "bytecodeDebugPatch": "=4-2=2-2+2a=3-1+a=2-2+a3=3-1+c40b5=2-2+72=2+8=1-1=3-1+d=2-2+b=7+0=4-1+4=30+0016007e0207726e6420697320=796",
-      "codeHashDebug": "9e4f29e676903f58a1433ae448c18359bb45184927e6be99df55a72dc69474fd",
+      "sourceCodeHash": "c64f76b75a7b8d7290180c95977335f23b2242d4790a25f6e6241bf37e22bf31",
+      "bytecodeDebugPatch": "=6-2=2-2+2a=2-2+93=3-1+c=3-1+5=3-1+e40b7=2-2+fb=2-2+d4=2-2+e9=3-1+f=2-2+12=11-1+4=30+0016007e0207726e6420697320=992",
+      "codeHashDebug": "c05a629fc8b4946ad5d68b06bd47f8d485ada48a664628a1110902b952d2c809",
       "warnings": []
     },
     "Walph": {
       "sourceFile": "walph.ral",
-      "sourceCodeHash": "8767fa0ac7b097e4a384b4c69d8b79f396d18f1a0bc1babded852518186a3d57",
-      "bytecodeDebugPatch": "=4-2=2-2+2a=3-1+a=2-2+83=3-1+c4095=2-2+3a=3-1+f=2+6=1-1=2-2+78=2-2+8c=11-1+4=30+0016007e0207726e6420697320=724",
-      "codeHashDebug": "65921bdefb5599c6f8dc43dc27f4eb5826a18651fd6a2e7ef7e144b15755f84c",
+      "sourceCodeHash": "3d204fc2ff44ae926ec3b6e3ec4e6631d974f33dfd460cd51a4ddd6a31bb7b51",
+      "bytecodeDebugPatch": "=6-2=2-2+2a=3-1+5=3-1+e=3-1+7=2-2+90=2-2+99=1-3+0c0=2-2+7b=3-1+0=3-1+641b9=3-1+d=11-1+4=30+0016007e0207726e6420697320=854",
+      "codeHashDebug": "941c0a924f8db3fcea745b478b225da306d071380f10ee185f694a9f361e28bc",
       "warnings": []
     },
     "Walph50HodlAlf": {
       "sourceFile": "walph50HodlAlf.ral",
-      "sourceCodeHash": "e44c818ece08427bb41404cf3a8e2df96db293d66542c630be39c6c746cc6216",
-      "bytecodeDebugPatch": "=6-2=2-2+2a=3+44=1+8d=2-1=1+6=3-1+f=2-2=1-3+7=2-1=1+c=3+241=1+5=2-2+99=11-1+4=30+0016007e0207726e6420697320=750",
-      "codeHashDebug": "57419208b37782b4506881bc9cb1efecbbcb3796c4b53da39635eab337e3b714",
+      "sourceCodeHash": "3d2811d56e599d54bda12a1e2819ec15c9ed12848681a8f2d04f2a5c168e8fa8",
+      "bytecodeDebugPatch": "=6-2=2-2+2a=3-1+5=3-1+e=3-1+7=2-2+904099=3-1+e=2-2+79=3-1+e=2-2+a4=2-2+b7=2+c=1-1=11-1+4=30+0016007e0207726e6420697320=850",
+      "codeHashDebug": "59484989f1f9cdb10172a19199b067a202aa6debce0632c482fb68cae6569c2a",
+      "warnings": []
+    },
+    "WithdrawFees": {
+      "sourceFile": "poolState.ral",
+      "sourceCodeHash": "4a9e5fec316398309dd4cee0d2b39148e96a427523a1826db23e125a75b1b13b",
+      "bytecodeDebugPatch": "",
+      "codeHashDebug": "",
       "warnings": []
     }
   }

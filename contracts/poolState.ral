@@ -13,3 +13,7 @@ TxScript Close(walphContract: Walph){
 TxScript Destroy(walphContract: Walph){
     walphContract.destroyPool()
 }
+
+TxScript WithdrawFees(walphContract: Walph){
+    walphContract.withdraw()
+}

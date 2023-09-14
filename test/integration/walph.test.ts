@@ -1,6 +1,6 @@
 import { web3, Project, stringToHex, ONE_ALPH, DUST_AMOUNT, sleep, ZERO_ADDRESS, sign } from '@alephium/web3'
 import { NodeWallet, PrivateKeyWallet } from '@alephium/web3-wallet'
-import { Walph, Buy, Open,Close, WalphTypes, Destroy, BuyWithoutToken } from '../../artifacts/ts'
+import { Walph, Buy, Open,Close, WalphTypes, Destroy, BuyWithoutToken, WithdrawFees } from '../../artifacts/ts'
 import configuration, { Settings } from '../../alephium.config'
 import * as dotenv from 'dotenv'
 import { waitTxConfirmed } from '@alephium/cli'
@@ -40,12 +40,13 @@ describe('integration tests', () => {
         initialFields: {
             poolSize: 10n * 10n ** 18n,
             poolOwner: signerAddress,
-            poolFees: 10n,
+            poolFees: 1n,
             ticketPrice: 10n ** 18n,
             minTokenAmountToHold: 0n,
             tokenIdToHold: tokenIdToHold,
             open: true,
             balance: 0n,
+            feesBalance: 0n,
             numAttendees: 0n,
             attendees: Array(10).fill(ZERO_ADDRESS) as WalphTypes.Fields["attendees"],
             lastWinner: ZERO_ADDRESS
@@ -127,7 +128,7 @@ describe('integration tests', () => {
       })
 
       const contractAfterPoolDistributionBalance = await web3.getCurrentNodeProvider().addresses.getAddressesAddressBalance(walphContractAddress)
-      expect(contractAfterPoolDistributionBalance.balanceHint).toEqual("1 ALPH")
+      expect(contractAfterPoolDistributionBalance.balanceHint).toEqual("1.09 ALPH")
       const winnerBalance = await web3.getCurrentNodeProvider().addresses.getAddressesAddressBalance(signer.address)
 
 
@@ -144,6 +145,16 @@ describe('integration tests', () => {
       expect(afterPoolDistributionWinner).toEqual(signer.account.address)
 
       subscription.unsubscribe()
+
+      await WithdrawFees.execute(signer, {
+        initialFields: { walphContract: walphleContractId},
+        attoAlphAmount: DUST_AMOUNT
+      })
+
+      const afterWhitdraw = await walphleDeployed.fetchState()
+      expect(afterWhitdraw.fields.feesBalance).toEqual(0n)
+      const afterWhitdrawBalance = await web3.getCurrentNodeProvider().addresses.getAddressesAddressBalance(walphContractAddress)
+      expect(afterWhitdrawBalance.balanceHint).toEqual("1 ALPH")
 
      await Destroy.execute(signer, {
         initialFields: { walphContract: walphleContractId},
@@ -167,12 +178,13 @@ it('should close and open pool', async () => {
       initialFields: {
           poolSize: 10n * 10n ** 18n,
           poolOwner: signerAddress,
-          poolFees: 10n,
+          poolFees: 1n,
           minTokenAmountToHold: 0n,
           ticketPrice: 10n ** 18n,
           tokenIdToHold: tokenIdToHold,
           open: true,
           balance: 0n,
+          feesBalance: 0n,
           numAttendees: 0n,
           attendees: Array(10).fill(ZERO_ADDRESS) as WalphTypes.Fields["attendees"],
           lastWinner: ZERO_ADDRESS

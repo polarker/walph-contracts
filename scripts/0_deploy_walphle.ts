@@ -2,7 +2,7 @@ import { Deployer, DeployFunction, getNetwork, Network } from '@alephium/cli'
 import { Settings } from '../alephium.config'
 import { Walph, Walph50HodlAlf, WalphTypes, Walph50HodlAlfTypes, Walf, WalfTypes } from '../artifacts/ts'
 import { DUST_AMOUNT, ZERO_ADDRESS } from '@alephium/web3'
-import { mintToken } from '@alephium/web3-test'
+import { mintToken, transfer } from '@alephium/web3-test'
 
 
 
@@ -24,6 +24,7 @@ const deployWalph: DeployFunction<Settings> = async (
         tokenIdToHold: "",
         open: true,
         balance: 0n,
+        feesBalance: 0n,
         numAttendees: 0n,
         attendees: Array(poolSize).fill(ZERO_ADDRESS) as WalphTypes.Fields["attendees"],
         lastWinner: ZERO_ADDRESS
@@ -48,6 +49,7 @@ const deployWalph: DeployFunction<Settings> = async (
         tokenIdToHold: "47504df5a7b18dcecdbf1ea00b7e644d0a7c93919f2d2061ba153f241f03b801",
         open: true,
         balance: 0n,
+        feesBalance: 0n,
         numAttendees: 0n,
         attendees: Array(poolSize).fill(ZERO_ADDRESS) as Walph50HodlAlfTypes.Fields["attendees"],
         lastWinner: ZERO_ADDRESS
@@ -69,11 +71,13 @@ const deployWalph: DeployFunction<Settings> = async (
     initialFields: {
         poolSize: BigInt(poolSize * ticketPrice) * 10n ** 9n,
         poolOwner: deployer.account.address,
-        poolFees: 10n,
+        poolFees: 1n,
         ticketPrice: BigInt(ticketPrice) * 10n ** 9n,
         tokenId: testnetAlf,
         open: true,
         balance: 0n,
+        feesBalance: 0n,
+        dustBalance: 0n,
         numAttendees: 0n,
         attendees: Array(poolSize).fill(ZERO_ADDRESS) as WalfTypes.Fields["attendees"],
         lastWinner: ZERO_ADDRESS
