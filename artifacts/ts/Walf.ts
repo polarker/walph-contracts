@@ -37,19 +37,9 @@ export namespace WalfTypes {
     ticketPrice: bigint;
     open: boolean;
     balance: bigint;
+    feesBalance: bigint;
     numAttendees: bigint;
     attendees: [
-      Address,
-      Address,
-      Address,
-      Address,
-      Address,
-      Address,
-      Address,
-      Address,
-      Address,
-      Address,
-      Address,
       Address,
       Address,
       Address,
@@ -85,6 +75,10 @@ export namespace WalfTypes {
       result: CallContractResult<bigint>;
     };
     getBalance: {
+      params: Omit<CallContractParams<{}>, "args">;
+      result: CallContractResult<bigint>;
+    };
+    getTicketPrice: {
       params: Omit<CallContractParams<{}>, "args">;
       result: CallContractResult<bigint>;
     };
@@ -160,6 +154,16 @@ class Factory extends ContractFactory<WalfInstance, WalfTypes.Fields> {
     ): Promise<TestContractResult<bigint>> => {
       return testMethod(this, "getBalance", params);
     },
+    getTicketPrice: async (
+      params: Omit<TestContractParams<WalfTypes.Fields, never>, "testArgs">
+    ): Promise<TestContractResult<bigint>> => {
+      return testMethod(this, "getTicketPrice", params);
+    },
+    withdraw: async (
+      params: Omit<TestContractParams<WalfTypes.Fields, never>, "testArgs">
+    ): Promise<TestContractResult<null>> => {
+      return testMethod(this, "withdraw", params);
+    },
     buyTicket: async (
       params: TestContractParams<WalfTypes.Fields, { amount: bigint }>
     ): Promise<TestContractResult<null>> => {
@@ -187,8 +191,8 @@ class Factory extends ContractFactory<WalfInstance, WalfTypes.Fields> {
 export const Walf = new Factory(
   Contract.fromJson(
     WalfContractJson,
-    "=4-2=2-2+2a=3-1+a=2-2+a3=3-1+c40b5=2-2+72=2+8=1-1=3-1+d=2-2+b=7+0=4-1+4=30+0016007e0207726e6420697320=796",
-    "9e4f29e676903f58a1433ae448c18359bb45184927e6be99df55a72dc69474fd"
+    "=4-2=2-2+2a=2-2+93=3-1+c=3-1+5=3-1+e=2-2+b7=1-2+0=1+0=2+a=1-1=3-1+0=3-1+641e9=11-1+4=30+0016007e0207726e6420697320=910",
+    "9be62baccef9c36fc1eadad9c03d831330ad48701bf941553b3a5792776317ec"
   )
 );
 
@@ -314,6 +318,17 @@ export class WalfInstance extends ContractInstance {
         Walf,
         this,
         "getBalance",
+        params === undefined ? {} : params,
+        getContractByCodeHash
+      );
+    },
+    getTicketPrice: async (
+      params?: WalfTypes.CallMethodParams<"getTicketPrice">
+    ): Promise<WalfTypes.CallMethodResult<"getTicketPrice">> => {
+      return callMethod(
+        Walf,
+        this,
+        "getTicketPrice",
         params === undefined ? {} : params,
         getContractByCodeHash
       );

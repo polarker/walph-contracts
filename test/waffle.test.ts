@@ -9,6 +9,7 @@ import {
   ZERO_ADDRESS,
   ContractState,
   NamedVals,
+  sleep,
 } from "@alephium/web3";
 import { PrivateKeyWallet } from "@alephium/web3-wallet";
 import {
@@ -51,6 +52,7 @@ describe("unit tests", () => {
           "47504df5a7b18dcecdbf1ea00b7e644d0a7c93919f2d2061ba153f241f03b801",
         open: false,
         balance: 0n,
+        feesBalance: 0n,
         numAttendees: 0n,
         attendees: Array(10).fill(
           ZERO_ADDRESS
@@ -58,7 +60,7 @@ describe("unit tests", () => {
         lastWinner: ZERO_ADDRESS,
       },
       initialAsset: {
-        alphAmount: 0n,
+        alphAmount: 1n * 10n ** 18n,
       },
       // arguments to test the target function of the test contract
       testArgs: {
@@ -90,7 +92,7 @@ describe("unit tests", () => {
     // open the pool
     let testResult = await Walph.tests.random(testParams);
     runs[0] = testResult.returns
-    
+    sleep(1000)
     testResult = await Walph.tests.random(testParams);
 
     runs[1] = testResult.returns
@@ -165,13 +167,14 @@ describe("unit tests", () => {
     const contractState = testResult.contracts[0] as WalphTypes.State;
 
     expect(contractState.fields.balance).toEqual(10n ** 18n);
+    expect(contractState.fields.feesBalance).toEqual(10n ** 16n)
     expect(contractState.fields.attendees.length).toEqual(10);
     expect(contractState.fields.numAttendees).toEqual(1n);
     expect(contractState.fields.attendees).toEqual([
       "1GBvuTs4TosNB9xTCGJL5wABn2xTYCzwa7MnXHphjcj1y",
       ZERO_ADDRESS,
       ZERO_ADDRESS,
-      ZERO_ADDRESS,
+      ZERO_ADDRESS, 
       ZERO_ADDRESS,
       ZERO_ADDRESS,
       ZERO_ADDRESS,
@@ -191,6 +194,7 @@ describe("unit tests", () => {
     const contractState = testResult.contracts[0] as WalphTypes.State;
 
     expect(contractState.fields.balance).toEqual(5n * 10n ** 18n);
+    expect(contractState.fields.feesBalance).toEqual(5n * 10n ** 16n)
     expect(contractState.fields.attendees.length).toEqual(10);
     expect(contractState.fields.numAttendees).toEqual(5n);
     expect(contractState.fields.attendees).toEqual([
@@ -213,6 +217,7 @@ describe("unit tests", () => {
     testParams.initialFields.open = true;
     testParams.initialFields.balance = 5n * 10n ** 18n;
     testParams.initialFields.numAttendees = 5n;
+    testParams.initialFields.feesBalance = 5n * 10n ** 16n
 
     testParams.inputAssets[0].address = "1GBvuTs4TosNB9xTCGJL5wABn2xTYCzwa7MnXHphjcj1y"
     testParams.testArgs.amount = 3n * 10n ** 18n
@@ -220,6 +225,7 @@ describe("unit tests", () => {
     const contractState = testResult.contracts[0] as WalphTypes.State;
 
     expect(contractState.fields.balance).toEqual(8n * 10n ** 18n);
+    expect(contractState.fields.feesBalance).toEqual(8n * 10n ** 16n);
     expect(contractState.fields.attendees.length).toEqual(10);
     expect(contractState.fields.numAttendees).toEqual(8n);
     expect(contractState.fields.attendees).toEqual([
@@ -244,6 +250,22 @@ describe("unit tests", () => {
     testParams.inputAssets[0].address = "1GBvuTs4TosNB9xTCGJL5wABn2xTYCzwa7MnXHphjcj1y"
 
     testParams.testArgs.amount = 11n * 10n ** 17n;
+
+    await expectAssertionError(
+      Walph.tests.buyTicket(testParams),
+      testContractAddress,
+      7
+    );
+  });
+
+
+  it("test buy a ticket less than ticket price", async () => {
+    const testParams = JSON.parse(JSON.stringify(testParamsFixture));
+    testParams.initialFields.open = true;
+    testParams.initialFields.ticketPrice = 10n * 10n ** 18n
+    testParams.inputAssets[0].address = "1GBvuTs4TosNB9xTCGJL5wABn2xTYCzwa7MnXHphjcj1y"
+
+    testParams.testArgs.amount = 9n * 10n ** 18n;
 
     await expectAssertionError(
       Walph.tests.buyTicket(testParams),
@@ -302,24 +324,20 @@ describe("unit tests", () => {
   });
 
 
-  /*
-  it("test calling distribute()", async () => {
+  it("test withdraw fees", async () => {
     const testParams = JSON.parse(JSON.stringify(testParamsFixture));
-    testParams.initialFields.open = true;
-    testParams.initialFields.balance =  0;
-    testParams.initialAsset.alphAmount = 100 * 10 ** 18;
-    //testParams.initialFields.numAttendees = 10
-    testParams.inputAssets[0].address = "1GBvuTs4TosNB9xTCGJL5wABn2xTYCzwa7MnXHphjcj1y"
-    testParams.testArgs.amount = 10 * 10 ** 18
+    testParams.initialFields.open = true
+    testParams.initialFields.balance =  0
+    testParams.initialAsset.alphAmount = 100 * 10 ** 18
+    testParams.initialFields.feesBalance = 1 * 10 ** 18
 
-    await expectAssertionError(
-      Walph.tests.distributePrize(testParams),
-      testContractAddress,
-      4
-    );
+    const testResult = await Walph.tests.withdraw(testParams);
+    const contractState = testResult.contracts[0] as WalphTypes.State;
 
+    expect(contractState.fields.feesBalance).toEqual(0n);
+    console.log(await testResult.txOutputs)
 
-  });*/
+  });
 
 
 

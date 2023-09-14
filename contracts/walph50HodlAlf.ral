@@ -1,12 +1,14 @@
 Contract Walph50HodlAlf(
     poolSize: U256,
     poolOwner: Address,
+    //poolFees not in percent, 0.01 (1%) = 1000
     poolFees: U256,
     tokenIdToHold: ByteVec,
     ticketPrice: U256,
     mut minTokenAmountToHold: U256,
     mut open: Bool,
     mut balance: U256,
+    mut feesBalance: U256,
     mut numAttendees: U256,
     mut attendees: [Address;50],
     mut lastWinner: Address
@@ -42,7 +44,6 @@ Contract Walph50HodlAlf(
     @using(preapprovedAssets = true, assetsInContract = false, updateFields = true, checkExternalCaller = false)
     fn distributePrize(lastAttendee: Address, amount: U256) -> (){
          checkCaller!(callerAddress!() == selfAddress!(), ErrorCodes.InvalidCaller)
-         assert!(!open, ErrorCodes.PoolAlreadyClose)
          assert!(balance + amount >= poolSize, ErrorCodes.PoolNotFull)
 
         lastWinner = attendees[random()]
@@ -53,14 +54,12 @@ Contract Walph50HodlAlf(
         balance = 0
         numAttendees = 0
 
-        transferTokenFromSelf!(poolOwner, ALPH, poolOwnerAmount)
+        //transferTokenFromSelf!(poolOwner, ALPH, poolOwnerAmount)
         transferTokenFromSelf!(lastWinner, ALPH, winnerAmount)
 
         // the last attendee will be the one with the rest of ALPH to sent to the winner, it will be the one who send it in addition of the rest of the pool
         transferToken!(lastAttendee, lastWinner, ALPH, amount)
 
-        open = true
-        emit PoolOpen()
         emit Winner(lastWinner)
 
      }
@@ -77,13 +76,28 @@ Contract Walph50HodlAlf(
     pub fn getBalance() -> (U256){
         return balance
     }
+
+    pub fn getTicketPrice() -> (U256){
+        return ticketPrice
+    }
     
+    @using(preapprovedAssets = false, assetsInContract = true, updateFields = true, checkExternalCaller = false)
+    pub fn withdraw() -> () {
+        checkCaller!(callerAddress!() == poolOwner, ErrorCodes.InvalidCaller)
+        assert!(feesBalance > 0, ErrorCodes.PoolNotFull)
+
+        transferTokenFromSelf!(poolOwner, ALPH, feesBalance - dustAmount!())
+        feesBalance = 0
+
+    }
+
     @using(preapprovedAssets = true, assetsInContract = true, updateFields = true, checkExternalCaller = false)
     pub fn buyTicket(amount: U256) -> (){
         let caller = callerAddress!()
         assert!(balance + amount <= poolSize, ErrorCodes.PoolFull)
         assert!(open, ErrorCodes.PoolClosed)
-        assert!(addModN!(amount,0 ,10 ** 18) == 0, ErrorCodes.InvalidAmount) // dirty
+        assert!(addModN!(amount,0 ,10 ** 18) == 0, ErrorCodes.InvalidAmount)
+        assert!(amount >= ticketPrice, ErrorCodes.InvalidAmount)
         if (minTokenAmountToHold > 0){
             assert!(tokenRemaining!(caller, tokenIdToHold) >= minTokenAmountToHold, ErrorCodes.NotEnoughToken)
         }
@@ -99,20 +113,23 @@ Contract Walph50HodlAlf(
 
         }
 
+        emit TicketBought(caller, amount)
+
         // used to check if the amount added will close the pool
         let balanceCheck = balance + amount
+        feesBalance = feesBalance + amount * poolFees/100
         // last person to complete the pool close it and start the draw
         if (balanceCheck >= poolSize){
             assert!(balanceCheck >= poolSize, ErrorCodes.PoolNotFull)
             
             // check if the number of attendees is full
             assert!(numAttendees == poolSize / ticketPrice, ErrorCodes.PoolNotFull)
-            open = false
+            
+
             distributePrize{selfAddress!() -> ALPH: balance; caller -> ALPH: amount}(caller, amount)
        } else {
             balance = balance + amount
             transferTokenToSelf!(caller, ALPH, amount)
-            emit TicketBought(caller, amount)
        }
     }
 

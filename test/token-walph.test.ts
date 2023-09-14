@@ -11,7 +11,7 @@ import {
     randomContractId,
     testAddress,
   } from "@alephium/web3-test";
-  import { Walf, WalfTypes } from "../artifacts/ts";
+  import { Walf, WalfTypes, Walph } from "../artifacts/ts";
   
   describe("unit tests", () => {
     let testContractId: string;
@@ -44,6 +44,7 @@ import {
             "47504df5a7b18dcecdbf1ea00b7e644d0a7c93919f2d2061ba153f241f03b801",
           open: false,
           balance: 0n,
+          feesBalance: 0n,
           numAttendees: 0n,
           attendees: Array(10).fill(
             ZERO_ADDRESS
@@ -265,6 +266,23 @@ import {
       );
     });
   
+    it("test withdraw fees", async () => {
+      const testParams = JSON.parse(JSON.stringify(testParamsFixture));
+      testParams.initialFields.open = true
+      testParams.initialFields.balance =  0
+      testParams.initialAsset.alphAmount = 100 * 10 ** 18
+      testParams.initialFields.feesBalance = 1 * 10 ** 18
+  
+      const testResult = await Walf.tests.withdraw(testParams);
+      const contractState = testResult.contracts[0] as WalfTypes.State;
+  
+      expect(contractState.fields.feesBalance).toEqual(0n);
+      console.log(await testResult.txOutputs)
+  
+    });
+
+
+
     it("test distribute prize pool", async () => {
       const testParams = JSON.parse(JSON.stringify(testParamsFixture));
       testParams.initialFields.open = true;

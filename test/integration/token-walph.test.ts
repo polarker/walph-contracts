@@ -1,6 +1,6 @@
 import { web3, Project, stringToHex, ONE_ALPH, DUST_AMOUNT, sleep, ZERO_ADDRESS, sign } from '@alephium/web3'
 import { NodeWallet, PrivateKeyWallet } from '@alephium/web3-wallet'
-import { Walf, Buy, Open,Close, WalfInstance, Destroy, BuyWithoutToken, WalfTypes, BuyTicketToken } from '../../artifacts/ts'
+import { Walf, Buy, Open,Close, WalfInstance, Destroy, BuyWithoutToken, WalfTypes, BuyTicketToken, WithdrawFees, WithdrawFeesToken } from '../../artifacts/ts'
 import configuration, { Settings } from '../../alephium.config'
 import * as dotenv from 'dotenv'
 import { waitTxConfirmed } from '@alephium/cli'
@@ -48,6 +48,7 @@ describe('integration tests', () => {
             tokenTest.contractId,
           open: true,
           balance: 0n,
+          feesBalance: 0n,
           numAttendees: 0n,
           attendees: Array(10).fill(
             ZERO_ADDRESS
@@ -150,13 +151,25 @@ describe('integration tests', () => {
       expect(afterPoolDistributionOpenState).toEqual(true)
       expect(afterPoolDistributionBalanceState).toEqual(0n)
       expect(afterPoolDistributionNumAttendeesState).toEqual(0n)
-      expect(afterPoolDistributionWinner).toEqual(firstAttendee.address || lastOne.address)
+      expect([firstAttendee.address,lastOne.address].includes(afterPoolDistributionWinner)).toBe(true)
 
       subscription.unsubscribe()
 
+
+      await WithdrawFeesToken.execute(signer, {
+        initialFields: { walfContract: walfContractId, tokenId: tokenTest.contractId},
+        attoAlphAmount: 2n*DUST_AMOUNT
+      })
+
+      const afterWhitdraw = await walfDeployed.fetchState()
+      expect(afterWhitdraw.fields.feesBalance).toEqual(0n)
+      const afterWhitdrawBalance = await web3.getCurrentNodeProvider().addresses.getAddressesAddressBalance(walfContractAddress)
+      expect(afterWhitdrawBalance.balanceHint).toEqual("1 ALPH")
+
+
      await Destroy.execute(signer, {
         initialFields: { walphContract: walfContractId },
-        attoAlphAmount: 2n*DUST_AMOUNT
+        attoAlphAmount: DUST_AMOUNT
 
       })
       /*

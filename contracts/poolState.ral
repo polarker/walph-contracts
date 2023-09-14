@@ -13,3 +13,11 @@ TxScript Close(walphContract: Walph){
 TxScript Destroy(walphContract: Walph){
     walphContract.destroyPool()
 }
+
+TxScript WithdrawFees(walphContract: Walph){
+    walphContract.withdraw()
+}
+
+TxScript WithdrawFeesToken(walfContract: Walf, tokenId: ByteVec){
+    walfContract.withdraw{selfAddress!() -> ALPH: dustAmount!(), tokenId: 9 * 10 ** 7 }()
+}

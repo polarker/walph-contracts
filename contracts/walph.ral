@@ -1,14 +1,16 @@
 Contract Walph(
     poolSize: U256,
     poolOwner: Address,
+    //poolFees not in percent, 0.01 (1%) = 1000
     poolFees: U256,
     tokenIdToHold: ByteVec,
     ticketPrice: U256,
     mut minTokenAmountToHold: U256,
     mut open: Bool,
     mut balance: U256,
+    mut feesBalance: U256,
     mut numAttendees: U256,
-    mut attendees: [Address;21],
+    mut attendees: [Address;10],
     mut lastWinner: Address
 ){
     
@@ -52,7 +54,7 @@ Contract Walph(
         balance = 0
         numAttendees = 0
 
-        transferTokenFromSelf!(poolOwner, ALPH, poolOwnerAmount)
+        //transferTokenFromSelf!(poolOwner, ALPH, poolOwnerAmount)
         transferTokenFromSelf!(lastWinner, ALPH, winnerAmount)
 
         // the last attendee will be the one with the rest of ALPH to sent to the winner, it will be the one who send it in addition of the rest of the pool
@@ -74,17 +76,29 @@ Contract Walph(
     pub fn getBalance() -> (U256){
         return balance
     }
+
+    pub fn getTicketPrice() -> (U256){
+        return ticketPrice
+    }
     
+    @using(preapprovedAssets = false, assetsInContract = true, updateFields = true, checkExternalCaller = false)
+    pub fn withdraw() -> () {
+        checkCaller!(callerAddress!() == poolOwner, ErrorCodes.InvalidCaller)
+        assert!(feesBalance > 0, ErrorCodes.PoolNotFull)
 
-    //TODO add function to withdraw the fees instead of transfering them each time 
+        // (poolFees/100) * 10**18 == poolFees * 10**16
+        transferTokenFromSelf!(poolOwner, ALPH, feesBalance - poolFees * 10**16) // to not hit LowerThanContractMinimalBalance
+        feesBalance = 0
 
+    }
 
     @using(preapprovedAssets = true, assetsInContract = true, updateFields = true, checkExternalCaller = false)
     pub fn buyTicket(amount: U256) -> (){
         let caller = callerAddress!()
         assert!(balance + amount <= poolSize, ErrorCodes.PoolFull)
         assert!(open, ErrorCodes.PoolClosed)
-        assert!(addModN!(amount,0 ,10 ** 18) == 0, ErrorCodes.InvalidAmount) // dirty
+        assert!(addModN!(amount,0 , 10 ** 18) == 0, ErrorCodes.InvalidAmount)
+        assert!(amount >= ticketPrice, ErrorCodes.InvalidAmount)
         if (minTokenAmountToHold > 0){
             assert!(tokenRemaining!(caller, tokenIdToHold) >= minTokenAmountToHold, ErrorCodes.NotEnoughToken)
         }
@@ -104,6 +118,7 @@ Contract Walph(
 
         // used to check if the amount added will close the pool
         let balanceCheck = balance + amount
+        feesBalance = feesBalance + amount * poolFees/100
         // last person to complete the pool close it and start the draw
         if (balanceCheck >= poolSize){
             assert!(balanceCheck >= poolSize, ErrorCodes.PoolNotFull)

@@ -6,8 +6,9 @@ Contract Walf(
     ticketPrice: U256,
     mut open: Bool,
     mut balance: U256,
+    mut feesBalance: U256,
     mut numAttendees: U256,
-    mut attendees: [Address;21],
+    mut attendees: [Address;10],
     mut lastWinner: Address
 ){
     
@@ -49,9 +50,9 @@ Contract Walf(
         balance = 0
         numAttendees = 0
         
-        transferTokenFromSelf!(poolOwner, ALPH, dustAmount!())
-        transferTokenFromSelf!(poolOwner, tokenId, poolOwnerAmount)
 
+        //transferTokenFromSelf!(poolOwner, tokenId, poolOwnerAmount)
+        transferTokenFromSelf!(poolOwner, ALPH, dustAmount!())
         transferTokenFromSelf!(lastWinner, tokenId, winnerAmount)
 
         // the last attendee will be the one with the rest of ALPH to sent to the winner, it will be the one who send it in addition of the rest of the pool
@@ -74,7 +75,22 @@ Contract Walf(
     pub fn getBalance() -> (U256){
         return balance
     }
+
+    pub fn getTicketPrice() -> (U256){
+        return ticketPrice
+    }
     
+    @using(preapprovedAssets = true, assetsInContract = true, updateFields = true, checkExternalCaller = true)
+    pub fn withdraw() -> () {
+        checkCaller!(callerAddress!() == poolOwner, ErrorCodes.InvalidCaller)
+        assert!(feesBalance > 0, ErrorCodes.PoolNotFull)
+
+        transferTokenFromSelf!(poolOwner, ALPH, dustAmount!())
+        transferTokenFromSelf!(poolOwner, tokenId, feesBalance)
+        feesBalance = 0
+
+    }
+
     @using(preapprovedAssets = true, assetsInContract = true, updateFields = true, checkExternalCaller = false)
     pub fn buyTicket(amount: U256) -> (){
         let caller = callerAddress!()
@@ -97,6 +113,7 @@ Contract Walf(
 
         // used to check if the amount added will close the pool
         let balanceCheck = balance + amount
+        feesBalance = feesBalance + amount * poolFees/100
         // last person to complete the pool close it and start the draw
         if (balanceCheck >= poolSize){
             assert!(balanceCheck >= poolSize, ErrorCodes.PoolNotFull)

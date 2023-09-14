@@ -17,6 +17,8 @@ import { default as BuyTicketTokenScriptJson } from "../BuyTicketToken.ral.json"
 import { default as OpenScriptJson } from "../Open.ral.json";
 import { default as CloseScriptJson } from "../Close.ral.json";
 import { default as DestroyScriptJson } from "../Destroy.ral.json";
+import { default as WithdrawFeesScriptJson } from "../WithdrawFees.ral.json";
+import { default as WithdrawFeesTokenScriptJson } from "../WithdrawFeesToken.ral.json";
 
 export const Buy = new ExecutableScript<{
   walphContract: HexString;
@@ -42,3 +44,10 @@ export const Close = new ExecutableScript<{ walphContract: HexString }>(
 export const Destroy = new ExecutableScript<{ walphContract: HexString }>(
   Script.fromJson(DestroyScriptJson)
 );
+export const WithdrawFees = new ExecutableScript<{ walphContract: HexString }>(
+  Script.fromJson(WithdrawFeesScriptJson)
+);
+export const WithdrawFeesToken = new ExecutableScript<{
+  walfContract: HexString;
+  tokenId: HexString;
+}>(Script.fromJson(WithdrawFeesTokenScriptJson));
