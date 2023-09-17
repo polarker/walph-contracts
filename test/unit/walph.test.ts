@@ -18,7 +18,7 @@ import {
   testAddress,
   testPrivateKey,
 } from "@alephium/web3-test";
-import { Walph, WalphTypes } from "../artifacts/ts";
+import { Walph, WalphTypes } from "../../artifacts/ts";
 
 describe("unit tests", () => {
   let testContractId: string;

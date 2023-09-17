@@ -72,6 +72,13 @@
       "codeHashDebug": "59484989f1f9cdb10172a19199b067a202aa6debce0632c482fb68cae6569c2a",
       "warnings": []
     },
+    "WalphTimed": {
+      "sourceFile": "walphTimed.ral",
+      "sourceCodeHash": "959d32ef8e5561655ba33479ea95288cf34c2b443cb4bc66bc8d4e4cce36aef3",
+      "bytecodeDebugPatch": "=6-2=2-2+2a=3-1+b=3-1+4=3-1+d=3-1+6=2-1=1+f=2-2+c6=2-3+1=1-2=2-1+e=3+f=1-1=2-2+144227423b=11-1+4=30+0016007e0207726e6420697320=339-1+c=28+567e0212626c6f636b54696d655374616d702069732000=77-1+6=251-1+d=28+567e0212626c6f636b54696d655374616d702069732000=256",
+      "codeHashDebug": "ff32ef3065dcc20816916221cf42bd466cf82232f7b8e03cb0cd2c61dab17d02",
+      "warnings": []
+    },
     "WithdrawFees": {
       "sourceFile": "poolState.ral",
       "sourceCodeHash": "4a9e5fec316398309dd4cee0d2b39148e96a427523a1826db23e125a75b1b13b",
