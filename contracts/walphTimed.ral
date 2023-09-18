@@ -10,7 +10,7 @@ Contract WalphTimed(
     mut balance: U256,
     mut feesBalance: U256,
     mut numAttendees: U256,
-    mut attendees: [Address;21],
+    mut attendees: [Address;80],
     mut lastWinner: Address
 ){
     
@@ -35,6 +35,7 @@ Contract WalphTimed(
         TimestampNotReached = 8
         NoAttendees = 9
         NotValidAddress = 10
+        TimestampReached = 11
     }
 
 
@@ -51,7 +52,6 @@ Contract WalphTimed(
          assert!(balance > 0, ErrorCodes.PoolNotFull)
          assert!(numAttendees > 0, ErrorCodes.NoAttendees)
 
-         //assert!(actualBlockTs > drawTimestamp , ErrorCodes.TimestampNotReached)
 
         lastWinner = attendees[random()]
         assert!(lastWinner != @tgx7VNFoP9DJiFMFgXXtafQZkUvyEdDHT9ryamHJYrjq, ErrorCodes.NotValidAddress)
@@ -103,18 +103,19 @@ Contract WalphTimed(
     // can be called anytime if the timestamp target is reached
     @using(updateFields = true, assetsInContract = true)
     pub fn draw() -> (){
-        assert!(balance > 0, ErrorCodes.PoolNotFull)
         let actualBlockTs = blockTimeStamp!()
-
-        emit Debug(`draw timestamp is ${drawTimestamp}`)            
-        emit Debug(`blockTimeStamp is ${actualBlockTs}`)            
-
         assert!(actualBlockTs > drawTimestamp , ErrorCodes.TimestampNotReached)
-        drawTimestamp = actualBlockTs + (600*1000) // each ten minutes
+        // balance is 0 means nobody participate but we still have to move the timestamp for the next draw
+        if(balance <= 0){
+            drawTimestamp = actualBlockTs + (600*1000)
 
-        
+        } else {      
+
+            drawTimestamp = actualBlockTs + (600*1000) // each ten minutes
+
+            distributePrize{selfAddress!() -> ALPH: balance + dustAmount!()}()
+        }
         emit PoolDrawn(balance)
-        distributePrize{selfAddress!() -> ALPH: balance + dustAmount!()}()
 
     }
 
@@ -122,6 +123,7 @@ Contract WalphTimed(
     pub fn buyTicket(amount: U256) -> (){
         emit Debug(`blockTimeStamp is ${blockTimeStamp!()}`)            
         let caller = callerAddress!()
+        assert!(blockTimeStamp!() < drawTimestamp , ErrorCodes.TimestampReached)
         assert!(balance + amount <= poolSize, ErrorCodes.PoolFull)
         assert!(open, ErrorCodes.PoolClosed)
         assert!(addModN!(amount,0 , 10 ** 18) == 0, ErrorCodes.InvalidAmount)

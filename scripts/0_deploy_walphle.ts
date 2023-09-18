@@ -1,6 +1,6 @@
 import { Deployer, DeployFunction, getNetwork, Network } from '@alephium/cli'
 import { Settings } from '../alephium.config'
-import { Walph, Walph50HodlAlf, WalphTypes, Walph50HodlAlfTypes, Walf, WalfTypes, WalphTimed } from '../artifacts/ts'
+import { Walph, Walph50HodlAlf, WalphTypes, Walph50HodlAlfTypes, Walf, WalfTypes, WalphTimed, WalphTimedTypes } from '../artifacts/ts'
 import { DUST_AMOUNT, ZERO_ADDRESS } from '@alephium/web3'
 import { mintToken, transfer } from '@alephium/web3-test'
 
@@ -89,10 +89,11 @@ const deployWalph: DeployFunction<Settings> = async (
   console.log('Walf contract id: ' + resultAlf.contractInstance.contractId)
   console.log('Walf contract address: ' + resultAlf.contractInstance.address)
 
-  poolSize = 21
+  poolSize = 80
   ticketPrice = 10
   //const testnetAlf = (await mintToken(deployer.account.address, 2000n * 10n ** 18n)).contractId
-  
+  const drawTimestamp = BigInt(Date.now()+600*100)
+
   const resultTimedWalph = await deployer.deployContract(WalphTimed, {
     // The initial states of the faucet contract
     initialFields: {
@@ -106,14 +107,15 @@ const deployWalph: DeployFunction<Settings> = async (
         minTokenAmountToHold: 0n,
         feesBalance: 0n,
         numAttendees: 0n,
-        drawTimestamp: BigInt(Date.now()+600 * 100),
-        attendees: Array(poolSize).fill(ZERO_ADDRESS) as WalfTypes.Fields["attendees"],
+        drawTimestamp: drawTimestamp,
+        attendees: Array(poolSize).fill(ZERO_ADDRESS) as WalphTimedTypes.Fields["attendees"],
         lastWinner: ZERO_ADDRESS
 
       },
   })
 
 
+  console.log("First draw in: "+drawTimestamp)
   console.log('Walph Timed contract id: ' + resultTimedWalph.contractInstance.contractId)
   console.log('Walf contract address: ' + resultTimedWalph.contractInstance.address)
 

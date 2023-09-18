@@ -10,11 +10,11 @@ import {
 } from "@alephium/web3";
 import { PrivateKeyWallet } from "@alephium/web3-wallet";
 import configuration from "../alephium.config";
-import { Destroy, Draw, Walph, WalphTimedTypes, WithdrawFees } from "../artifacts/ts";
+import { Destroy, Draw, Walph, WalphTimed, WalphTimedTypes, WithdrawFees } from "../artifacts/ts";
 
 // The `TokenFaucetTypes.WithdrawEvent` is generated in the getting-started guide
 
-async function destroy(privKey: string, group: number, contractName: string) {
+async function draw(privKey: string, group: number, contractName: string) {
 
   Project.build();
   const wallet = new PrivateKeyWallet({
@@ -36,28 +36,40 @@ async function destroy(privKey: string, group: number, contractName: string) {
   );
   const walpheContractId = deployed.contractInstance.contractId;
   const walpheContractAddress = deployed.contractInstance.address;
+  let drawInProgress = false
 
-
+  const drawChecker = async function() {
     const balanceContract = await nodeProvider.addresses.getAddressesAddressBalance(walpheContractAddress)
     console.log(walpheContractAddress+" - Balance contract is " + balanceContract.balanceHint )
 
-    if (parseInt(balanceContract.balance) > ONE_ALPH){
-    await Draw.execute(wallet, {
-      initialFields: { walphContract: walpheContractId},
-      attoAlphAmount: DUST_AMOUNT,
-    });
+    const WalphState = WalphTimed.at(walpheContractAddress)
 
-    const addressBalance = await nodeProvider.addresses.getAddressesAddressBalance(wallet.address)
-    console.log("Address balance: "+ addressBalance.balanceHint )
-    console.log(walpheContractAddress + " drawed")
-  console.log("\n")
+    const initialState = await WalphState.fetchState()
+    console.log(walpheContractAddress + " - Next draw: "+ new Date(Number(initialState.fields.drawTimestamp)))
+    if (initialState.fields.drawTimestamp <= Date.now() && !drawInProgress){
+        drawInProgress = true
+    const txDraw = await Draw.execute(wallet, {
+      initialFields: { walphContract: walpheContractId},
+      attoAlphAmount: 10n + 8n * DUST_AMOUNT,
+    });
+    console.log(walpheContractAddress+" - "+"Draw tx: "+ JSON.stringify(txDraw))
+    await waitTxConfirmed(nodeProvider, txDraw.txId,1 ,10000 )
+
+    drawInProgress = false
+    console.log(walpheContractAddress + " drawn")
+    
   }
+
+    setTimeout(drawChecker, Number(initialState.fields.drawTimestamp) - Date.now());
+}
+
+drawChecker()
 
     
 }
 
 
-const networkToUse = "devnet";
+const networkToUse = "testnet";
 //Select our network defined in alephium.config.ts
 const network = configuration.networks[networkToUse];
 
@@ -72,6 +84,6 @@ const numberOfKeys = configuration.networks[networkToUse].privateKeys.length
 Array.from(Array(numberOfKeys).keys()).forEach((group) => {
   //distribute(configuration.networks[networkToUse].privateKeys[group], group, "Walph");
   //distribute(configuration.networks[networkToUse].privateKeys[group], group, "Walph50HodlAlf");
-  destroy(configuration.networks[networkToUse].privateKeys[group], group, "WalphTimed");
+  draw(configuration.networks[networkToUse].privateKeys[group], group, "WalphTimed");
 
 });

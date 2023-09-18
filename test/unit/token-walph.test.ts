@@ -11,7 +11,7 @@ import {
     randomContractId,
     testAddress,
   } from "@alephium/web3-test";
-  import { Walf, WalfTypes } from "../artifacts/ts";
+  import { Walf, WalfTypes } from "../../artifacts/ts";
   
   describe("unit tests", () => {
     let testContractId: string;

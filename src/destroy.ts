@@ -50,6 +50,7 @@ async function destroy(privKey: string, group: number, contractName: string) {
   );
   //Make sure it match your address group
   const accountGroup = group;
+
   const deployed = deployments.getDeployedContractResult(
     accountGroup,
     contractName
@@ -57,17 +58,25 @@ async function destroy(privKey: string, group: number, contractName: string) {
   const walpheContractId = deployed.contractInstance.contractId;
   const walpheContractAddress = deployed.contractInstance.address;
 
-
+  try {
     const balanceContract = await nodeProvider.addresses.getAddressesAddressBalance(walpheContractAddress)
     console.log(walpheContractAddress+" - Balance contract is " + balanceContract.balanceHint )
 
-    await Destroy.execute(wallet, {
+    const destroyTx = await Destroy.execute(wallet, {
       initialFields: { walphContract: walpheContractId},
-      attoAlphAmount: 5n * DUST_AMOUNT,
+      attoAlphAmount: ONE_ALPH + 5n * DUST_AMOUNT,
     });
+    console.log("Wait for "+destroyTx.txId+" to destroy the contract")
+    await waitTxConfirmed(nodeProvider,destroyTx.txId,1 , 1000)
 
     console.log(walpheContractAddress + " destroyed")
-  console.log("\n")
+ 
+  } catch (error) {
+    console.log("Contract "+walpheContractAddress+"not found, continue")
+    return
+  }
+
+    
 }
 
 
@@ -86,6 +95,10 @@ const numberOfKeys = configuration.networks[networkToUse].privateKeys.length
 Array.from(Array(numberOfKeys).keys()).forEach((group) => {
   //distribute(configuration.networks[networkToUse].privateKeys[group], group, "Walph");
   //distribute(configuration.networks[networkToUse].privateKeys[group], group, "Walph50HodlAlf");
+  
   destroy(configuration.networks[networkToUse].privateKeys[group], group, "Walph");
+  destroy(configuration.networks[networkToUse].privateKeys[group], group, "WalphTimed");
+  destroy(configuration.networks[networkToUse].privateKeys[group], group, "Walf");
+  destroy(configuration.networks[networkToUse].privateKeys[group], group, "Walph50HodlAlf");
 
 });
