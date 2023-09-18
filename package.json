@@ -14,7 +14,8 @@
     "testnetdeploy": "cli deploy --network testnet",
     "build": "tsc --build .",
     "withdraw": "tsc --build . && node dist/src/withdraw.js",
-    "destroy": "tsc --build . && node dist/src/destroy.js"
+    "destroy": "tsc --build . && node dist/src/destroy.js",
+    "draw": "tsc --build . && node dist/src/draw.js"
   },
   "author": "",
   "license": "ISC",
