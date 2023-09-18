@@ -1,4 +1,4 @@
-FROM node:16
+FROM oven/bun:1.0.2
 
 # Create app directory
 WORKDIR /usr/src/app
@@ -8,12 +8,12 @@ WORKDIR /usr/src/app
 # where available (npm@5+)
 COPY package*.json ./
 
-RUN yarn
+RUN bun install
 # If you are building your code for production
 # RUN npm ci --omit=dev
 
 # Bundle app source
 COPY . .
-RUN yarn run build
+RUN bun run build
 
-CMD [ "yarn", "run", "draw" ]
+CMD [ "bun", "run", "draw" ]
