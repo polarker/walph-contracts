@@ -1,0 +1,193 @@
+Contract WalphTimed(
+    poolSize: U256,
+    poolOwner: Address,
+    poolFees: U256,
+    tokenIdToHold: ByteVec,
+    ticketPrice: U256,
+    mut drawTimestamp: U256,
+    mut minTokenAmountToHold: U256,
+    mut open: Bool,
+    mut balance: U256,
+    mut feesBalance: U256,
+    mut numAttendees: U256,
+    mut attendees: [Address;21],
+    mut lastWinner: Address
+){
+    
+
+    event TicketBought(from: Address, amount: U256)
+    event PoolOpen()
+    event PoolClose()
+    event Destroy(from: Address)
+    event NewMinTokenAmountToHold(newAmount: U256)
+    event Winner(address: Address)
+    event PoolDrawn(amount: U256)
+
+    enum ErrorCodes {
+        PoolFull = 0
+        PoolAlreadyClose = 1
+        PoolAlreadyOpen = 2
+        PoolClosed = 3
+        InvalidCaller = 4
+        NotEnoughToken = 5
+        PoolNotFull = 6
+        InvalidAmount = 7
+        TimestampNotReached = 8
+        NoAttendees = 9
+        NotValidAddress = 10
+    }
+
+
+    fn random() -> (U256){
+        assert!(numAttendees > 0, ErrorCodes.PoolNotFull)
+        let seed = u256From32Byte!(blake2b!(toByteVec!(blockTarget!()) ++ toByteVec!(blockTimeStamp!())))
+        emit Debug(`rnd is ${seed}`)
+        return addModN!(0,seed, numAttendees)
+    }
+
+    @using(preapprovedAssets = true, assetsInContract = false, updateFields = true, checkExternalCaller = false)
+    fn distributePrize() -> (){
+         checkCaller!(callerAddress!() == selfAddress!(), ErrorCodes.InvalidCaller)
+         assert!(balance > 0, ErrorCodes.PoolNotFull)
+         assert!(numAttendees > 0, ErrorCodes.NoAttendees)
+
+         //assert!(actualBlockTs > drawTimestamp , ErrorCodes.TimestampNotReached)
+
+        lastWinner = attendees[random()]
+        assert!(lastWinner != @tgx7VNFoP9DJiFMFgXXtafQZkUvyEdDHT9ryamHJYrjq, ErrorCodes.NotValidAddress)
+        
+        let poolOwnerAmount = balance * poolFees/100
+        let winnerAmount = balance - poolOwnerAmount
+        balance = 0
+        numAttendees = 0
+
+        // reset attendees array
+        for (let mut index = 0; index <= numAttendees; index = index + 1){
+            attendees[index] = @tgx7VNFoP9DJiFMFgXXtafQZkUvyEdDHT9ryamHJYrjq
+        }
+
+        transferTokenFromSelf!(lastWinner, ALPH, winnerAmount)
+
+        emit Winner(lastWinner)
+
+     }
+
+
+    pub fn getPoolState() -> (Bool) {
+        return open
+    }
+
+    pub fn getPoolSize() -> (U256) {
+        return poolSize
+    }
+
+    pub fn getBalance() -> (U256){
+        return balance
+    }
+
+    pub fn getTicketPrice() -> (U256){
+        return ticketPrice
+    }
+    
+    @using(preapprovedAssets = false, assetsInContract = true, updateFields = true, checkExternalCaller = false)
+    pub fn withdraw() -> () {
+        checkCaller!(callerAddress!() == poolOwner, ErrorCodes.InvalidCaller)
+        assert!(feesBalance > 0, ErrorCodes.PoolNotFull)
+
+        // (poolFees/100) * 10**18 == poolFees * 10**16
+        transferTokenFromSelf!(poolOwner, ALPH, feesBalance - 2* dustAmount!()) // to not hit LowerThanContractMinimalBalance
+        feesBalance = 0
+
+    }
+
+    // can be called anytime if the timestamp target is reached
+    @using(updateFields = true, assetsInContract = true)
+    pub fn draw() -> (){
+        assert!(balance > 0, ErrorCodes.PoolNotFull)
+        let actualBlockTs = blockTimeStamp!()
+
+        emit Debug(`draw timestamp is ${drawTimestamp}`)            
+        emit Debug(`blockTimeStamp is ${actualBlockTs}`)            
+
+        assert!(actualBlockTs > drawTimestamp , ErrorCodes.TimestampNotReached)
+        drawTimestamp = actualBlockTs + (600*1000) // each ten minutes
+
+        
+        emit PoolDrawn(balance)
+        distributePrize{selfAddress!() -> ALPH: balance + dustAmount!()}()
+
+    }
+
+    @using(preapprovedAssets = true, assetsInContract = true, updateFields = true, checkExternalCaller = false)
+    pub fn buyTicket(amount: U256) -> (){
+        emit Debug(`blockTimeStamp is ${blockTimeStamp!()}`)            
+        let caller = callerAddress!()
+        assert!(balance + amount <= poolSize, ErrorCodes.PoolFull)
+        assert!(open, ErrorCodes.PoolClosed)
+        assert!(addModN!(amount,0 , 10 ** 18) == 0, ErrorCodes.InvalidAmount)
+        assert!(amount >= ticketPrice, ErrorCodes.InvalidAmount)
+        if (minTokenAmountToHold > 0){
+            assert!(tokenRemaining!(caller, tokenIdToHold) >= minTokenAmountToHold, ErrorCodes.NotEnoughToken)
+        }
+                
+        let numberTicketsBought = amount / ticketPrice
+        let mut numberPlaceCounter = 0
+
+        // fill the array with the buyer address
+        while (numberPlaceCounter < numberTicketsBought){
+            attendees[numAttendees] = caller
+            numAttendees = numAttendees + 1
+            numberPlaceCounter = numberPlaceCounter + 1
+
+        }
+
+        emit TicketBought(caller, amount)
+
+        // used to check if the amount added will close the pool
+        feesBalance = feesBalance + amount * poolFees/100
+        balance = amount + balance
+
+        transferTokenToSelf!(caller, ALPH, amount)
+       
+    }
+
+    @using(updateFields = true, checkExternalCaller = true)
+    pub fn closePool() -> (){
+        assert!(open, ErrorCodes.PoolAlreadyClose)
+        checkCaller!(callerAddress!() == poolOwner, ErrorCodes.InvalidCaller)
+
+        open = false
+
+        emit PoolClose()
+    }
+
+    @using(updateFields = true, checkExternalCaller = true)
+    pub fn openPool() -> (){
+        assert!(!open, ErrorCodes.PoolAlreadyOpen)
+        checkCaller!(callerAddress!() == poolOwner, ErrorCodes.InvalidCaller)
+
+        open = true
+
+        emit PoolOpen()
+    }
+
+    @using(assetsInContract = true, updateFields = false, checkExternalCaller = true)
+    pub fn destroyPool() -> () {
+        checkCaller!(callerAddress!() == poolOwner, ErrorCodes.InvalidCaller)
+
+        destroySelf!(poolOwner)
+
+        emit Destroy(poolOwner)
+    }
+
+    @using(assetsInContract = false, updateFields = true, checkExternalCaller = true)
+    pub fn changeMinAmountToHold(newAmount: U256) -> () {
+        checkCaller!(callerAddress!() == poolOwner, ErrorCodes.InvalidCaller)
+
+        minTokenAmountToHold = newAmount
+
+        emit NewMinTokenAmountToHold(newAmount)
+    }
+
+
+}
