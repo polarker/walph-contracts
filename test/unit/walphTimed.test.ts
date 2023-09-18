@@ -3,25 +3,33 @@ import {
     Project,
     TestContractParams,
     addressFromContractId,
+    AssetOutput,
+    DUST_AMOUNT,
+    addressFromPublicKey,
     ZERO_ADDRESS,
+    ContractState,
+    NamedVals,
+    sleep,
+    ONE_ALPH,
   } from "@alephium/web3";
   import { PrivateKeyWallet } from "@alephium/web3-wallet";
   import {
     expectAssertionError,
     randomContractId,
     testAddress,
+    testPrivateKey,
   } from "@alephium/web3-test";
-  import { Walf, WalfTypes } from "../../artifacts/ts";
+  import { WalphTimed, WalphTimedTypes } from "../../artifacts/ts";
   
   describe("unit tests", () => {
     let testContractId: string;
     let testTokenId: string;
     let testContractAddress: string;
     let testParamsFixture: TestContractParams<
-      WalfTypes.Fields,
+      WalphTimedTypes.Fields,
       { amount: bigint }
     >;
-  
+    
     // We initialize the fixture variables before all tests
     beforeAll(async () => {
       web3.setCurrentNodeProvider("http://127.0.0.1:22973", undefined, fetch);
@@ -36,34 +44,29 @@ import {
   
         // initial state of the test contract
         initialFields: {
-          poolSize: 10n * 10n ** 9n,
+          poolSize: 10n * 10n ** 18n,
           poolOwner: testAddress,
           poolFees: 1n,
-          ticketPrice: 1n * 10n ** 9n,
-          tokenId:
+          minTokenAmountToHold: 1n,
+          ticketPrice: 10n ** 18n,
+          tokenIdToHold:
             "47504df5a7b18dcecdbf1ea00b7e644d0a7c93919f2d2061ba153f241f03b801",
           open: false,
           balance: 0n,
           feesBalance: 0n,
-          dustBalance: 0n,
           numAttendees: 0n,
+          drawTimestamp: BigInt(Date.now()+600*1000), // time now + 10 minutes
           attendees: Array(10).fill(
             ZERO_ADDRESS
-          ) as WalfTypes.Fields["attendees"],
+          ) as WalphTimedTypes.Fields["attendees"],
           lastWinner: ZERO_ADDRESS,
         },
         initialAsset: {
           alphAmount: 1n * 10n ** 18n,
-          tokens: [
-            {
-              id: "47504df5a7b18dcecdbf1ea00b7e644d0a7c93919f2d2061ba153f241f03b801",
-              amount: 0n
-            },
-          ],
         },
         // arguments to test the target function of the test contract
         testArgs: {
-          amount: 1n * 10n ** 9n,
+          amount: 1n * 10n ** 18n,
         },
         // assets owned by the caller of the function
         inputAssets: [
@@ -74,7 +77,7 @@ import {
               tokens: [
                 {
                   id: "47504df5a7b18dcecdbf1ea00b7e644d0a7c93919f2d2061ba153f241f03b801",
-                  amount: 200n * 10n ** 9n
+                  amount: 2n,
                 },
               ],
             },
@@ -89,10 +92,10 @@ import {
       let runs = [0n,0n]
   
       // open the pool
-      let testResult = await Walf.tests.random(testParams);
+      let testResult = await WalphTimed.tests.random(testParams);
       runs[0] = testResult.returns
-      
-      testResult = await Walf.tests.random(testParams);
+      sleep(1000)
+      testResult = await WalphTimed.tests.random(testParams);
   
       runs[1] = testResult.returns
       console.log(runs)
@@ -105,17 +108,17 @@ import {
       const testParams = JSON.parse(JSON.stringify(testParamsFixture));
   
       // open the pool
-      let testResult = await Walf.tests.openPool(testParams);
-      let contractState = testResult.contracts[0] as WalfTypes.State;
+      let testResult = await WalphTimed.tests.openPool(testParams);
+      let contractState = testResult.contracts[0] as WalphTimedTypes.State;
   
       expect(contractState.address).toEqual(testContractAddress);
       expect(contractState.fields.open).toEqual(true);
   
       //assign new state to initial fields and close the pool
       testParams.initialFields = contractState.fields;
-      testResult = await Walf.tests.closePool(testParams);
+      testResult = await WalphTimed.tests.closePool(testParams);
   
-      contractState = testResult.contracts[0] as WalfTypes.State;
+      contractState = testResult.contracts[0] as WalphTimedTypes.State;
       expect(contractState.fields.open).toEqual(false);
     });
   
@@ -124,7 +127,7 @@ import {
       testParams.initialFields.open = true;
   
       await expectAssertionError(
-        Walf.tests.openPool(testParams),
+        WalphTimed.tests.openPool(testParams),
         testContractAddress,
         2
       );
@@ -135,7 +138,7 @@ import {
       testParams.initialFields.open = false;
   
       await expectAssertionError(
-        Walf.tests.closePool(testParams),
+        WalphTimed.tests.closePool(testParams),
         testContractAddress,
         1
       );
@@ -151,7 +154,7 @@ import {
       testParams.initialFields.open = false;
   
       await expectAssertionError(
-        Walf.tests.openPool(testParams),
+        WalphTimed.tests.openPool(testParams),
         testContractAddress,
         4
       );
@@ -162,17 +165,18 @@ import {
       testParams.initialFields.open = true;
       testParams.inputAssets[0].address = "1GBvuTs4TosNB9xTCGJL5wABn2xTYCzwa7MnXHphjcj1y"
   
-      const testResult = await Walf.tests.buyTicket(testParams);
-      const contractState = testResult.contracts[0] as WalfTypes.State;
+      const testResult = await WalphTimed.tests.buyTicket(testParams);
+      const contractState = testResult.contracts[0] as WalphTimedTypes.State;
   
-      expect(contractState.fields.balance).toEqual(10n ** 9n);
+      expect(contractState.fields.balance).toEqual(10n ** 18n);
+      expect(contractState.fields.feesBalance).toEqual(10n ** 16n)
       expect(contractState.fields.attendees.length).toEqual(10);
       expect(contractState.fields.numAttendees).toEqual(1n);
       expect(contractState.fields.attendees).toEqual([
         "1GBvuTs4TosNB9xTCGJL5wABn2xTYCzwa7MnXHphjcj1y",
         ZERO_ADDRESS,
         ZERO_ADDRESS,
-        ZERO_ADDRESS,
+        ZERO_ADDRESS, 
         ZERO_ADDRESS,
         ZERO_ADDRESS,
         ZERO_ADDRESS,
@@ -187,11 +191,12 @@ import {
       const testParams = JSON.parse(JSON.stringify(testParamsFixture));
       testParams.initialFields.open = true;
       testParams.inputAssets[0].address = "1GBvuTs4TosNB9xTCGJL5wABn2xTYCzwa7MnXHphjcj1y"
-      testParams.testArgs.amount = 5n * 10n ** 9n
-      const testResult = await Walf.tests.buyTicket(testParams);
-      const contractState = testResult.contracts[0] as WalfTypes.State;
+      testParams.testArgs.amount = 5n * 10n ** 18n
+      const testResult = await WalphTimed.tests.buyTicket(testParams);
+      const contractState = testResult.contracts[0] as WalphTimedTypes.State;
   
-      expect(contractState.fields.balance).toEqual(5n * 10n ** 9n);
+      expect(contractState.fields.balance).toEqual(5n * 10n ** 18n);
+      expect(contractState.fields.feesBalance).toEqual(5n * 10n ** 16n)
       expect(contractState.fields.attendees.length).toEqual(10);
       expect(contractState.fields.numAttendees).toEqual(5n);
       expect(contractState.fields.attendees).toEqual([
@@ -212,15 +217,17 @@ import {
     it("test buy 3 tickets after 5 was bought", async () => {
       const testParams = JSON.parse(JSON.stringify(testParamsFixture));
       testParams.initialFields.open = true;
-      testParams.initialFields.balance = 5n * 10n ** 9n;
+      testParams.initialFields.balance = 5n * 10n ** 18n;
       testParams.initialFields.numAttendees = 5n;
+      testParams.initialFields.feesBalance = 5n * 10n ** 16n
   
       testParams.inputAssets[0].address = "1GBvuTs4TosNB9xTCGJL5wABn2xTYCzwa7MnXHphjcj1y"
-      testParams.testArgs.amount = 3n * 10n ** 9n
-      const testResult = await Walf.tests.buyTicket(testParams);
-      const contractState = testResult.contracts[0] as WalfTypes.State;
+      testParams.testArgs.amount = 3n * 10n ** 18n
+      const testResult = await WalphTimed.tests.buyTicket(testParams);
+      const contractState = testResult.contracts[0] as WalphTimedTypes.State;
   
-      expect(contractState.fields.balance).toEqual(8n * 10n ** 9n);
+      expect(contractState.fields.balance).toEqual(8n * 10n ** 18n);
+      expect(contractState.fields.feesBalance).toEqual(8n * 10n ** 16n);
       expect(contractState.fields.attendees.length).toEqual(10);
       expect(contractState.fields.numAttendees).toEqual(8n);
       expect(contractState.fields.attendees).toEqual([
@@ -244,70 +251,152 @@ import {
       testParams.initialFields.open = true;
       testParams.inputAssets[0].address = "1GBvuTs4TosNB9xTCGJL5wABn2xTYCzwa7MnXHphjcj1y"
   
-      testParams.testArgs.amount = 11n * 10n ** 7n;
+      testParams.testArgs.amount = 11n * 10n ** 17n;
   
       await expectAssertionError(
-        Walf.tests.buyTicket(testParams),
+        WalphTimed.tests.buyTicket(testParams),
         testContractAddress,
         7
       );
     });
   
-    
+  
+    it("test buy a ticket less than ticket price", async () => {
+      const testParams = JSON.parse(JSON.stringify(testParamsFixture));
+      testParams.initialFields.open = true;
+      testParams.initialFields.ticketPrice = 10n * 10n ** 18n
+      testParams.inputAssets[0].address = "1GBvuTs4TosNB9xTCGJL5wABn2xTYCzwa7MnXHphjcj1y"
+  
+      testParams.testArgs.amount = 9n * 10n ** 18n;
+  
+      await expectAssertionError(
+        WalphTimed.tests.buyTicket(testParams),
+        testContractAddress,
+        7
+      );
+    });
+  
+  
+    it("test buy a ticket without holding token", async () => {
+      const testParams = JSON.parse(JSON.stringify(testParamsFixture));
+      testParams.initialFields.open = true;
+      testParams.inputAssets[0].address = "1GBvuTs4TosNB9xTCGJL5wABn2xTYCzwa7MnXHphjcj1y"
+      testParams.inputAssets[0].asset.tokens[0].amount = 0n
+      testParams.testArgs.amount = 1n * 10n ** 18n;
+  
+      await expectAssertionError(
+        WalphTimed.tests.buyTicket(testParams),
+        testContractAddress,
+        5
+      );
+    });
+  
+  
     it("test buy a ticket when pool full", async () => {
       const testParams = JSON.parse(JSON.stringify(testParamsFixture));
       testParams.initialFields.open = true;
-      testParams.initialFields.balance = 100n * 10n **9n;
+      testParams.initialFields.balance = 100n * 10n ** 18n;
       testParams.inputAssets[0].address = "1GBvuTs4TosNB9xTCGJL5wABn2xTYCzwa7MnXHphjcj1y"
   
       await expectAssertionError(
-        Walf.tests.buyTicket(testParams),
+        WalphTimed.tests.buyTicket(testParams),
         testContractAddress,
         0
       );
     });
-  
-    it("test withdraw fees", async () => {
-      const testParams = JSON.parse(JSON.stringify(testParamsFixture));
-      testParams.initialFields.open = true
-      testParams.initialFields.balance =  100n * 10n ** 9n
-      testParams.initialAsset.tokens[0].amount = 10n * 10n ** 9n
-      testParams.initialAsset.alphAmount = 100 * 10 ** 18
-      testParams.initialFields.feesBalance = 1 * 10 ** 9
-      testParams.initialFields.dustBalance = 1 * 10 ** 18
-  
-      const testResult = await Walf.tests.withdraw(testParams);
-      const contractState = testResult.contracts[0] as WalfTypes.State;
-  
-      expect(contractState.fields.feesBalance).toEqual(0n);
-      console.log(await testResult.txOutputs)
-  
-    });
 
-
-
-    it("test distribute prize pool", async () => {
+    it("test draw prize pool", async () => {
       const testParams = JSON.parse(JSON.stringify(testParamsFixture));
       testParams.initialFields.open = true;
-      testParams.initialFields.balance =  0;
-      testParams.initialAsset.alphAmount = 10n * 10n ** 18n
-      //testParams.initialFields.numAttendees = 10n
-      testParams.inputAssets[0].address = "1GBvuTs4TosNB9xTCGJL5wABn2xTYCzwa7MnXHphjcj1y"
-      testParams.testArgs.amount = 10n * 10n ** 9n
-  
-  
-      const testResult = await Walf.tests.buyTicket(testParams)
-      const contractState = testResult.contracts[0] as WalfTypes.State
+      testParams.initialFields.balance =  10 * 10 ** 18;
+      testParams.initialAsset.alphAmount = 100 * 10 ** 18;
+      testParams.initialFields.numAttendees = 10
+      testParams.testArgs.amount = 10 * 10 ** 18
+      testParams.initialFields.drawTimestamp = BigInt(Date.now()+1)
+      testParams.initialFields.attendees = Array(10).fill(
+        "1GBvuTs4TosNB9xTCGJL5wABn2xTYCzwa7MnXHphjcj1y"
+      ) as WalphTimedTypes.Fields["attendees"]
 
-
+  
+      const testResult = await WalphTimed.tests.draw(testParams);
+      const contractState = testResult.contracts[0] as WalphTimedTypes.State;
+  
       expect(contractState.fields.balance).toEqual(0n);
       expect(contractState.fields.open).toEqual(true);
       expect(contractState.fields.numAttendees).toEqual(0n);
       expect(contractState.fields.attendees.length).toEqual(10);
       expect(contractState.fields.lastWinner).toEqual("1GBvuTs4TosNB9xTCGJL5wABn2xTYCzwa7MnXHphjcj1y");
-
     });
-    
+  
 
+    it("test draw with 0 balance when not time", async () => {
+      const testParams = JSON.parse(JSON.stringify(testParamsFixture));
+      testParams.initialFields.open = true;
+      testParams.initialFields.balance =  0;
+      testParams.initialAsset.alphAmount = 100 * 10 ** 18;
+      testParams.initialFields.numAttendees = 10
+      testParams.testArgs.amount = 10 * 10 ** 18
+      //testParams.initialFields.drawTimestamp = BigInt(Date.now())
+      testParams.initialFields.attendees = Array(10).fill(
+        ZERO_ADDRESS
+      ) as WalphTimedTypes.Fields["attendees"]
+
+      await expectAssertionError(
+        WalphTimed.tests.draw(testParams),
+        testContractAddress,
+        8
+      );
+    });
+
+
+    it("test while loop draw prize pool", async () => {
+      const testParams = JSON.parse(JSON.stringify(testParamsFixture));
+      testParams.initialFields.open = true;
+      testParams.initialFields.balance =  10 * 10 ** 18;
+      testParams.initialAsset.alphAmount = 100 * 10 ** 18;
+      testParams.initialFields.numAttendees = 10
+      testParams.testArgs.amount = 10 * 10 ** 18
+      testParams.initialFields.drawTimestamp = BigInt(Date.now()+1)
+      testParams.initialFields.attendees = Array(10).fill(
+        ZERO_ADDRESS
+      ) as WalphTimedTypes.Fields["attendees"]
+
+      await expectAssertionError(
+        WalphTimed.tests.draw(testParams),
+        testContractAddress,
+        10
+      );
+    });
+
+
+  
+    it("test withdraw fees", async () => {
+      const testParams = JSON.parse(JSON.stringify(testParamsFixture));
+      testParams.initialFields.open = true
+      testParams.initialFields.balance =  0
+      testParams.initialAsset.alphAmount = 100 * 10 ** 18
+      testParams.initialFields.feesBalance = 1 * 10 ** 18
+      
+      const testResult = await WalphTimed.tests.withdraw(testParams);
+      const contractState = testResult.contracts[0] as WalphTimedTypes.State;
+  
+      expect(contractState.fields.feesBalance).toEqual(0n);
+  
+    });
+  
+  
+  
+    it("test change token amount to hodl", async () => {
+      const testParams = JSON.parse(JSON.stringify(testParamsFixture));
+      testParams.initialFields.open = false;
+      testParams.initialFields.balance = testParams.initialFields.poolSize;
+      testParams.initialAsset.alphAmount = testParams.initialFields.poolSize + 1;
+      
+      testParams.testArgs.newAmount = 10n
+      const testResult = await WalphTimed.tests.changeMinAmountToHold(testParams);
+      const contractState = testResult.contracts[0] as WalphTimedTypes.State;
+  
+      expect(contractState.fields.minTokenAmountToHold).toEqual(10n);
+    });
   });
   

@@ -10,31 +10,11 @@ import {
 } from "@alephium/web3";
 import { PrivateKeyWallet } from "@alephium/web3-wallet";
 import configuration from "../alephium.config";
-import { Destroy, Walph, WalphTypes } from "../artifacts/ts";
+import { Destroy, Draw, Walph, WalphTimed, WalphTimedTypes, WithdrawFees } from "../artifacts/ts";
 
 // The `TokenFaucetTypes.WithdrawEvent` is generated in the getting-started guide
-const events: WalphTypes.PoolCloseEvent[] = [];
-const subscribeOptions = {
-  // It will check for new events from the full node every `pollingInterval`
-  pollingInterval: 40000,
-  // The callback function will be called for each event
-  messageCallback: (event: WalphTypes.PoolCloseEvent): Promise<void> => {
-    events.push(event);
-    return Promise.resolve();
-  },
-  // This callback function will be called when an error occurs
-  errorCallback: (
-    error: any,
-    subscription: { unsubscribe: () => void }
-  ): Promise<void> => {
-    console.log(error);
-    subscription.unsubscribe();
-    return Promise.resolve();
-  },
-};
 
-
-async function destroy(privKey: string, group: number, contractName: string) {
+async function draw(privKey: string, group: number, contractName: string) {
 
   Project.build();
   const wallet = new PrivateKeyWallet({
@@ -46,36 +26,44 @@ async function destroy(privKey: string, group: number, contractName: string) {
   //.deployments contains the info of our `TokenFaucet` deployement, as we need to now the contractId and address
   //This was auto-generated with the `cli deploy` of our `scripts/0_deploy_faucet.ts`
   const deployments = await Deployments.from(
-    "./to-destroy/.deployments." + networkToUse + ".json"
+    "./artifacts/.deployments." + networkToUse + ".json"
   );
   //Make sure it match your address group
   const accountGroup = group;
-
   const deployed = deployments.getDeployedContractResult(
     accountGroup,
     contractName
   );
   const walpheContractId = deployed.contractInstance.contractId;
   const walpheContractAddress = deployed.contractInstance.address;
+  let drawInProgress = false
 
-  try {
+  const drawChecker = async function() {
     const balanceContract = await nodeProvider.addresses.getAddressesAddressBalance(walpheContractAddress)
     console.log(walpheContractAddress+" - Balance contract is " + balanceContract.balanceHint )
 
-    const destroyTx = await Destroy.execute(wallet, {
+    const WalphState = WalphTimed.at(walpheContractAddress)
+
+    const initialState = await WalphState.fetchState()
+    console.log(walpheContractAddress + " - Next draw: "+ new Date(Number(initialState.fields.drawTimestamp)))
+    if (initialState.fields.drawTimestamp <= Date.now() && !drawInProgress){
+        drawInProgress = true
+    const txDraw = await Draw.execute(wallet, {
       initialFields: { walphContract: walpheContractId},
-      attoAlphAmount: ONE_ALPH + 5n * DUST_AMOUNT,
+      attoAlphAmount: 10n + 8n * DUST_AMOUNT,
     });
-    console.log("Wait for "+destroyTx.txId+" to destroy the contract ")
+    console.log(walpheContractAddress+" - "+"Draw tx: "+ txDraw.txId)
+    await waitTxConfirmed(nodeProvider, txDraw.txId,1 ,10000 )
 
-    await waitTxConfirmed(nodeProvider,destroyTx.txId,1 , 1000)
-
-    console.log(walpheContractAddress + " destroyed")
- 
-  } catch (error) {
-    console.log("Contract "+walpheContractAddress+"not found, continue")
-    return
+    drawInProgress = false
+    console.log(walpheContractAddress + " drawn")
+    
   }
+
+    setTimeout(drawChecker, Number(initialState.fields.drawTimestamp) - Date.now());
+}
+
+drawChecker()
 
     
 }
@@ -96,10 +84,6 @@ const numberOfKeys = configuration.networks[networkToUse].privateKeys.length
 Array.from(Array(numberOfKeys).keys()).forEach((group) => {
   //distribute(configuration.networks[networkToUse].privateKeys[group], group, "Walph");
   //distribute(configuration.networks[networkToUse].privateKeys[group], group, "Walph50HodlAlf");
-  
-  destroy(configuration.networks[networkToUse].privateKeys[group], group, "Walph");
-  destroy(configuration.networks[networkToUse].privateKeys[group], group, "WalphTimed");
-  destroy(configuration.networks[networkToUse].privateKeys[group], group, "Walf");
-  destroy(configuration.networks[networkToUse].privateKeys[group], group, "Walph50HodlAlf");
+  draw(configuration.networks[networkToUse].privateKeys[group], group, "WalphTimed");
 
 });

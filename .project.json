@@ -11,42 +11,56 @@
   "infos": {
     "Buy": {
       "sourceFile": "buyTicket.ral",
-      "sourceCodeHash": "10ea4abd4971577edea1a685540e26fd0f839d0efad64e0848d1db9846133964",
+      "sourceCodeHash": "d3729ce19cca1f2d822b1f74cfa33fc7d58d2bf47130b8d2b1369e49af97ed26",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "",
       "warnings": []
     },
     "BuyTicketToken": {
       "sourceFile": "buyTicket.ral",
-      "sourceCodeHash": "10ea4abd4971577edea1a685540e26fd0f839d0efad64e0848d1db9846133964",
+      "sourceCodeHash": "d3729ce19cca1f2d822b1f74cfa33fc7d58d2bf47130b8d2b1369e49af97ed26",
+      "bytecodeDebugPatch": "",
+      "codeHashDebug": "",
+      "warnings": []
+    },
+    "BuyTimedWithoutToken": {
+      "sourceFile": "buyTicket.ral",
+      "sourceCodeHash": "d3729ce19cca1f2d822b1f74cfa33fc7d58d2bf47130b8d2b1369e49af97ed26",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "",
       "warnings": []
     },
     "BuyWithoutToken": {
       "sourceFile": "buyTicket.ral",
-      "sourceCodeHash": "10ea4abd4971577edea1a685540e26fd0f839d0efad64e0848d1db9846133964",
+      "sourceCodeHash": "d3729ce19cca1f2d822b1f74cfa33fc7d58d2bf47130b8d2b1369e49af97ed26",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "",
       "warnings": []
     },
     "Close": {
       "sourceFile": "poolState.ral",
-      "sourceCodeHash": "4a9e5fec316398309dd4cee0d2b39148e96a427523a1826db23e125a75b1b13b",
+      "sourceCodeHash": "2c555233cd51fa4c37fd79d1fac76e7396a46e1fa96c4e071c71ed44b694ca77",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "",
       "warnings": []
     },
     "Destroy": {
       "sourceFile": "poolState.ral",
-      "sourceCodeHash": "4a9e5fec316398309dd4cee0d2b39148e96a427523a1826db23e125a75b1b13b",
+      "sourceCodeHash": "2c555233cd51fa4c37fd79d1fac76e7396a46e1fa96c4e071c71ed44b694ca77",
+      "bytecodeDebugPatch": "",
+      "codeHashDebug": "",
+      "warnings": []
+    },
+    "Draw": {
+      "sourceFile": "poolState.ral",
+      "sourceCodeHash": "2c555233cd51fa4c37fd79d1fac76e7396a46e1fa96c4e071c71ed44b694ca77",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "",
       "warnings": []
     },
     "Open": {
       "sourceFile": "poolState.ral",
-      "sourceCodeHash": "4a9e5fec316398309dd4cee0d2b39148e96a427523a1826db23e125a75b1b13b",
+      "sourceCodeHash": "2c555233cd51fa4c37fd79d1fac76e7396a46e1fa96c4e071c71ed44b694ca77",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "",
       "warnings": []
@@ -72,9 +86,16 @@
       "codeHashDebug": "59484989f1f9cdb10172a19199b067a202aa6debce0632c482fb68cae6569c2a",
       "warnings": []
     },
+    "WalphTimed": {
+      "sourceFile": "walphTimed.ral",
+      "sourceCodeHash": "44db111753b0ba465c0cf343eeabaaafe79c5d2cc81382a2ca9726ca473adb74",
+      "bytecodeDebugPatch": "=6-2=2-2+2a=3-1+b=3-1+4=3-1+d=3-1+6=1-1+0ff4=1-1+26=3-1+d=3+f4=1+1=1-3=2-2+2a=3-1+d=2-2+51=11-1+4=30+0016007e0207726e6420697320=1118",
+      "codeHashDebug": "d75fe99ea1ea99c5550c554a8044afbb051cb14f829c7284430d3653e993d28c",
+      "warnings": []
+    },
     "WithdrawFees": {
       "sourceFile": "poolState.ral",
-      "sourceCodeHash": "4a9e5fec316398309dd4cee0d2b39148e96a427523a1826db23e125a75b1b13b",
+      "sourceCodeHash": "2c555233cd51fa4c37fd79d1fac76e7396a46e1fa96c4e071c71ed44b694ca77",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "",
       "warnings": []

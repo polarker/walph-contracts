@@ -17,3 +17,7 @@ TxScript Destroy(walphContract: Walph){
 TxScript WithdrawFees(walphContract: Walph){
     walphContract.withdraw()
 }
+
+TxScript Draw(walphContract: WalphTimed){
+    walphContract.draw()
+}
