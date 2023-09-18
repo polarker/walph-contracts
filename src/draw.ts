@@ -52,7 +52,7 @@ async function draw(privKey: string, group: number, contractName: string) {
       initialFields: { walphContract: walpheContractId},
       attoAlphAmount: 10n + 8n * DUST_AMOUNT,
     });
-    console.log(walpheContractAddress+" - "+"Draw tx: "+ JSON.stringify(txDraw))
+    console.log(walpheContractAddress+" - "+"Draw tx: "+ txDraw.txId)
     await waitTxConfirmed(nodeProvider, txDraw.txId,1 ,10000 )
 
     drawInProgress = false
