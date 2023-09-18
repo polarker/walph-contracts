@@ -67,6 +67,7 @@ async function destroy(privKey: string, group: number, contractName: string) {
       attoAlphAmount: ONE_ALPH + 5n * DUST_AMOUNT,
     });
     console.log("Wait for "+destroyTx.txId+" to destroy the contract")
+    
     await waitTxConfirmed(nodeProvider,destroyTx.txId,1 , 1000)
 
     console.log(walpheContractAddress + " destroyed")

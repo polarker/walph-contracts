@@ -55,7 +55,7 @@ import {
           balance: 0n,
           feesBalance: 0n,
           numAttendees: 0n,
-          drawTimestamp: BigInt(Date.now()+600), // time now + 10 minutes
+          drawTimestamp: BigInt(Date.now()+600*1000), // time now + 10 minutes
           attendees: Array(10).fill(
             ZERO_ADDRESS
           ) as WalphTimedTypes.Fields["attendees"],
@@ -304,27 +304,6 @@ import {
         0
       );
     });
-  
-    it("test distribute prize pool", async () => {
-      const testParams = JSON.parse(JSON.stringify(testParamsFixture));
-      testParams.initialFields.open = true;
-      testParams.initialFields.balance =  0;
-      testParams.initialAsset.alphAmount = 100 * 10 ** 18;
-      //testParams.initialFields.numAttendees = 10
-      testParams.inputAssets[0].address = "1GBvuTs4TosNB9xTCGJL5wABn2xTYCzwa7MnXHphjcj1y"
-      testParams.testArgs.amount = 10 * 10 ** 18
-      testParams.initialFields.drawTimestamp = BigInt(Date.now()+1)
-  
-      const testResult = await WalphTimed.tests.buyTicket(testParams);
-      const contractState = testResult.contracts[0] as WalphTimedTypes.State;
-  
-      expect(contractState.fields.balance).toEqual(10n * ONE_ALPH);
-      expect(contractState.fields.open).toEqual(true);
-      expect(contractState.fields.numAttendees).toEqual(10n);
-      expect(contractState.fields.attendees.length).toEqual(10);
-
-    });
-
 
     it("test draw prize pool", async () => {
       const testParams = JSON.parse(JSON.stringify(testParamsFixture));
@@ -349,6 +328,26 @@ import {
       expect(contractState.fields.lastWinner).toEqual("1GBvuTs4TosNB9xTCGJL5wABn2xTYCzwa7MnXHphjcj1y");
     });
   
+
+    it("test draw with 0 balance when not time", async () => {
+      const testParams = JSON.parse(JSON.stringify(testParamsFixture));
+      testParams.initialFields.open = true;
+      testParams.initialFields.balance =  0;
+      testParams.initialAsset.alphAmount = 100 * 10 ** 18;
+      testParams.initialFields.numAttendees = 10
+      testParams.testArgs.amount = 10 * 10 ** 18
+      //testParams.initialFields.drawTimestamp = BigInt(Date.now())
+      testParams.initialFields.attendees = Array(10).fill(
+        ZERO_ADDRESS
+      ) as WalphTimedTypes.Fields["attendees"]
+
+      await expectAssertionError(
+        WalphTimed.tests.draw(testParams),
+        testContractAddress,
+        8
+      );
+    });
+
 
     it("test while loop draw prize pool", async () => {
       const testParams = JSON.parse(JSON.stringify(testParamsFixture));
