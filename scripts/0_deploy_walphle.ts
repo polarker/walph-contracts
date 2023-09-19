@@ -92,7 +92,7 @@ const deployWalph: DeployFunction<Settings> = async (
   poolSize = 80
   ticketPrice = 10
   //const testnetAlf = (await mintToken(deployer.account.address, 2000n * 10n ** 18n)).contractId
-  const drawTimestamp = BigInt(Date.now()+600*100)
+  const drawTimestamp = BigInt(Date.now()+21600*1000)
 
   const resultTimedWalph = await deployer.deployContract(WalphTimed, {
     // The initial states of the faucet contract

@@ -59,12 +59,13 @@ Contract WalphTimed(
         let poolOwnerAmount = balance * poolFees/100
         let winnerAmount = balance - poolOwnerAmount
         balance = 0
-        numAttendees = 0
 
         // reset attendees array
         for (let mut index = 0; index <= numAttendees; index = index + 1){
             attendees[index] = @tgx7VNFoP9DJiFMFgXXtafQZkUvyEdDHT9ryamHJYrjq
         }
+
+        numAttendees = 0
 
         transferTokenFromSelf!(lastWinner, ALPH, winnerAmount)
 
@@ -107,11 +108,11 @@ Contract WalphTimed(
         assert!(actualBlockTs > drawTimestamp , ErrorCodes.TimestampNotReached)
         // balance is 0 means nobody participate but we still have to move the timestamp for the next draw
         if(balance <= 0){
-            drawTimestamp = actualBlockTs + (600*1000)
+            drawTimestamp = actualBlockTs + (21600*1000)
 
         } else {      
 
-            drawTimestamp = actualBlockTs + (600*1000) // each ten minutes
+            drawTimestamp = actualBlockTs + (21600*1000) // each ten minutes
 
             distributePrize{selfAddress!() -> ALPH: balance + dustAmount!()}()
         }

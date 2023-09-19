@@ -69,7 +69,7 @@ drawChecker()
 }
 
 
-const networkToUse = "testnet";
+const networkToUse = "devnet";
 //Select our network defined in alephium.config.ts
 const network = configuration.networks[networkToUse];
 
