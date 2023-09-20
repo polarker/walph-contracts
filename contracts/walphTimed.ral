@@ -59,12 +59,6 @@ Contract WalphTimed(
         let poolOwnerAmount = balance * poolFees/100
         let winnerAmount = balance - poolOwnerAmount
         balance = 0
-
-        // reset attendees array
-        for (let mut index = 0; index <= numAttendees; index = index + 1){
-            attendees[index] = @tgx7VNFoP9DJiFMFgXXtafQZkUvyEdDHT9ryamHJYrjq
-        }
-
         numAttendees = 0
 
         transferTokenFromSelf!(lastWinner, ALPH, winnerAmount)
