@@ -37,17 +37,18 @@ Contract Walph(
         assert!(numAttendees > 0, ErrorCodes.PoolNotFull)
         let seed = u256From32Byte!(blake2b!(toByteVec!(blockTarget!()) ++ toByteVec!(blockTimeStamp!())))
         emit Debug(`rnd is ${seed}`)
-        return addModN!(0,seed, numAttendees)
+        return addModN!(0,seed, numAttendees) // Good to add numAttendees instead of zero. numAttendees is not accessible to the external caller.
     }
 
     @using(preapprovedAssets = true, assetsInContract = false, updateFields = true, checkExternalCaller = false)
     fn distributePrize(lastAttendee: Address, amount: U256) -> (){
          checkCaller!(callerAddress!() == selfAddress!(), ErrorCodes.InvalidCaller)
-         assert!(balance + amount >= poolSize, ErrorCodes.PoolNotFull)
+         assert!(balance + amount >= poolSize, ErrorCodes.PoolNotFull) // Q: It seems in your current design, they should be equal?
 
         lastWinner = attendees[random()]
         
-
+        // Q1: basis point is more common, i.e. poolFees / 10000: https://en.wikipedia.org/wiki/Basis_point
+        // Q2: should the owner get `poolSize` * poolFees / N? The fee of the amount is not charged in `balance * poolFees/N`.
         let poolOwnerAmount = balance * poolFees/100
         let winnerAmount = balance - poolOwnerAmount
         balance = 0
@@ -80,7 +81,7 @@ Contract Walph(
         return ticketPrice
     }
     
-    @using(preapprovedAssets = false, assetsInContract = true, updateFields = true, checkExternalCaller = false)
+    @using(preapprovedAssets = false, assetsInContract = true, updateFields = true)
     pub fn withdraw() -> () {
         checkCaller!(callerAddress!() == poolOwner, ErrorCodes.InvalidCaller)
         assert!(feesBalance > 0, ErrorCodes.PoolNotFull)
@@ -91,6 +92,7 @@ Contract Walph(
 
     }
 
+    // Note that if there is 1 ticket left and there are 5 users trying to buy it, only 1 will get it, the other 4 will get a failed tx.
     @using(preapprovedAssets = true, assetsInContract = true, updateFields = true, checkExternalCaller = false)
     pub fn buyTicket(amount: U256) -> (){
         let caller = callerAddress!()
@@ -133,6 +135,7 @@ Contract Walph(
        }
     }
 
+    // Note that the owner could close the pool even when it is not full, not a big deal though.
     @using(updateFields = true, checkExternalCaller = true)
     pub fn closePool() -> (){
         assert!(open, ErrorCodes.PoolAlreadyClose)
@@ -153,6 +156,7 @@ Contract Walph(
         emit PoolOpen()
     }
 
+    // Not that the owner could destroy the pool even when it is not full, not a big deal though.
     @using(assetsInContract = true, updateFields = false, checkExternalCaller = true)
     pub fn destroyPool() -> () {
         checkCaller!(callerAddress!() == poolOwner, ErrorCodes.InvalidCaller)
